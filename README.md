@@ -43,6 +43,7 @@ The R functions are available from the EMODnet github repository at https://gith
 ```R
 source("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/R/installallneededpackages.R")
 source("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/R/emodnetqc.R")
+BODC <- getbodc()  
 LoopCheckdataset ("http://ipt.iobis.org/training/archive?r=biofun_2009")
 LoopCheckdataset (c("http://ipt.iobis.org/training/archive?r=biofun_2009", "http://ipt.vliz.be/eurobis/resource?r=benthic-fauna-arrabida-2007-2009"))
 ```
