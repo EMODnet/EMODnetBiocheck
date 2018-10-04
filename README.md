@@ -29,6 +29,7 @@ Additional checks which are planned to be implemented are:
  *   Is there a sampling instrument present?
  *   Are there other sampling descriptors present?
  *   Provide an overview of the number of taxa per kingdom and class.
+ *   Check for non-marine and non-brackish taxa.
  *   Has the unit provided the same base unit as specified by the measurementTypeID?
  *   add the name of the dataset + URL at the top + number of records per file
  *   List the non-matched taxa
