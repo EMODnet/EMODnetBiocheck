@@ -167,7 +167,7 @@ IPTreport$mofsummary  <- IPTreport$mofsummary %>% arrange(type , desc(count))
           
           
      mof.oc.ev_check_id <- eMoF %>% mutate (level = 'error', field = 'eventID', row = row_number(),
-                                                 message = 'This EventID does not link to the same Event as the EventID provided in the related Occurrence') %>%
+                                                 message = 'This eventID differs from the eventID provided in the related Occurrence') %>%
             inner_join(Occurrence, by = "occurrenceID") %>% anti_join(eMoF, by = c(  "eventID.y"=  "eventID", "occurrenceID" = "occurrenceID")) %>%
             select (level, field, row, message) # Checks the all eMoF eventIDs linked to the same event as the related occurrence
         }
