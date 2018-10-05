@@ -36,7 +36,7 @@ Additional checks which are planned to be implemented are:
  *   Add geographical cover and temporal cover from the eml to the overvieuw page.
  
  
-The tool is avaiable from the LifeWatch services at http://rshiny.lifewatch.be/
+The tool is avaiable from the LifeWatch services at http://rshiny.lifewatch.be/BioCheck/
 The R functions are available from the EMODnet github repository at https://github.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool
 
 
