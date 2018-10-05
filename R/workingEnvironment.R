@@ -90,8 +90,11 @@ biometrics <- c ('http://vocab.nerc.ac.uk/collection/P01/current/LSTAGE01/', 'ht
 #-----------------------------------------------------------------------#
 ####                    BODC VOCAB tables                            ####
 #-----------------------------------------------------------------------#
+#if (exists("forcebodc") == false ){ 
+#forcebodc <- FALSE }
 
-getbodc = function( forcebodc = FALSE){
+
+#getbodc = function( forcebodc = FALSE){
 if(!exists("BODC") | forcebodc == TRUE) {
 
 BODC=list()
@@ -233,6 +236,6 @@ BODC$values <- rbind(L22s, L05s, S11s, S10s, M20s, EUNIS)
 
 rm(L22s, L05s, S11s, S10s, M20s, x,l, terms, EUNIS, P01s, Q01s)
 
-return(BODC)
-}
+#return(BODC)
+#}
 }
