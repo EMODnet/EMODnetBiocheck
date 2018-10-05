@@ -132,9 +132,9 @@ IPTreport$mofsummary <-  eMoF %>% mutate(type = if_else(is.na(occurrenceID) , "E
 
 IPTreport$mofsummary_values <- eMoF %>% filter(!is.na(measurementValueID)) %>% mutate(type = if_else(is.na(occurrenceID) , "EventMoF", "OccurrenceMoF" )) %>% 
         mutate (measurementValueID = if_else(str_sub(measurementValueID, -1, -1)=='/',measurementValueID, paste(measurementValueID, "/",  sep = '') )) %>%    
-        group_by(type, measurementValue, measurementValueID) %>% summarize(count = n()) %>% ungroup() %>%
+        group_by(type, measurementType, measurementValue, measurementValueID) %>% summarize(count = n()) %>% ungroup() %>%
         left_join(BODC$values, by = c("measurementValueID"="uri")) %>%
-        select (type, measurementValue,preflabel, definition)
+        select (type, measurementType, measurementValue,preflabel, definition)
 
 } else {
 IPTreport$mofsummary <-  eMoF %>% mutate(type = if_else(is.na(occurrenceID) , "EventMoF", "OccurrenceMoF" )) %>% 
