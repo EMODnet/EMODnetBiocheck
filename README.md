@@ -34,7 +34,7 @@ Additional checks which are planned to be implemented are:
  *   add the name of the dataset + URL at the top + number of records per file
  *   List the non-matched taxa
  *   Add geographical cover and temporal cover from the eml to the overvieuw page.
- 
+ *   add minimum, maximum (and maybe mean / median) values for numeric measurementTypes.
  
 The tool is avaiable from the LifeWatch services at http://rshiny.lifewatch.be/BioCheck/
 The R functions are available from the EMODnet github repository at https://github.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool
