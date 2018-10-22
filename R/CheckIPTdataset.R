@@ -3,7 +3,6 @@
 CheckIPTdataset = function(link, tree = FALSE){
   library(stringr)
   IPTreport=list()
-  
   #-----------------------------------------------------------------------#
   ####                    check if is downloadable file                ####
   #-----------------------------------------------------------------------#
@@ -71,10 +70,10 @@ IPTreport$dtb$general_issues <- ("The dataset does not have an occurrence file")
       
       #### MoF fix
       
-      if (  exists("eMoF") == TRUE  )
+      if ( exists("eMoF") == TRUE  )
       { eMoF[eMoF =='NA' | eMoF =='' | eMoF ==' '] <- NA
         eMoF <- eMoF[,colSums(is.na(eMoF))<nrow(eMoF)]
-        eMoF <- fncols(eMoF, c("measurementTypeID","measurementValueID","measurementUnitID", "eventID", "measurementUnit"))
+        eMoF <- fncols(eMoF, c("measurementTypeID","measurementValueID", "measurementValue", "measurementUnitID", "eventID", "measurementUnit"))
  #       eMoF[eMoF =='NA' | eMoF =='' | eMoF ==' '] <- NA
           
         if ( exists("Event") == TRUE){
@@ -96,7 +95,7 @@ IPTreport$title <- out$emlmeta@dataset@title[[1]]@.Data
                   select (one_of(c("occurrenceStatus","basisOfRecord", "eventID"))))
 
     
-if (exists("Event")) {
+  if (exists("Event")) {
        if("absent" %in% occurrencetemp$occurrenceStatus)  {     
 IPTreport$datasummary <- Event %>% fncols("type") %>% select (eventID, type) %>% left_join(occurrencetemp, by = "eventID") %>% 
         group_by(eventID, type, occurrenceStatus, basisOfRecord ) %>% summarise( occount = sum(!is.na(basisOfRecord))) %>%
@@ -104,14 +103,14 @@ IPTreport$datasummary <- Event %>% fncols("type") %>% select (eventID, type) %>%
         mutate(absent = as.integer(absent)) %>% group_by(type, basisOfRecord) %>% 
         summarise(n_events = sum(!is.na(unique(eventID))), n_absent = sum(absent),  n_present = sum(present),n_NA = sum(NA)) %>%
         select(type,n_events, basisOfRecord, n_present, n_absent, n_NA )
-      } else {
+        } else {
 IPTreport$datasummary <- Event %>% fncols("type") %>% select (eventID, type) %>% left_join(occurrencetemp, by = "eventID") %>% 
         mutate (occurrenceStatus = if_else(!is.na(occurrenceStatus), paste("n_", occurrenceStatus, sep ="") , occurrenceStatus )) %>%
         group_by(type, occurrenceStatus, basisOfRecord ) %>% 
         summarise( occount = sum(!is.na(basisOfRecord)), n_events = sum(!is.na(unique(eventID)))) %>%  
         mutate (occount = if_else(occount =="0", as.integer(NA), occount )) %>% 
         dcast (type + n_events + basisOfRecord ~occurrenceStatus, value.var=c("occount") )
-      }
+        }
 IPTreport$datasummary[IPTreport$datasummary =='0' | IPTreport$datasummary  =='NA'] <- NA
 IPTreport$datasummary <- IPTreport$datasummary[,names(IPTreport$datasummary) == "type" |colSums(is.na(IPTreport$datasummary))<nrow(IPTreport$datasummary)] 
   
@@ -123,11 +122,13 @@ IPTreport$datasummary <- occurrencetemp   %>%   group_by(basisOfRecord, occurren
 if (exists("eMoF")) {
 
 if (exists("BODC")) {
-IPTreport$mofsummary <-  eMoF %>% mutate(type = if_else(is.na(occurrenceID) , "EventMoF", "OccurrenceMoF" )) %>% 
+IPTreport$mofsummary <-  suppressWarnings(eMoF %>% mutate(type = if_else(is.na(occurrenceID) , "EventMoF", "OccurrenceMoF" ), measurementValue =  as.numeric(measurementValue)) %>% 
         mutate (measurementTypeID = if_else(str_sub(measurementTypeID, -1, -1)=='/',measurementTypeID, paste(measurementTypeID, "/",  sep = '') )) %>%    
-        group_by(type, measurementType, measurementTypeID, measurementUnit) %>% summarize(count = n()) %>% ungroup() %>%
+        group_by(type, measurementType,  measurementTypeID, measurementUnit) %>% summarize(count = n(), minValue = min(measurementValue), maxValue = max(measurementValue) ) %>% ungroup() %>%
         left_join(BODC$parameters, by = c("measurementTypeID"="uri")) %>%
-        select (type, measurementType,measurementUnit,count,   preflabel, definition)
+        select (type, measurementType, minValue,  maxValue, measurementUnit,count,   preflabel, definition))
+#IPTreport$mofsummary$minValue <- format(IPTreport$mofsummary$minValue, digits=2) 
+#IPTreport$mofsummary$maxValue <- format(IPTreport$mofsummary$maxValue, digits=2) 
 
 
 IPTreport$mofsummary_values <- eMoF %>% filter(!is.na(measurementValueID)) %>% mutate(type = if_else(is.na(occurrenceID) , "EventMoF", "OccurrenceMoF" )) %>% 
@@ -137,8 +138,10 @@ IPTreport$mofsummary_values <- eMoF %>% filter(!is.na(measurementValueID)) %>% m
         select (type, measurementType, measurementValue,preflabel, definition)
 
 } else {
-IPTreport$mofsummary <-  eMoF %>% mutate(type = if_else(is.na(occurrenceID) , "EventMoF", "OccurrenceMoF" )) %>% 
-      group_by(type, measurementType, measurementUnit) %>% summarize(count = n())
+IPTreport$mofsummary <-  suppressWarnings(eMoF %>% mutate(type = if_else(is.na(occurrenceID) , "EventMoF", "OccurrenceMoF"),  measurementValue =  as.numeric(measurementValue))   %>% 
+      group_by(type, measurementType, measurementUnit) %>% summarize(count = n(), minValue = min(measurementValue), maxValue = max(measurementValue)) %>%
+      select (type, measurementType, minValue,  maxValue, measurementUnit,count))
+
 }
   
         if (is.data.frame(IPTreport$mofsummary)){if (nrow(IPTreport$mofsummary)>0){
@@ -215,7 +218,18 @@ IPTreport$tree <- treeStructure(Event, Occurrence, eMoF)
         mutate(IDlink = if_else(!is.na(occurrenceID),"occurrence", "event") ) %>%
         mutate(message = 'measurementValues which may need a measurementValueID') %>%  group_by (IDlink, measurementType, measurementValue, message) %>% summarize(count = n()) %>% arrange (desc(measurementType))
       
+
+      if (sum(grepl(BODC$instrument, unique(eMoF$measurementTypeID)))== 0){
+     mof_noInstrument <- data.frame(level = c('warning'),field = c('measurementType'), row = NA, 
+                                          message = c('No sampling instrument present'))
+      }
       
+      if (sum(grepl(paste(BODC$effort, collapse="|"), unique(eMoF$measurementTypeID)))== 0){
+     mof_noSamplingdescriptor <- data.frame(level = c('warning'),field = c('measurementType'), row = NA, 
+                                       message = c('No sampling descriptors present: see http://vocab.nerc.ac.uk/collection/Q01/current/'))
+      }
+      
+            
       if (  exists("BODC")){ 
      mof_oc_TypeID_NotResolve <- eMoF %>% filter (!is.na(occurrenceID), !is.na(measurementTypeID) ) %>% 
                 select (measurementType, measurementTypeID, measurementUnit) %>% 
@@ -297,7 +311,10 @@ IPTreport$dtb$mof_issues <- suppressWarnings(rbind(mof_oc_noTypeID, mof_noValueI
 IPTreport$dtb$mof_issues <- IPTreport$dtb$mof_issues[,colSums(is.na(IPTreport$dtb$mof_issues))<nrow(IPTreport$dtb$mof_issues)] %>% arrange(IDlink , message, desc(count))
           }}
 
-    emoferror <- rbind(emoferror, mof_ValueNull, mof_oc_Value0, mof_oc_dubs, if(exists("mof_ev_dubs")) mof_ev_dubs)
+    emoferror <- rbind(emoferror, mof_ValueNull, mof_oc_Value0, mof_oc_dubs, if(exists("mof_ev_dubs")) mof_ev_dubs,
+                       if(exists("mof_noInstrument")) mof_noInstrument,  
+                       if(exists("mof_noSamplingdescriptor")) mof_noSamplingdescriptor
+                         )
 
       }
       
@@ -309,13 +326,27 @@ IPTreport$dtb$mof_issues <- IPTreport$dtb$mof_issues[,colSums(is.na(IPTreport$dt
 
 # QC checks - Check if all required fields are there  ---------------------------------
    
-  if (  exists("Event") ){
+  if (  exists("Event") ){ if ( nrow(ev_check_id) == 0) {
 
-        ev_flat <- flatten_event(Event)
-
+        ev_flat <- flatten_event(Event) %>% filter (!eventID %in% Event$parentEventID)
+        
    ev_CheckFields <- check_fields(ev_flat, level = "warning") %>% filter (field %in% event_fields())
    oc_CheckFields <- check_fields(Occurrence, level = "warning") %>% filter (!field %in% event_fields())
-        }	else  {
+        } else
+    {
+      ev_flat <- Event %>% filter (!eventID %in% Event$parentEventID)
+      
+      ev_CheckFields <- check_fields(ev_flat, level = "warning") %>% filter (field %in% event_fields())
+      oc_CheckFields <- check_fields(Occurrence, level = "warning") %>% filter (!field %in% event_fields())
+      
+      
+    } 
+    if ( nrow(ev_CheckFields) > 0) {
+      ev_CheckFields <- Event  %>% select(eventID) %>% mutate (rownew = row_number()) %>% inner_join(ev_flat %>% select(eventID) %>% 
+                                                                    mutate (row = row_number()), by = "eventID") %>%
+                        inner_join(ev_CheckFields, by="row") %>% select (-eventID, -row) %>% select (row=rownew) 
+    
+    }} else  {
    oc_CheckFields <- check_fields(Occurrence, level = "warning")
         }
 
@@ -528,7 +559,7 @@ IPTreport$dtb$emoferror_table <- emoferror %>% distinct() %>% filter (!is.na(row
                                mutate (message = (if_else(grepl("does not seem to be a valid date", message, fixed = TRUE),
                                                              "eventDate does not seem to be a valid date" , message))) %>%
                               mutate (message = (if_else(grepl("is greater than maximum", message, fixed = TRUE),
-                                                             "Minimum depth is greater than maximum dept" , message))) %>% 
+                                                             "Minimum depth is greater than maximum depth" , message))) %>% 
                               group_by (field, message) %>% summarize(count = n()) %>% 
                               mutate (table = "event")
     }} 
