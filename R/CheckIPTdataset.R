@@ -1,4 +1,4 @@
-CheckIPTdataset = function(link, tree = FALSE){
+checkIPTdataset = function(link, tree = FALSE){
 
   IPTreport=list()
   #-----------------------------------------------------------------------#
@@ -48,7 +48,7 @@ IPTreport$dtb$general_issues <- ("The dataset does not have an occurrence file")
     } else {
   
       
-IPTreport <- Checkdataset (if(exists("Event"))Event , Occurrence, if(exists("eMoF"))eMoF, IPTreport, tree)
+IPTreport <- checkdataset (if(exists("Event"))Event , Occurrence, if(exists("eMoF"))eMoF, IPTreport, tree)
 
 return(IPTreport)
 

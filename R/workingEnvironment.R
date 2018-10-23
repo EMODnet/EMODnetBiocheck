@@ -1,10 +1,20 @@
 ####  empty the working environment
 
-rm(list=setdiff(ls(), c("lstIPT", "i", "fncols", "getPackage", "biometrics", "BODC")))
+rm(list=setdiff(ls(), c("lstIPT", "i", "fncols", "BODC")))
 
+library("RCurl")
+library("finch")
+library("dplyr")
+library("data.table")
+library("ggplot2")
+library("knitr")
+library("leaflet")
+library("xml2")
+require("obistools")
+
+library("rmarkdown")
 
 #### install and require dependancys
-
 
 
 NamesToVector = function (x) {
@@ -35,35 +45,15 @@ if (is.null(names(x)) == TRUE) {
   }
 
 
-getPackage <- function(pkg){
-  if(!require(pkg, character.only = TRUE)){
-    install.packages(pkg, dependencies = TRUE)
-    library(pkg, character.only = TRUE)
-  }
-  return(TRUE)
-}
-
 fncols <- function(data, cname) {
   add <-cname[!cname%in%names(data)]
   if(length(add)!=0) data[add] <- as.character(NA)
   data
 }
 
-library("RCurl")
-library("finch")
-library("dplyr")
-library("data.table")
-library("ggplot2")
-library("knitr")
-library("leaflet")
-library("xml2")
-require("obistools")
-
-library("rmarkdown")
 
 
 
-rm(getPackage)
 
 
 #create a list of the measurementtypeIDs to be taken into account when checking the occurrence table for duplicates
@@ -71,33 +61,25 @@ rm(getPackage)
 
 
 
-biometrics <- c ('http://vocab.nerc.ac.uk/collection/P01/current/LSTAGE01/', 'http://vocab.nerc.ac.uk/collection/P01/current/OBSINDLX/',
-                 'http://vocab.nerc.ac.uk/collection/P01/current/LGPIXEL1/', 'http://vocab.nerc.ac.uk/collection/P01/current/AGEBENTX/',
-                 'http://vocab.nerc.ac.uk/collection/P01/current/CELLVOLM/', 'http://vocab.nerc.ac.uk/collection/P01/current/OBSMAXLX/',
-                 'http://vocab.nerc.ac.uk/collection/P01/current/OBSMINLX/' )
-
-
-
-# download the WoRMS table 
-
-
-
-
-
-
-
-
 #-----------------------------------------------------------------------#
 ####                    BODC VOCAB tables                            ####
 #-----------------------------------------------------------------------#
-if (exists("forcebodc") == FALSE ){ 
-forcebodc <- FALSE }
 
-
-getbodc = function( forcebodc = FALSE){
-if(!exists("BODC") | forcebodc == TRUE) {
-
+  
 BODC=list()
+
+BODC$biometrics <- c ('http://vocab.nerc.ac.uk/collection/P01/current/LSTAGE01/', 'http://vocab.nerc.ac.uk/collection/P01/current/OBSINDLX/',
+                      'http://vocab.nerc.ac.uk/collection/P01/current/LGPIXEL1/', 'http://vocab.nerc.ac.uk/collection/P01/current/AGEBENTX/',
+                      'http://vocab.nerc.ac.uk/collection/P01/current/CELLVOLM/', 'http://vocab.nerc.ac.uk/collection/P01/current/OBSMAXLX/',
+                      'http://vocab.nerc.ac.uk/collection/P01/current/OBSMINLX/' )
+
+
+
+BODC$effort <- c('AREABEDS', 'Q01', 'VOLWBSMP', 'LENTRACK' , 'AZDRZZ01' ,'VOLFFMXX')
+
+BODC$instrument <- c('Q0100002')
+
+
 
 
 ##### Paramters
@@ -236,6 +218,3 @@ BODC$values <- rbind(L22s, L05s, S11s, S10s, M20s, EUNIS)
 
 rm(L22s, L05s, S11s, S10s, M20s, x,l, terms, EUNIS, P01s, Q01s)
 
-return(BODC)
-}
-}

@@ -1,4 +1,4 @@
-Checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport = list()){
+checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport = list(), tree = FALSE){
   library(stringr)
 
   if (is.null(Event)) {rm(Event)}
@@ -416,7 +416,7 @@ Checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   # QC checks potential duplicate occurrences  ---------------------------------
   #with emof
   if (  exists("eMoF")  ){
-    mof_biometric <- eMoF %>% filter (!is.na(occurrenceID), measurementTypeID %in% (biometrics) ) 
+    mof_biometric <- eMoF %>% filter (!is.na(occurrenceID), measurementTypeID %in% (BODC$biometrics) ) 
     
     if (exists("Event") ) {
       
