@@ -5,7 +5,8 @@ output: html_document
   
 ```{r  echo=FALSE, results='asis'}
 
-if("general_issues" %in% names(IPTreport$dtb)) {
+if("general_issues" %in% names(IPTreport$dtb)) 
+   if(nrow(IPTreport$dtb$general_issues) > 0) {
   cat("<h2>Overview of all issues</h2>")
   kable(IPTreport$dtb$general_issues)
 }  
@@ -16,7 +17,8 @@ if("general_issues" %in% names(IPTreport$dtb)) {
 
 ```{r  echo=FALSE, results='asis'}
 
-if("mof_issues" %in% names(IPTreport$dtb)) {
+if("mof_issues" %in% names(IPTreport$dtb)) 
+     if(nrow(IPTreport$dtb$mof_issues) > 0) {
   cat("<h2>Overview of potential issues with MoF records</h2>")
   kable(IPTreport$dtb$mof_issues)
 }  
