@@ -20,21 +20,20 @@ The tool performs a basic QC on OBIS-env datasets and occurrence core dataset.  
 *    Does the measurementTypeID / measurementValueID refer to an existing term in the BODC vocabulary?
 *    Do all measurementValues that refer to facts have a measurementValueID?
 *    Are there records where measurementValue is NULL?
+*    Is there a sampling instrument present?
+*    Are there other sampling descriptors present?
+
 *    Are there records that refer to biological measurement  where measurementValue = 0 (and where occurrenceStatus is not absent)?
 
 Plots of the coordinates and the distribution of the temporal cover are provided to allow for quick comparison with the metadata. A tree view of the event hierarchy can be used to inspect the structure.
 
 Additional checks which are planned to be implemented are:
 
- *   Is there a sampling instrument present?
- *   Are there other sampling descriptors present?
  *   Provide an overview of the number of taxa per kingdom and class.
  *   Check for non-marine and non-brackish taxa.
  *   Has the unit provided the same base unit as specified by the measurementTypeID?
- *   add the name of the dataset + URL at the top + number of records per file
  *   List the non-matched taxa
- *   Add geographical cover and temporal cover from the eml to the overvieuw page.
- *   add minimum, maximum (and maybe mean / median) values for numeric measurementTypes.
+ *   Add geographical cover and temporal cover from the eml to the overview page.
  
 The tool is was created using the OBIS tools package (https://github.com/iobis/obistools) and is avaiable from the LifeWatch services at http://rshiny.lifewatch.be/BioCheck/
 The R functions are available from the EMODnet github repository at https://github.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool
