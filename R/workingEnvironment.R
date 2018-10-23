@@ -1,6 +1,5 @@
-####  empty the working environment
 
-rm(list=setdiff(ls(), c("lstIPT", "i", "fncols", "BODC")))
+#rm(list=setdiff(ls(), c("lstIPT", "i", "fncols", "BODC")))
 
 library("RCurl")
 library("finch")
@@ -11,10 +10,9 @@ library("knitr")
 library("leaflet")
 library("xml2")
 require("obistools")
-
 library("rmarkdown")
 
-#### install and require dependancys
+
 
 
 NamesToVector = function (x) {
@@ -52,11 +50,6 @@ fncols <- function(data, cname) {
 }
 
 
-
-
-
-
-#create a list of the measurementtypeIDs to be taken into account when checking the occurrence table for duplicates
 
 
 
