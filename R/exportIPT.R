@@ -46,7 +46,7 @@ exportTree(IPTreport$tree, paste(IPTreport$name, "/",  "tree",  ".html", sep = "
 
     
     for (t in names(IPTreport$dtb)) {
-      if (is.data.frame(IPTreport$dtb[[t]])) {
+      if (is.data.frame(IPTreport$dtb[[t]]))    if (nrow(IPTreport$dtb[[t]]) >0 ) {
         path <- paste0(IPTreport$name, "/", t, ".txt")
         write.table(IPTreport$dtb[[t]], file=path, row.names = FALSE, sep = "\t", quote = FALSE, na = "")
       }  }
