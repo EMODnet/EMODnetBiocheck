@@ -33,8 +33,8 @@ IPTreport$dtb$general_issues <- ("please provide the IPT url")
       IPTreport$startdate <- c(IPTreport$startdate, out$emlmeta@dataset@coverage@temporalCoverage[[i]]@rangeOfDates@beginDate@calendarDate@.Data)
       IPTreport$enddate <- c(IPTreport$enddate, out$emlmeta@dataset@coverage@temporalCoverage[[i]]@rangeOfDates@endDate@calendarDate@.Data)
     }
-    if(!is.na(IPTreport$startdate)) {IPTreport$startdate <- min(IPTreport$startdate)}
-    if(!is.na(IPTreport$enddate)) {IPTreport$enddate <- max(IPTreport$enddate)}
+    if(length(IPTreport$startdate)>0) {IPTreport$startdate <- min(IPTreport$startdate)}
+    if(length(IPTreport$enddate)>0) {IPTreport$enddate <- max(IPTreport$enddate)}
     }
     
       if (is.null(out$data[["event.txt"]]) == FALSE){
