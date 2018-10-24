@@ -28,7 +28,15 @@ IPTreport$dtb$general_issues <- ("please provide the IPT url")
     IPTreport$name <- names(NamesToVector(link))
     IPTreport$title <- out$emlmeta@dataset@title[[1]]@.Data  
     
-      
+    if (length(out$emlmeta@dataset@coverage@temporalCoverage)>0) {
+    for (i in 1:length(out$emlmeta@dataset@coverage@temporalCoverage)) {
+      IPTreport$startdate <- c(IPTreport$startdate, out$emlmeta@dataset@coverage@temporalCoverage[[i]]@rangeOfDates@beginDate@calendarDate@.Data)
+      IPTreport$enddate <- c(IPTreport$enddate, out$emlmeta@dataset@coverage@temporalCoverage[[i]]@rangeOfDates@endDate@calendarDate@.Data)
+    }
+    if(!is.na(IPTreport$startdate)) {IPTreport$startdate <- min(IPTreport$startdate)}
+    if(!is.na(IPTreport$enddate)) {IPTreport$enddate <- max(IPTreport$enddate)}
+    }
+    
       if (is.null(out$data[["event.txt"]]) == FALSE){
     Event <-out$data[["event.txt"]] }
       
