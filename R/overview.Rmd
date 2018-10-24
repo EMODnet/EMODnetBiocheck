@@ -85,8 +85,14 @@ if("dates_plot" %in% names(IPTreport)) {  if (length(unique(IPTreport$dates_plot
           , panel.grid.minor = element_blank() # get rid of minor grid
           , plot.background = element_rect(fill = "transparent"))
   
-  
-}}
+  }}
+
+```
+
+```{r  echo=FALSE, results='asis'}
+   if(length(IPTreport$startdate)>0) {
+  cat("date range according to metadata:" , IPTreport$startdate , "-", IPTreport$enddate)
+   }
 
 ```
 
