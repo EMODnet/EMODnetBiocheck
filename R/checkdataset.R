@@ -1,6 +1,6 @@
 checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport = list(), tree = FALSE){
   library(stringr)
-
+  
   if (is.null(Event)) {rm(Event)}
   if (is.null(eMoF)) {rm(eMoF)}
   
@@ -300,7 +300,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     if ( nrow(ev_CheckFields) > 0) {
       ev_CheckFields <- Event  %>% select(eventID) %>% mutate (rownew = row_number()) %>% inner_join(ev_flat %>% select(eventID) %>% 
                                                                                                        mutate (row = row_number()), by = "eventID") %>%
-        inner_join(ev_CheckFields, by="row") %>% select (-eventID, -row) %>% select (row=rownew) 
+        inner_join(ev_CheckFields, by="row") %>% select (-eventID, -row) %>% rename (row=rownew) 
       
     }} else  {
       oc_CheckFields <- check_fields(Occurrence, level = "warning")
@@ -486,26 +486,27 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   reversedmatch <- reversetaxmatch (as.integer(gsub("urn:lsid:marinespecies.org:taxname:", "", unique(Occurrence$scientificNameID[nchar(Occurrence$scientificNameID)>35]))))
   
-IPTreport$dtb$taxa <- Occurrence %>% group_by (scientificName, scientificNameID) %>% summarise(count = n()) %>% 
+  IPTreport$dtb$taxa <- Occurrence %>% group_by (scientificName, scientificNameID) %>% summarise(count = n()) %>% 
     left_join(reversedmatch, by = c("scientificNameID" = "lsid"))
-
+  
   if (exists ("Event")) { 
-    IPTreport$MarTaxaonLand <- IPTreport$dtb$taxa %>% ungroup() %>% filter (isMarine == 1 & (isBrackish == 0 | is.na(isBrackish))  &  (isFreshwater == 0 | is.na(isFreshwater)) & (isTerrestrial == 0 | is.na(isTerrestrial)) ) %>% inner_join (Occurrence %>% filter(occurrenceStatus == 'present'), by = c("scientificNameID")) %>% filter (eventID %in% (OnLand$eventID))
-#    IPTreport$nonMartaxaonAtSea <- IPTreport$dtb$taxa %>%  ungroup() %>% filter (isMarine == 0 & isBrackish == 0) %>% inner_join (Occurrence, by = c("scientificNameID")) %>% filter (!eventID %in% (OnLand$eventID))
+    IPTreport$MarTaxaonLand <- IPTreport$dtb$taxa %>% ungroup() %>% filter (isMarine == 1 & (isBrackish == 0 | is.na(isBrackish))  &  (isFreshwater == 0 | is.na(isFreshwater)) & (isTerrestrial == 0 | is.na(isTerrestrial)) ) %>% inner_join (fncols(Occurrence, c("occurrenceStatus")) %>%  filter (is.na(occurrenceStatus) | occurrenceStatus == 'present' ), by = c("scientificNameID")) %>% filter (eventID %in% (OnLand$eventID))
+    #    IPTreport$nonMartaxaonAtSea <- IPTreport$dtb$taxa %>%  ungroup() %>% filter (isMarine == 0 & isBrackish == 0) %>% inner_join (Occurrence, by = c("scientificNameID")) %>% filter (!eventID %in% (OnLand$eventID))
     IPTreport$plot_coordinates <- IPTreport$plot_coordinates %>% mutate (quality = if_else ((eventID %in% IPTreport$MarTaxaonLand$eventID), 'Marine Taxa on Land', quality))
     
     
+    
     occ_onland <- Occurrence %>% mutate (row = row_number()) %>% filter (scientificNameID %in% IPTreport$MarTaxaonLand$scientificNameID, eventID %in% IPTreport$MarTaxaonLand$eventID) %>% select (row) %>%
-                                         mutate (level = 'warning', field ='scientificNameID', message = 'Marine taxon located on land' )
+      mutate (level = 'warning', field ='scientificNameID', message = 'Marine taxon located on land' )
     
     occurrenceerror <- rbind(occurrenceerror, occ_onland)                                     
-
-        } else {
-
-IPTreport$MarTaxaonLand <- IPTreport$dtb$taxa %>% ungroup() %>% filter (isMarine == 1 & (isBrackish == 0 | is.na(isBrackish))  &  (isFreshwater == 0 | is.na(isFreshwater)) & (isTerrestrial == 0 | is.na(isTerrestrial)) ) %>% inner_join (OnLand %>% select (occurrenceID) %>% inner_join(Occurrence %>% filter(occurrenceStatus == 'present'), by =c("occurrenceID")) %>% select (occurrenceID, scientificNameID ), by = c("scientificNameID"))
-#    IPTreport$nonMartaxaonAtSea <- IPTreport$dtb$taxa %>%  ungroup() %>% filter (isMarine == 0 & isBrackish == 0) %>% filter (!scientificNameID %in% (OnLand$scientificNameID))
-  
-IPTreport$plot_coordinates <- IPTreport$plot_coordinates %>% mutate (quality = if_else ((occurrenceID %in% IPTreport$MarTaxaonLand$occurrenceID), 'Marine Taxa on Land', quality))
+    
+  } else {
+    
+    IPTreport$MarTaxaonLand <- IPTreport$dtb$taxa %>% ungroup() %>% filter (isMarine == 1 & (isBrackish == 0 | is.na(isBrackish))  &  (isFreshwater == 0 | is.na(isFreshwater)) & (isTerrestrial == 0 | is.na(isTerrestrial)) ) %>% inner_join (OnLand %>% select (occurrenceID) %>% inner_join (fncols(Occurrence, c("occurrenceStatus")) %>%  filter (is.na(occurrenceStatus) | occurrenceStatus == 'present' ), by =c("occurrenceID")) %>% select (occurrenceID, scientificNameID ), by = c("scientificNameID"))
+    #    IPTreport$nonMartaxaonAtSea <- IPTreport$dtb$taxa %>%  ungroup() %>% filter (isMarine == 0 & isBrackish == 0) %>% filter (!scientificNameID %in% (OnLand$scientificNameID))
+    
+    IPTreport$plot_coordinates <- IPTreport$plot_coordinates %>% mutate (quality = if_else ((occurrenceID %in% IPTreport$MarTaxaonLand$occurrenceID), 'Marine Taxa on Land', quality))
     
     
     occ_onland <- Occurrence %>% mutate (row = row_number()) %>% filter (occurrenceID %in% IPTreport$MarTaxaonLand$occurrenceID) %>% select (row) %>%
@@ -514,9 +515,9 @@ IPTreport$plot_coordinates <- IPTreport$plot_coordinates %>% mutate (quality = i
     occurrenceerror <- rbind(occurrenceerror, occ_onland)                                     
     
     
-    }
+  }
   
-IPTreport$kingdoms <- IPTreport$dtb$taxa %>% filter(!is.na(kingdom)) %>% group_by (kingdom, class)%>% summarise(counts = sum(count))
+  IPTreport$kingdoms <- IPTreport$dtb$taxa %>% filter(!is.na(kingdom)) %>% group_by (kingdom, class)%>% summarise(counts = sum(count))
   
   #-------------------------------------------------------------------------------#
   ####                    Generate report table                                ####
@@ -586,5 +587,5 @@ IPTreport$kingdoms <- IPTreport$dtb$taxa %>% filter(!is.na(kingdom)) %>% group_b
   
   
   return(IPTreport)
-
+  
 }
