@@ -46,9 +46,7 @@ if ("plot_coordinates"  %in% names(IPTreport)  ) {
         addProviderTiles("Esri.OceanBasemap", options = providerTileOptions(maxZoom = 10)) %>%
         addCircleMarkers(popup=~formatLabel(IPTreport$plot_coordinates),~decimalLongitude, ~decimalLatitude,  radius = 3, color = ~pal(quality))
       
-    }  else {
-      leaflet() %>% addProviderTiles("Esri.OceanBasemap") 
-    }}  }
+    } }  }
 
 ```
 
@@ -59,10 +57,10 @@ if ("plot_coordinates"  %in% names(IPTreport)  ) {
 
    if("taxa" %in% names(IPTreport$dtb)) {
      noinworms <- IPTreport$dtb$taxa %>% filter(is.na(scientificNameMatch)) %>% select (scientificName, scientificNameID, status, count)
-     if (nrow (noinworms)>0)
+     if (nrow (noinworms)>0) {
   cat("<h2>Overview unmatched taxa</h2>")
   kable(noinworms)
-}
+}}
 
 ```
  
