@@ -39,7 +39,7 @@ if ("plot_coordinates"  %in% names(IPTreport)  ) {
       
       IPTreport$plot_coordinates<- IPTreport$plot_coordinates %>% filter(quality != "OK")
       
-      pal=function(x){ifelse(x=='Check Depth',"Blue",ifelse(x=='On Land',"Red","Black"))}
+        pal=function(x){ifelse(x=='OK',"Green",ifelse(x=='Check Depth',"Blue", ifelse (x == 'Marine Taxa on Land', 'Red', ifelse(x=='On Land', "Yellow","Black"))))}
       
       
       leaflet(IPTreport$plot_coordinates) %>%
@@ -52,6 +52,31 @@ if ("plot_coordinates"  %in% names(IPTreport)  ) {
 
 ```
 
+
+
+
+```{r  echo=FALSE, results='asis'}
+
+   if("taxa" %in% names(IPTreport$dtb)) {
+     noinworms <- IPTreport$dtb$taxa %>% filter(is.na(scientificNameMatch)) %>% select (scientificName, scientificNameID, status, count)
+     if (nrow (noinworms)>0)
+  cat("<h2>Overview unmatched taxa</h2>")
+  kable(noinworms)
+}
+
+```
+ 
+ 
+```{r  echo=FALSE, results='asis'}
+
+   if("MarTaxaonLand" %in% names(IPTreport)) {
+     onland <- IPTreport$MarTaxaonLand %>% filter(!is.na(scientificNameMatch)) %>% group_by (scientificNameMatch, scientificNameID, kingdom, class, status, isMarine, isBrackish , isFreshwater , isTerrestrial) %>% summarise (count =n())
+     if (nrow (onland)>0) {
+  cat("<h2>Marine taxa on land</h2>")
+  kable(onland)
+     }}
+
+```
 
 
 

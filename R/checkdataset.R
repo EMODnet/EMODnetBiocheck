@@ -57,7 +57,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
         group_by(eventID, type, occurrenceStatus, basisOfRecord ) %>% summarise( occount = sum(!is.na(basisOfRecord))) %>%
         dcast (type + eventID + basisOfRecord ~occurrenceStatus, value.var=c("occount"), fun=(sum)) %>% fncols(c("absent", "NA", "present")) %>%
         mutate(absent = as.integer(absent)) %>% group_by(type, basisOfRecord) %>% 
-        summarise(n_events = sum(!is.na(unique(eventID))), n_absent = sum(absent),  n_present = sum(present),n_NA = sum(NA)) %>%
+        summarise(n_events = sum(!is.na(unique(eventID))) , n_absent = sum(absent),  n_present = sum(as.numeric(present)) ,n_NA = sum(NA)) %>%
         select(type,n_events, basisOfRecord, n_present, n_absent, n_NA )
     } else {
       IPTreport$datasummary <- Event %>% fncols("type") %>% select (eventID, type) %>% left_join(occurrencetemp, by = "eventID") %>% 
@@ -482,6 +482,41 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   
   
+  # taxa --------------------------------------
+  
+  reversedmatch <- reversetaxmatch (as.integer(gsub("urn:lsid:marinespecies.org:taxname:", "", unique(Occurrence$scientificNameID[nchar(Occurrence$scientificNameID)>35]))))
+  
+IPTreport$dtb$taxa <- Occurrence %>% group_by (scientificName, scientificNameID) %>% summarise(count = n()) %>% 
+    left_join(reversedmatch, by = c("scientificNameID" = "lsid"))
+
+  if (exists ("Event")) { 
+    IPTreport$MarTaxaonLand <- IPTreport$dtb$taxa %>% ungroup() %>% filter (isMarine == 1 & (isBrackish == 0 | is.na(isBrackish))  &  (isFreshwater == 0 | is.na(isFreshwater)) & (isTerrestrial == 0 | is.na(isTerrestrial)) ) %>% inner_join (Occurrence %>% filter(occurrenceStatus == 'present'), by = c("scientificNameID")) %>% filter (eventID %in% (OnLand$eventID))
+#    IPTreport$nonMartaxaonAtSea <- IPTreport$dtb$taxa %>%  ungroup() %>% filter (isMarine == 0 & isBrackish == 0) %>% inner_join (Occurrence, by = c("scientificNameID")) %>% filter (!eventID %in% (OnLand$eventID))
+    IPTreport$plot_coordinates <- IPTreport$plot_coordinates %>% mutate (quality = if_else ((eventID %in% IPTreport$MarTaxaonLand$eventID), 'Marine Taxa on Land', quality))
+    
+    
+    occ_onland <- Occurrence %>% mutate (row = row_number()) %>% filter (scientificNameID %in% IPTreport$MarTaxaonLand$scientificNameID, eventID %in% IPTreport$MarTaxaonLand$eventID) %>% select (row) %>%
+                                         mutate (level = 'warning', field ='scientificNameID', message = 'Marine taxon located on land' )
+    
+    occurrenceerror <- rbind(occurrenceerror, occ_onland)                                     
+
+        } else {
+
+IPTreport$MarTaxaonLand <- IPTreport$dtb$taxa %>% ungroup() %>% filter (isMarine == 1 & (isBrackish == 0 | is.na(isBrackish))  &  (isFreshwater == 0 | is.na(isFreshwater)) & (isTerrestrial == 0 | is.na(isTerrestrial)) ) %>% inner_join (OnLand %>% select (occurrenceID) %>% inner_join(Occurrence %>% filter(occurrenceStatus == 'present'), by =c("occurrenceID")) %>% select (occurrenceID, scientificNameID ), by = c("scientificNameID"))
+#    IPTreport$nonMartaxaonAtSea <- IPTreport$dtb$taxa %>%  ungroup() %>% filter (isMarine == 0 & isBrackish == 0) %>% filter (!scientificNameID %in% (OnLand$scientificNameID))
+  
+IPTreport$plot_coordinates <- IPTreport$plot_coordinates %>% mutate (quality = if_else ((occurrenceID %in% IPTreport$MarTaxaonLand$occurrenceID), 'Marine Taxa on Land', quality))
+    
+    
+    occ_onland <- Occurrence %>% mutate (row = row_number()) %>% filter (occurrenceID %in% IPTreport$MarTaxaonLand$occurrenceID) %>% select (row) %>%
+      mutate (level = 'warning', field ='scientificNameID', message = 'Marine taxon located on land' )
+    
+    occurrenceerror <- rbind(occurrenceerror, occ_onland)                                     
+    
+    
+    }
+  
+IPTreport$kingdoms <- IPTreport$dtb$taxa %>% filter(!is.na(kingdom)) %>% group_by (kingdom, class)%>% summarise(counts = sum(count))
   
   #-------------------------------------------------------------------------------#
   ####                    Generate report table                                ####
