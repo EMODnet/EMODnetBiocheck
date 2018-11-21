@@ -97,27 +97,3 @@ if("dates_plot" %in% names(IPTreport)) {  if (length(unique(IPTreport$dates_plot
 ```
 
 
-# Rmarkdown doesn't take loops :(
-
-
-#```{r  echo=FALSE, results='asis'}
-#
-#   if ("kingdoms" %in% names(IPTreport)) 
-#     if (nrow (IPTreport$kingdoms %>% filter (!is.na(kingdom)) > 0))
-#      cat("<h2>Taxonomic cover of the dataset</h2>")
-
-#  for (kingselect in unique(IPTreport$kingdoms$kingdom)){
-# kingdoms_dist <- IPTreport$kingdoms %>% filter (kingdom == kingselect)
-#      cat("Number of records per class for", kingselect)
-
-#         if (nrow(kingdoms_dist %>% filter(!is.na(class))) > 0) {
-#         p<-ggplot(kingdoms_dist, aes(class,counts,fill=class))+geom_bar(stat="identity", width = 1)
-#         p <- p+theme_bw()+theme(legend.position="none") + coord_flip()
-#         p
-#         } 
-#          else {
-#           p<-ggplot(kingdoms_dist, aes(kingdom,counts,fill=kingdom))+geom_bar(stat="identity")
-#           p <- p+theme_bw()+theme(legend.position="none") + coord_flip()
-#           p  
-#       }}
-#```
