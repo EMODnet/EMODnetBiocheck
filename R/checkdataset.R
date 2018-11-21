@@ -490,7 +490,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     left_join(reversedmatch, by = c("scientificNameID" = "lsid"))
   
   if (exists ("Event")) { 
-    IPTreport$MarTaxaonLand <- IPTreport$dtb$taxa %>% ungroup() %>% filter (isMarine == 1 & (isBrackish == 0 | is.na(isBrackish))  &  (isFreshwater == 0 | is.na(isFreshwater)) & (isTerrestrial == 0 | is.na(isTerrestrial)) ) %>% inner_join (fncols(Occurrence, c("occurrenceStatus")) %>%  filter (is.na(occurrenceStatus) | occurrenceStatus == 'present' ), by = c("scientificNameID")) %>% filter (eventID %in% (OnLand$eventID))
+    IPTreport$MarTaxaonLand <- IPTreport$dtb$taxa %>% ungroup() %>% filter (isMarine == 1 & (isBrackish == 0 | is.na(isBrackish))  &  (isFreshwater == 0 | is.na(isFreshwater)) & (isTerrestrial == 0 | is.na(isTerrestrial)) ) %>% inner_join (fncols(Occurrence, c("occurrenceStatus")) %>%  filter (is.na(occurrenceStatus) | occurrenceStatus == 'present' ), by = c("scientificNameID"), suffix = c("", "_orig")) %>% filter (eventID %in% (OnLand$eventID))
     #    IPTreport$nonMartaxaonAtSea <- IPTreport$dtb$taxa %>%  ungroup() %>% filter (isMarine == 0 & isBrackish == 0) %>% inner_join (Occurrence, by = c("scientificNameID")) %>% filter (!eventID %in% (OnLand$eventID))
     IPTreport$plot_coordinates <- IPTreport$plot_coordinates %>% mutate (quality = if_else ((eventID %in% IPTreport$MarTaxaonLand$eventID), 'Marine Taxa on Land', quality))
     
@@ -503,7 +503,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
   } else {
     
-    IPTreport$MarTaxaonLand <- IPTreport$dtb$taxa %>% ungroup() %>% filter (isMarine == 1 & (isBrackish == 0 | is.na(isBrackish))  &  (isFreshwater == 0 | is.na(isFreshwater)) & (isTerrestrial == 0 | is.na(isTerrestrial)) ) %>% inner_join (OnLand %>% select (occurrenceID) %>% inner_join (fncols(Occurrence, c("occurrenceStatus")) %>%  filter (is.na(occurrenceStatus) | occurrenceStatus == 'present' ), by =c("occurrenceID")) %>% select (occurrenceID, scientificNameID ), by = c("scientificNameID"))
+    IPTreport$MarTaxaonLand <- IPTreport$dtb$taxa %>% ungroup() %>% filter (isMarine == 1 & (isBrackish == 0 | is.na(isBrackish))  &  (isFreshwater == 0 | is.na(isFreshwater)) & (isTerrestrial == 0 | is.na(isTerrestrial)) ) %>% inner_join (OnLand %>% select (occurrenceID) %>% inner_join (fncols(Occurrence, c("occurrenceStatus")) %>%  filter (is.na(occurrenceStatus) | occurrenceStatus == 'present' ), by =c("occurrenceID"),  suffix = c("", "_orig")) %>% select (occurrenceID, scientificNameID ), by = c("scientificNameID"))
     #    IPTreport$nonMartaxaonAtSea <- IPTreport$dtb$taxa %>%  ungroup() %>% filter (isMarine == 0 & isBrackish == 0) %>% filter (!scientificNameID %in% (OnLand$scientificNameID))
     
     IPTreport$plot_coordinates <- IPTreport$plot_coordinates %>% mutate (quality = if_else ((occurrenceID %in% IPTreport$MarTaxaonLand$occurrenceID), 'Marine Taxa on Land', quality))
