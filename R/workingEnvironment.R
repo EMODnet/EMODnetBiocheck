@@ -61,12 +61,13 @@ fncols <- function(data, cname) {
   
 BODC=list()
 
+
+BODC$nomofvalues <- c('http://vocab.nerc.ac.uk/collection/P01/current/OCOUNT01/', 'http://vocab.nerc.ac.uk/collection/P01/current/SSAMPC01/')
+
 BODC$biometrics <- c ('http://vocab.nerc.ac.uk/collection/P01/current/LSTAGE01/', 'http://vocab.nerc.ac.uk/collection/P01/current/OBSINDLX/',
                       'http://vocab.nerc.ac.uk/collection/P01/current/LGPIXEL1/', 'http://vocab.nerc.ac.uk/collection/P01/current/AGEBENTX/',
                       'http://vocab.nerc.ac.uk/collection/P01/current/CELLVOLM/', 'http://vocab.nerc.ac.uk/collection/P01/current/OBSMAXLX/',
-                      'http://vocab.nerc.ac.uk/collection/P01/current/OBSMINLX/' )
-
-
+                      'http://vocab.nerc.ac.uk/collection/P01/current/OBSMINLX/', 'http://vocab.nerc.ac.uk/collection/P01/current/ENTSEX01/' ) #create a list of the measurementtypeIDs to be taken into account when checking the occurrence table for duplicates
 
 BODC$effort <- c('AREABEDS', 'Q01', 'VOLWBSMP', 'LENTRACK' , 'AZDRZZ01' ,'VOLFFMXX')
 

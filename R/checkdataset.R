@@ -52,12 +52,12 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   
   if (exists("Event")) {
-    if("absent" %in% occurrencetemp$occurrenceStatus)  {     
+    if("absent" %in% occurrencetemp$occurrenceStatus | NA %in% occurrencetemp$occurrenceStatus  )   {     
       IPTreport$datasummary <- Event %>% fncols("type") %>% select (eventID, type) %>% left_join(occurrencetemp, by = "eventID") %>% 
         group_by(eventID, type, occurrenceStatus, basisOfRecord ) %>% summarise( occount = sum(!is.na(basisOfRecord))) %>%
         dcast (type + eventID + basisOfRecord ~occurrenceStatus, value.var=c("occount"), fun=(sum)) %>% fncols(c("absent", "NA", "present")) %>%
         mutate(absent = as.integer(absent)) %>% group_by(type, basisOfRecord) %>% 
-        summarise(n_events = sum(!is.na(unique(eventID))) , n_absent = sum(absent),  n_present = sum(as.numeric(present)) ,n_NA = sum(NA)) %>%
+        summarise(n_events = sum(!is.na(unique(eventID))) , n_absent = sum(absent), n_present = sum(as.numeric(present)) ,n_NA = sum(`NA`)) %>%
         select(type,n_events, basisOfRecord, n_present, n_absent, n_NA )
     } else {
       IPTreport$datasummary <- Event %>% fncols("type") %>% select (eventID, type) %>% left_join(occurrencetemp, by = "eventID") %>% 
@@ -170,7 +170,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     mof_noValueID <- eMoF %>%
       filter ((is.na(measurementUnit) | (measurementUnit %in% mof_noUnit)  | measurementUnitID == "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/") &
-                is.na(measurementValueID) & (!measurementType %in% c("count") & !measurementTypeID %in% "http://vocab.nerc.ac.uk/collection/P01/current/OCOUNT01/")) %>%
+                is.na(measurementValueID) & (!measurementType %in% c("count") & !measurementTypeID %in% BODC$nomofvalues)) %>%
       mutate(IDlink = if_else(!is.na(occurrenceID),"occurrence", "event") ) %>%
       mutate(message = 'measurementValues which may need a measurementValueID') %>%  group_by (IDlink, measurementType, measurementValue, message) %>% summarize(count = n()) %>% arrange (desc(measurementType))
     
@@ -300,7 +300,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     if ( nrow(ev_CheckFields) > 0) {
       ev_CheckFields <- Event  %>% select(eventID) %>% mutate (rownew = row_number()) %>% inner_join(ev_flat %>% select(eventID) %>% 
                                                                                                        mutate (row = row_number()), by = "eventID") %>%
-        inner_join(ev_CheckFields, by="row") %>% select (-eventID, -row) %>% rename (row=rownew) 
+        right_join(ev_CheckFields, by="row") %>% select (-eventID, -row) %>% rename (row=rownew) 
       
     }} else  {
       oc_CheckFields <- check_fields(Occurrence, level = "warning")
@@ -416,7 +416,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   # QC checks potential duplicate occurrences  ---------------------------------
   #with emof
   if (  exists("eMoF")  ){
-    mof_biometric <- eMoF %>% filter (!is.na(occurrenceID), measurementTypeID %in% (BODC$biometrics) ) 
+    mof_biometric <- eMoF %>% filter (!is.na(occurrenceID), measurementTypeID %in% (BODC$biometrics) ) %>% distinct()
     
     if (exists("Event") ) {
       
@@ -425,7 +425,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       
       if (nrow(mof_biometric) > 0 ) {
         
-        mof_biometric <-  mof_biometric %>% dcast(occurrenceID  ~ measurementType, value.var=c("measurementValue"))
+        mof_biometric <-  mof_biometric  %>% dcast(occurrenceID  ~ measurementType, value.var=c("measurementValue"))
         biometricterms <- names(mof_biometric %>% select (-occurrenceID))
         duplicatescheck <- c(duplicatescheck, biometricterms)
         
@@ -589,3 +589,4 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   return(IPTreport)
   
 }
+
