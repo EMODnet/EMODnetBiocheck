@@ -4,3 +4,4 @@ source("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-t
 source("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/R/checkdataset.R")
 source("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/R/exportIPT.R")
 source("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/R/reversetaxmatch.R")
+source("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/R/updatelatestbodc.R")
