@@ -15,10 +15,9 @@ library("rmarkdown")
 
 
 BODC = list()
-BODC$units  <- read.csv("BODCdata/units.csv", stringsAsFactors = FALSE )
-BODC$values <-read.csv("BODCdata/values.csv", stringsAsFactors = FALSE )
-BODC$parameters <-read.csv("BODCdata/parameters.csv", stringsAsFactors = FALSE )
-
+BODC$units  <- read.csv("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/BODCdata/units.csv", stringsAsFactors = FALSE )
+BODC$values <-read.csv("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/BODCdata/values.csv", stringsAsFactors = FALSE )
+BODC$parameters <-read.csv("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/BODCdata/parameters.csv", stringsAsFactors = FALSE )
 
 
 
