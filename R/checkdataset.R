@@ -9,6 +9,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   #---------------------------------------------------------------------------#      
   #### Occurrence fix
   
+  
   Occurrence[Occurrence =='NA' | Occurrence =='' | Occurrence ==' '] <- NA
   Occurrence <- Occurrence[,colSums(is.na(Occurrence))<nrow(Occurrence)]
   #     Occurrence <- fncols(Occurrence, c("eventDate"))
@@ -31,8 +32,12 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   if ( exists("eMoF") == TRUE  )
   { eMoF[eMoF =='NA' | eMoF =='' | eMoF ==' '] <- NA
   eMoF <- eMoF[,colSums(is.na(eMoF))<nrow(eMoF)]
-  eMoF <- fncols(eMoF, c("measurementTypeID","measurementValueID", "measurementValue", "measurementUnitID", "eventID", "measurementUnit"))
+  eMoF <- fncols(eMoF, c("occurrenceID", "measurementTypeID","measurementValueID", "measurementValue", "measurementUnitID", "eventID", "measurementUnit"))
   #       eMoF[eMoF =='NA' | eMoF =='' | eMoF ==' '] <- NA
+  
+  eMoF <- eMoF %>% mutate (measurementTypeID = if_else(str_sub(measurementTypeID, -1, -1)=='/',measurementTypeID, paste(measurementTypeID, "/",  sep = '') ),
+                           measurementValueID = if_else(str_sub(measurementValueID, -1, -1)=='/',measurementValueID, paste(measurementValueID, "/",  sep = ''))
+  ) 
   
   if ( exists("Event") == TRUE){
     eMoF$eventID <- eMoF$id #eventID column is required in the measurements table.
@@ -56,8 +61,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       IPTreport$datasummary <- Event %>% fncols("type") %>% select (eventID, type) %>% left_join(occurrencetemp, by = "eventID") %>% 
         group_by(eventID, type, occurrenceStatus, basisOfRecord ) %>% summarise( occount = sum(!is.na(basisOfRecord))) %>%
         dcast (type + eventID + basisOfRecord ~occurrenceStatus, value.var=c("occount"), fun=(sum)) %>% fncols(c("absent", "NA", "present")) %>%
-        mutate(absent = as.integer(absent)) %>% group_by(type, basisOfRecord) %>% 
-        summarise(n_events = sum(!is.na(unique(eventID))) , n_absent = sum(absent), n_present = sum(as.numeric(present)) ,n_NA = sum(`NA`)) %>%
+        mutate(absent = as.integer(absent), `NA` = as.integer(`NA`) ) %>% group_by(type, basisOfRecord) %>% 
+        summarise(n_events = sum(!is.na(unique(eventID))) , n_absent = sum(absent), n_present = sum(as.numeric(present)), n_NA = sum(`NA`)) %>%
         select(type,n_events, basisOfRecord, n_present, n_absent, n_NA )
     } else {
       IPTreport$datasummary <- Event %>% fncols("type") %>% select (eventID, type) %>% left_join(occurrencetemp, by = "eventID") %>% 
@@ -79,16 +84,14 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     if (exists("BODC")) {
       IPTreport$mofsummary <-  suppressWarnings(eMoF %>% mutate(type = if_else(is.na(occurrenceID) , "EventMoF", "OccurrenceMoF" ), measurementValue =  as.numeric(measurementValue)) %>% 
-                                                  mutate (measurementTypeID = if_else(str_sub(measurementTypeID, -1, -1)=='/',measurementTypeID, paste(measurementTypeID, "/",  sep = '') )) %>%    
                                                   group_by(type, measurementType,  measurementTypeID, measurementUnit) %>% summarize(count = n(), minValue = min(measurementValue), maxValue = max(measurementValue) ) %>% ungroup() %>%
                                                   left_join(BODC$parameters, by = c("measurementTypeID"="uri")) %>%
-                                                  select (type, measurementType, minValue,  maxValue, measurementUnit,count,   preflabel, definition))
+                                                  select (type, measurementType, minValue,  maxValue, measurementUnit,  count,  standardunit, preflabel, definition))
       #IPTreport$mofsummary$minValue <- format(IPTreport$mofsummary$minValue, digits=2) 
       #IPTreport$mofsummary$maxValue <- format(IPTreport$mofsummary$maxValue, digits=2) 
       
       
       IPTreport$mofsummary_values <- eMoF %>% filter(!is.na(measurementValueID)) %>% mutate(type = if_else(is.na(occurrenceID) , "EventMoF", "OccurrenceMoF" )) %>% 
-        mutate (measurementValueID = if_else(str_sub(measurementValueID, -1, -1)=='/',measurementValueID, paste(measurementValueID, "/",  sep = '') )) %>%    
         group_by(type, measurementType, measurementValue, measurementValueID) %>% summarize(count = n()) %>% ungroup() %>%
         left_join(BODC$values, by = c("measurementValueID"="uri")) %>%
         select (type, measurementType, measurementValue,preflabel, definition)
@@ -119,17 +122,20 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     if (  exists("eMoF")){
       mof.ev_check_id <- check_extension_eventids(Event,eMoF)  # Checks the all eventIDs in your eMoF extentsion  link to the event Core
       
-      mof.oc_check_id <- eMoF %>% mutate (level = 'error', field = 'occurrenceID', row = row_number(),
-                                          message = 'This occurrenceID as no corresponding occurrenceID in the occurrence Extension') %>%
-        filter (!is.na(occurrenceID)) %>%  anti_join(Occurrence, by = "occurrenceID")  %>%
-        select (level, field, row, message) # Checks the all eMoF eventIDs linked to the same event as the related occurrence
       
       
-      mof.oc.ev_check_id <- eMoF %>% mutate (level = 'error', field = 'eventID', row = row_number(),
-                                             message = 'This eventID differs from the eventID provided in the related Occurrence') %>%
-        inner_join(Occurrence, by = "occurrenceID") %>% anti_join(eMoF, by = c(  "eventID.y"=  "eventID", "occurrenceID" = "occurrenceID")) %>%
-        select (level, field, row, message) # Checks the all eMoF eventIDs linked to the same event as the related occurrence
-    }
+      if ( sum(is.na(eMoF$occurrenceID)) != nrow(eMoF)  ){
+        mof.oc_check_id <- eMoF %>% mutate (level = 'error', field = 'occurrenceID', row = row_number(),
+                                            message = 'This occurrenceID as no corresponding occurrenceID in the occurrence Extension') %>%
+          filter (!is.na(occurrenceID)) %>%  anti_join(Occurrence, by = "occurrenceID")  %>%
+          select (level, field, row, message) # Checks the all eMoF eventIDs linked to the same event as the related occurrence
+        
+        
+        mof.oc.ev_check_id <- eMoF %>% mutate (level = 'error', field = 'eventID', row = row_number(),
+                                               message = 'This eventID differs from the eventID provided in the related Occurrence') %>%
+          inner_join(Occurrence, by = "occurrenceID") %>% anti_join(eMoF, by = c(  "eventID.y"=  "eventID", "occurrenceID" = "occurrenceID")) %>%
+          select (level, field, row, message) # Checks the all eMoF eventIDs linked to the same event as the related occurrence
+      }}
   }
   
   if ( exists("Event") == FALSE &  exists("eMoF") == TRUE  ){
@@ -153,7 +159,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   ####                    Tree structure                               ####
   #-----------------------------------------------------------------------#
   
-  if ( exists("Event") &  exists("eMoF")  & tree == TRUE) {if (   nrow(ev_check_id) == 0) {
+  if ( exists("Event") &  exists("eMoF")  & tree == "yes" ) {if (   nrow(ev_check_id) == 0) {
     IPTreport$tree <- treeStructure(Event, Occurrence, eMoF)
   }}
   
@@ -189,14 +195,12 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     if (  exists("BODC")){ 
       mof_oc_TypeID_NotResolve <- eMoF %>% filter (!is.na(occurrenceID), !is.na(measurementTypeID) ) %>% 
         select (measurementType, measurementTypeID, measurementUnit) %>% 
-        mutate (measurementTypeID = if_else(str_sub(measurementTypeID, -1, -1)=='/',measurementTypeID, paste(measurementTypeID, "/",  sep = '') )) %>%
         anti_join(BODC$parameters, by = c("measurementTypeID"="uri")) %>%
         mutate(IDlink = 'occurrence', message = 'measurementTypeID does not resolve') %>% 
         group_by (IDlink,measurementType, measurementTypeID, measurementUnit, message) %>% summarize(count = n())
       
       mof_oc_ValueID_NotResolve <- eMoF %>% 
         filter (!is.na(occurrenceID), !is.na(measurementValueID) ) %>% 
-        mutate (measurementValueID = if_else(str_sub(measurementValueID, -1, -1)=='/',measurementValueID, paste(measurementValueID, "/",  sep = '') )) %>%
         select (measurementValue, measurementValueID) %>% 
         anti_join(BODC$values, by = c("measurementValueID"="uri")) %>%
         mutate(IDlink = 'occurrence', message = 'measurementValueID does not resolve') %>% 
@@ -209,11 +213,13 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
               message = 'MeasurmentValue of Null') %>%
       filter (is.na(measurementValue))  %>% select (level,field, row ,message)
     
-    mof_oc_Value0 <- suppressWarnings(eMoF %>%
-                                        mutate (level = 'error', field = 'measurementValue', row = row_number(),
-                                                message = 'Biological value of 0 while Occurrencestatus is present') %>%
-                                        inner_join (fncols(Occurrence, c("occurrenceStatus")) %>%  filter (is.na(occurrenceStatus) | occurrenceStatus == 'present' ) %>% select (occurrenceID), by = 'occurrenceID') %>%
-                                        mutate(measurementValue = as.numeric(measurementValue)) %>% filter ( measurementValue == 0 ) %>%  select (level,field, row ,message))
+    if ( sum(is.na(eMoF$occurrenceID)) != nrow(eMoF)  ){
+      mof_oc_Value0 <- suppressWarnings(eMoF %>%
+                                          mutate (level = 'error', field = 'measurementValue', row = row_number(),
+                                                  message = 'Biological value of 0 while Occurrencestatus is present') %>%
+                                          inner_join (fncols(Occurrence, c("occurrenceStatus")) %>%  filter (is.na(occurrenceStatus) | occurrenceStatus == 'present' ) %>% select (occurrenceID), by = 'occurrenceID') %>%
+                                          mutate(measurementValue = as.numeric(measurementValue)) %>% filter ( measurementValue == 0 ) %>%  select (level,field, row ,message))
+    } else {mof_oc_Value0 <-NULL }
     
     mof_oc_dubs <- eMoF %>% filter (!is.na(occurrenceID), !is.na(measurementTypeID)) %>%
       select (occurrenceID, measurementTypeID) %>% group_by (occurrenceID, measurementTypeID) %>% summarize(count = n())  %>% filter (count >1 )  %>%
@@ -238,7 +244,6 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       if (  exists("BODC")){      
         mof_ev_TypeID_NotResolve <- eMoF %>% filter (!is.na(eventID), is.na(occurrenceID),  !is.na(measurementTypeID) ) %>% 
           select (measurementType, measurementTypeID, measurementUnit) %>% 
-          mutate (measurementTypeID = if_else(str_sub(measurementTypeID, -1, -1)=='/',measurementTypeID, paste(measurementTypeID, "/",  sep = '') )) %>%
           anti_join(BODC$parameters, by = c("measurementTypeID"="uri")) %>%
           mutate(IDlink = 'event', message = 'measurementTypeID does not resolve') %>% 
           group_by (IDlink,measurementType, measurementTypeID, measurementUnit, message) %>% summarize(count = n())
@@ -246,7 +251,6 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
         
         mof_ev_ValueID_NotResolve <- eMoF %>% 
           filter (!is.na(eventID), is.na(occurrenceID), !is.na(measurementValueID) ) %>% 
-          mutate (measurementValueID = if_else(str_sub(measurementValueID, -1, -1)=='/',measurementValueID, paste(measurementValueID, "/",  sep = '') )) %>%
           select (measurementValue, measurementValueID) %>% 
           anti_join(BODC$values, by = c("measurementValueID"="uri")) %>%
           mutate(IDlink = 'event', message = 'measurementValueID does not resolve') %>% 
@@ -284,7 +288,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   if (  exists("Event") ){ if ( nrow(ev_check_id) == 0) {
     
-    ev_flat <- flatten_event(Event) %>% filter (!eventID %in% Event$parentEventID)
+    ev_flat0 <- flatten_event(Event) 
+    ev_flat <- ev_flat0 %>% filter (!eventID %in% Event$parentEventID)
     
     ev_CheckFields <- check_fields(ev_flat, level = "warning") %>% filter (field %in% event_fields())
     oc_CheckFields <- check_fields(Occurrence, level = "warning") %>% filter (!field %in% event_fields())
@@ -294,7 +299,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     ev_CheckFields <- check_fields(ev_flat, level = "warning") %>% filter (field %in% event_fields())
     oc_CheckFields <- check_fields(Occurrence, level = "warning") %>% filter (!field %in% event_fields())
-    
+    ev_flat0 <- ev_flat
     
   } 
     if ( nrow(ev_CheckFields) > 0) {
@@ -325,7 +330,11 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     
     OnLand <- suppressWarnings(check_onland(GoodCords, buffer = 3000))
-    depth <- suppressWarnings(check_depth(GoodCords %>% filter (!is.na(minimumDepthInMeters) | !is.na(maximumDepthInMeters)), depthmargin = 150))
+    
+    depth <- tryCatch({suppressWarnings(check_depth(GoodCords %>% filter (!is.na(minimumDepthInMeters) | !is.na(!maximumDepthInMeters)), depthmargin = 150))},
+                      error=function(x) { occurrenceID <- c(NA)       
+                      data.frame(occurrenceID) })
+    
     
     Cords00_rep <- Event %>% mutate (level = 'error', field = 'coordinates_error', row = row_number(),
                                      message = 'decimalLatitude and decimalLongitude are both 0') %>%
@@ -341,6 +350,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     
     depth_rep <- check_depth(GoodCords, report=T, depthmargin = 150)
+    
+    
+    
     OnLand_rep <- check_onland(GoodCords,report=T, buffer = 3000) %>% mutate (field = 'coordinates_error')
     
     goodcord_rep <- GoodCords %>% select(eventID) %>% mutate (row = row_number()) %>% 
@@ -348,6 +360,24 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     coord_rep <- Event %>% select(eventID) %>% mutate (row = row_number()) %>% 
       inner_join(goodcord_rep, by=c("eventID")) %>% select (-eventID)
+    
+    
+    parentdepts <- ev_flat0 %>% fncols (c("decimalLatitude", "decimalLongitude", "minimumDepthInMeters", "maximumDepthInMeters")) %>%
+      filter(eventID %in% (Event %>% filter (eventID  %in% depth$eventID) %>% select(parentEventID) %>% 
+                             distinct())$parentEventID & !is.na(decimalLatitude) & !is.na(decimalLongitude)
+             & !is.na(minimumDepthInMeters) & !is.na(maximumDepthInMeters))
+    
+    if (nrow(parentdepts)>0) {
+      depth_rep2 <- check_depth(parentdepts, report=T, depthmargin = 150)
+      
+      parentdepts_rowconv <- Event %>% select(eventID) %>% mutate (rownew = row_number()) %>% 
+        inner_join(parentdepts  %>% mutate (rowold = row_number()) %>% select(eventID, rowold), by=c("eventID")) %>% select (-eventID)
+      
+      depth_rep2_conv <- depth_rep2 %>% inner_join(parentdepts_rowconv, by=c("row"="rowold")) %>% select (-row, row = rownew)
+      
+      coord_rep <- rbind(coord_rep,depth_rep2_conv)
+    }
+    
     
     
     eventerror <- bind_rows(eventerror, coord_rep, Cords00_rep)
@@ -360,7 +390,10 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                     select (occurrenceID,decimalLatitude, decimalLongitude, one_of (c("coordinateUncertaintyInMeters")), minimumDepthInMeters, maximumDepthInMeters))
     
     OnLand <- suppressWarnings(check_onland(GoodCords, buffer = 3000))
-    depth <- suppressWarnings(check_depth(GoodCords %>% filter (is.na(minimumDepthInMeters) | is.na(maximumDepthInMeters)), depthmargin = 150))
+    
+    depth <- tryCatch({suppressWarnings(check_depth(GoodCords %>% filter (!is.na(minimumDepthInMeters) | !is.na(!maximumDepthInMeters)), depthmargin = 150))},
+                      error=function(x) { occurrenceID <- c(NA)       
+                      data.frame(occurrenceID) })
     
     plot_coordinates <- suppressWarnings(GoodCords %>% mutate (quality = if_else ((occurrenceID %in% OnLand$occurrenceID), 'On Land', 
                                                                                   if_else ((occurrenceID %in% depth$occurrenceID), 'Check Depth',
@@ -384,6 +417,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     
     occurrenceerror <- bind_rows(occurrenceerror, coord_rep, Cords00_rep)  
+    
+    
   }   
   
   IPTreport$plot_coordinates <- plot_coordinates
@@ -416,7 +451,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   # QC checks potential duplicate occurrences  ---------------------------------
   #with emof
   if (  exists("eMoF")  ){
-    mof_biometric <- eMoF %>% filter (!is.na(occurrenceID), measurementTypeID %in% (BODC$biometrics) ) %>% distinct()
+    mof_biometric <- eMoF %>% filter (!is.na(occurrenceID), measurementTypeID %in% (BODC$biometrics) ) %>% group_by(occurrenceID, measurementType, measurementTypeID) %>%
+      summarise (measurementValue = max(measurementValue)) %>% ungroup()
     
     if (exists("Event") ) {
       
@@ -458,8 +494,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
             duplicatescheck <- c ('eventID', 'lifeStage', 'sex', 'scientificName',  'scientificNameID', 'identificationRemarks',
                                   'identificationQualifier') # terms to check in case of event Core
             
-            occ_dups_rows <-(fncols((Occurrence %>% left_join(mof_biometric, by = "occurrenceID")), duplicatescheck)  %>% select (duplicatescheck) %>% duplicated ()
-                             + fncols((Occurrence %>% left_join(mof_biometric, by = "occurrenceID")), duplicatescheck)  %>% select (duplicatescheck) %>% duplicated (fromLast=TRUE) )
+            occ_dups_rows <-(fncols(Occurrence, duplicatescheck)  %>% select (duplicatescheck) %>% duplicated ()
+                             + fncols(Occurrence, duplicatescheck)  %>% select (duplicatescheck) %>% duplicated (fromLast=TRUE) )
           } else {
             duplicatescheck <- c ("decimalLatitude", "decimalLongitude", 'eventDate', 'eventTime', 'minimumDepthInMeters', 'maximumDepthInMeters'
                                   , 'eventID', 'lifeStage', 'sex', 'samplingProtocol', 'scientificName',  'scientificNameID', 'identificationRemarks',
@@ -484,40 +520,56 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   # taxa --------------------------------------
   
-  reversedmatch <- reversetaxmatch (as.integer(gsub("urn:lsid:marinespecies.org:taxname:", "", unique(Occurrence$scientificNameID[nchar(Occurrence$scientificNameID)>35]))))
-  
-  IPTreport$dtb$taxa <- Occurrence %>% group_by (scientificName, scientificNameID) %>% summarise(count = n()) %>% 
-    left_join(reversedmatch, by = c("scientificNameID" = "lsid"))
-  
-  if (exists ("Event")) { 
-    IPTreport$MarTaxaonLand <- IPTreport$dtb$taxa %>% ungroup() %>% filter (isMarine == 1 & (isBrackish == 0 | is.na(isBrackish))  &  (isFreshwater == 0 | is.na(isFreshwater)) & (isTerrestrial == 0 | is.na(isTerrestrial)) ) %>% inner_join (fncols(Occurrence, c("occurrenceStatus")) %>%  filter (is.na(occurrenceStatus) | occurrenceStatus == 'present' ), by = c("scientificNameID"), suffix = c("", "_orig")) %>% filter (eventID %in% (OnLand$eventID))
-    #    IPTreport$nonMartaxaonAtSea <- IPTreport$dtb$taxa %>%  ungroup() %>% filter (isMarine == 0 & isBrackish == 0) %>% inner_join (Occurrence, by = c("scientificNameID")) %>% filter (!eventID %in% (OnLand$eventID))
-    IPTreport$plot_coordinates <- IPTreport$plot_coordinates %>% mutate (quality = if_else ((eventID %in% IPTreport$MarTaxaonLand$eventID), 'Marine Taxa on Land', quality))
+  if (!is.null(Occurrence$scientificNameID)){ if ( length(unique(Occurrence$scientificNameID[nchar(Occurrence$scientificNameID)>35]))!=0  ){
     
     
+    as.integer(gsub("urn:lsid:marinespecies.org:taxname:", "", unique(Occurrence$scientificNameID[nchar(Occurrence$scientificNameID)>35])))
     
-    occ_onland <- Occurrence %>% mutate (row = row_number()) %>% filter (scientificNameID %in% IPTreport$MarTaxaonLand$scientificNameID, eventID %in% IPTreport$MarTaxaonLand$eventID) %>% select (row) %>%
-      mutate (level = 'warning', field ='scientificNameID', message = 'Marine taxon located on land' )
+    reversedmatch <- reversetaxmatch (as.integer(gsub("urn:lsid:marinespecies.org:taxname:", "", unique(Occurrence$scientificNameID[nchar(Occurrence$scientificNameID)>35]))))
     
-    occurrenceerror <- rbind(occurrenceerror, occ_onland)                                     
+    IPTreport$dtb$taxa <- Occurrence %>% group_by (scientificName, scientificNameID) %>% summarise(count = n()) %>% 
+      left_join(reversedmatch, by = c("scientificNameID" = "lsid"))
     
+    if (exists ("Event")) { 
+      IPTreport$MarTaxaonLand <- IPTreport$dtb$taxa %>% ungroup() %>% filter (isMarine == 1 & (isBrackish == 0 | is.na(isBrackish))  &  (isFreshwater == 0 | is.na(isFreshwater)) & (isTerrestrial == 0 | is.na(isTerrestrial)) ) %>% inner_join (fncols(Occurrence, c("occurrenceStatus")) %>%  filter (is.na(occurrenceStatus) | occurrenceStatus == 'present' ), by = c("scientificNameID"), suffix = c("", "_orig")) %>% filter (eventID %in% (OnLand$eventID))
+      #    IPTreport$nonMartaxaonAtSea <- IPTreport$dtb$taxa %>%  ungroup() %>% filter (isMarine == 0 & isBrackish == 0) %>% inner_join (Occurrence, by = c("scientificNameID")) %>% filter (!eventID %in% (OnLand$eventID))
+      IPTreport$plot_coordinates <- IPTreport$plot_coordinates %>% mutate (quality = if_else ((eventID %in% IPTreport$MarTaxaonLand$eventID), 'Marine Taxa on Land', quality))
+      
+      
+      
+      occ_onland <- Occurrence %>% mutate (row = row_number()) %>% filter (scientificNameID %in% IPTreport$MarTaxaonLand$scientificNameID, eventID %in% IPTreport$MarTaxaonLand$eventID) %>% select (row) %>%
+        mutate (level = 'warning', field ='scientificNameID', message = 'Marine taxon located on land' )
+      
+      occurrenceerror <- rbind(occurrenceerror, occ_onland)                                     
+      
+    } else {
+      
+      IPTreport$MarTaxaonLand <- IPTreport$dtb$taxa %>% ungroup() %>% filter (isMarine == 1 & (isBrackish == 0 | is.na(isBrackish))  &  (isFreshwater == 0 | is.na(isFreshwater)) & (isTerrestrial == 0 | is.na(isTerrestrial)) ) %>% inner_join (OnLand %>% select (occurrenceID) %>% inner_join (fncols(Occurrence, c("occurrenceStatus")) %>%  filter (is.na(occurrenceStatus) | occurrenceStatus == 'present' ), by =c("occurrenceID"),  suffix = c("", "_orig")) %>% select (occurrenceID, scientificNameID ), by = c("scientificNameID"))
+      #    IPTreport$nonMartaxaonAtSea <- IPTreport$dtb$taxa %>%  ungroup() %>% filter (isMarine == 0 & isBrackish == 0) %>% filter (!scientificNameID %in% (OnLand$scientificNameID))
+      
+      IPTreport$plot_coordinates <- IPTreport$plot_coordinates %>% mutate (quality = if_else ((occurrenceID %in% IPTreport$MarTaxaonLand$occurrenceID), 'Marine Taxa on Land', quality))
+      
+      
+      occ_onland <- Occurrence %>% mutate (row = row_number()) %>% filter (occurrenceID %in% IPTreport$MarTaxaonLand$occurrenceID) %>% select (row) %>%
+        mutate (level = 'warning', field ='scientificNameID', message = 'Marine taxon located on land' )
+      
+      occurrenceerror <- rbind(occurrenceerror, occ_onland)                                     
+      
+      
+    }
+    
+    IPTreport$kingdoms <- IPTreport$dtb$taxa %>% filter(!is.na(kingdom)) %>% group_by (kingdom, class)%>% summarise(counts = sum(count))
+    
+    occ_notmatched <- Occurrence %>% mutate (row = row_number()) %>% filter (!is.na(scientificNameID)) %>% 
+      filter (scientificName %in% (IPTreport$dtb$taxa %>% filter(is.na(scientificNameMatch)))$scientificName) %>% 
+      filter (scientificNameID %in% (IPTreport$dtb$taxa %>% filter(is.na(scientificNameMatch)))$scientificNameID) %>% 
+      select (row) %>%  mutate (level = 'warning', field ='scientificNameID', message = 'scientificNameID does not resolve' )
   } else {
-    
-    IPTreport$MarTaxaonLand <- IPTreport$dtb$taxa %>% ungroup() %>% filter (isMarine == 1 & (isBrackish == 0 | is.na(isBrackish))  &  (isFreshwater == 0 | is.na(isFreshwater)) & (isTerrestrial == 0 | is.na(isTerrestrial)) ) %>% inner_join (OnLand %>% select (occurrenceID) %>% inner_join (fncols(Occurrence, c("occurrenceStatus")) %>%  filter (is.na(occurrenceStatus) | occurrenceStatus == 'present' ), by =c("occurrenceID"),  suffix = c("", "_orig")) %>% select (occurrenceID, scientificNameID ), by = c("scientificNameID"))
-    #    IPTreport$nonMartaxaonAtSea <- IPTreport$dtb$taxa %>%  ungroup() %>% filter (isMarine == 0 & isBrackish == 0) %>% filter (!scientificNameID %in% (OnLand$scientificNameID))
-    
-    IPTreport$plot_coordinates <- IPTreport$plot_coordinates %>% mutate (quality = if_else ((occurrenceID %in% IPTreport$MarTaxaonLand$occurrenceID), 'Marine Taxa on Land', quality))
-    
-    
-    occ_onland <- Occurrence %>% mutate (row = row_number()) %>% filter (occurrenceID %in% IPTreport$MarTaxaonLand$occurrenceID) %>% select (row) %>%
-      mutate (level = 'warning', field ='scientificNameID', message = 'Marine taxon located on land' )
-    
-    occurrenceerror <- rbind(occurrenceerror, occ_onland)                                     
-    
+    occ_notmatched <- data.frame (row = NA, level = c('warning'), field = c('scientificNameID'), message = c('None of the scientificNameIDs are LSID for WoRMS' ))
     
   }
-  
-  IPTreport$kingdoms <- IPTreport$dtb$taxa %>% filter(!is.na(kingdom)) %>% group_by (kingdom, class)%>% summarise(counts = sum(count))
+    occurrenceerror <- rbind(occurrenceerror, occ_notmatched)          
+  }
   
   #-------------------------------------------------------------------------------#
   ####                    Generate report table                                ####
@@ -527,17 +579,17 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   if (exists("Event")) {if(is.null(eventerror) == FALSE & nrow(eventerror %>% filter (!is.na(row))) > 0){
     IPTreport$dtb$eventerror_table <- suppressWarnings(eventerror %>% distinct() %>% filter (!is.na(row)) %>% dcast(row ~ field, value.var=c("message"), fun=max) %>%
-                                                         inner_join (Event %>% mutate (row = row_number()), by = "row", suffix = c("_error", "")) ) 
+                                                         inner_join (Event %>% mutate (row = row_number()), by = "row", suffix = c("_error", "")) %>% arrange(id, row) ) 
   } }
   
   if(is.null(occurrenceerror) == FALSE  & nrow (occurrenceerror %>% filter (!is.na(row))) >0 ) {
     IPTreport$dtb$occurrenceerror_table <- suppressWarnings(occurrenceerror %>% distinct() %>% filter (!is.na(row)) %>% dcast(row ~ field, value.var=c("message"), fun=max) %>%
-                                                              inner_join (Occurrence %>% mutate (row = row_number()), by = "row", suffix = c("_error", "")))
+                                                              inner_join (Occurrence %>% mutate (row = row_number()), by = "row", suffix = c("_error", "")) %>% arrange(id, scientificName) )
   }
   
   if (exists("eMoF")) {if(is.null(emoferror) ==FALSE & nrow(emoferror %>% filter (!is.na(row))) > 0) {
     IPTreport$dtb$emoferror_table <- emoferror %>% distinct() %>% filter (!is.na(row)) %>% dcast(row ~ field, value.var=c("message")) %>%
-      inner_join (eMoF %>% mutate (row = row_number()), by = "row", suffix = c("_error", ""))
+      inner_join (eMoF %>% mutate (row = row_number()), by = "row", suffix = c("_error", "")) %>% arrange(id, row)
   } }
   
   
@@ -552,6 +604,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                  "eventDate does not seem to be a valid date" , message))) %>%
       mutate (message = (if_else(grepl("is greater than maximum", message, fixed = TRUE),
                                  "Minimum depth is greater than maximum depth" , message))) %>% 
+      mutate (message = (if_else(grepl("has no corresponding eventID", message, fixed = TRUE),
+                                 "This parentEventID has no corresponding eventID" , message))) %>% 
+      
       group_by (field, message) %>% summarize(count = n()) %>% 
       mutate (table = "event")
   }} 
@@ -559,19 +614,21 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   if(is.null(occurrenceerror) == FALSE & nrow (occurrenceerror) >0) {
     occurrenceerror_report <- occurrenceerror  %>% distinct() %>% 
       mutate (message = (if_else(grepl("is greater than the value found in the bathymetry raster", message, fixed = TRUE),
-                                 "Depth value is greater than the value found in the bathymetry raster" , message))) %>%                         
+                                 "Depth value is greater than the value found in the bathymetry raster" , as.character(message)))) %>%                         
       mutate (message = (if_else(grepl("does not seem to be a valid date", message, fixed = TRUE),
-                                 "eventDate does not seem to be a valid date" , message))) %>% 
+                                 "eventDate does not seem to be a valid date" , as.character(message)))) %>% 
       mutate (message = (if_else(grepl("is greater than maximum", message, fixed = TRUE),
-                                 "Minimum depth is greater than maximum depth" , message))) %>% 
+                                 "Minimum depth is greater than maximum depth" , as.character(message)))) %>% 
       group_by (field, message) %>% summarize(count = n()) %>% 
       mutate (table = "occurrrence")
   }
   
   if (exists("eMoF")) {if(is.null(emoferror) ==FALSE) {
-    emoferror_report <- emoferror  %>% distinct() %>% 
+    emoferror_report <- emoferror  %>% distinct() %>% mutate(field = as.character(field), message = as.character(message)) %>% 
+      mutate (message = (if_else(grepl("has no corresponding eventID in the core", message, fixed = TRUE),
+                                 "This eventID has no corresponding eventID in the core" , message))) %>%                         
       group_by (field, message) %>% summarize(count = n()) %>% 
-      mutate (table = "emof")
+      mutate (table = "emof") 
   }}     
   
   IPTreport$dtb$general_issues <- rbind(if(exists("eventerror_report")) eventerror_report 

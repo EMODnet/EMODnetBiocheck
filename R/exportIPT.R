@@ -36,7 +36,7 @@ file.remove("qcreport.Rmd")
   
   
 ## step 2 export non tables
-    if (  is.null(IPTreport$tree) == FALSE   ) {
+    if (is.null(IPTreport$tree) == FALSE   ) {
 exportTree(IPTreport$tree, paste(IPTreport$name, "/",  "tree",  ".html", sep = ""), view=FALSE )
     }
 

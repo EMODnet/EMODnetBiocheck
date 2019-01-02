@@ -76,11 +76,11 @@ BODC$instrument <- c('Q0100002')
 
 
 
-##### Paramters
+##### Parameters
 
 x <- read_xml("http://vocab.nerc.ac.uk/collection/P01/current/")
-terms <- xml_find_all(x, ".//skos:Concept")
-l <- lapply(terms, function(term) {
+termsp01 <- xml_find_all(x, ".//skos:Concept")
+l <- lapply(termsp01, function(term) {
   element <- as_list(term)
   return(list(
     identifier = unlist(element$identifier),
@@ -106,7 +106,24 @@ l <- lapply(terms, function(term) {
   )
 })
 Q01s <- bind_rows(l)
-BODC$parameters <- rbind(Q01s,P01s )
+parameters <- rbind(Q01s,P01s )
+
+
+
+P01sunits <-NULL
+
+for (i in 1:nrow(P01s)){
+  P01 <- bind_rows(lapply(xml_attrs(termsp01[i]), function(x) data.frame(as.list(x), stringsAsFactors=FALSE)))
+  related <- xml_find_all(termsp01[i], ".//skos:related")
+  related <- bind_rows(lapply(xml_attrs(related), function(x) data.frame(as.list(x), stringsAsFactors=FALSE)))
+  related <- related %>% filter (grepl("P06", resource, fixed = TRUE))
+  if (nrow(related)>0){
+    links <- related %>% mutate(p01s = P01$about)
+    P01sunits <- rbind(P01sunits, links)
+  }
+  rm(P01,related, links)
+}
+
 
 
 ##### Units
@@ -124,6 +141,11 @@ l <- lapply(terms, function(term) {
 })
 BODC$units <- bind_rows(l)
 
+##### Link parameters and units
+
+BODC$parameters <- parameters %>% left_join(P01sunits, by=c("uri" = "p01s")) %>%
+  left_join(units %>% select (uri, standardunit = altLabel), 
+            by=c("resource" = "uri")) %>% rename (standardUnitID = resource)
 
 
 #### Values
@@ -210,5 +232,5 @@ EUNIS <- bind_rows(l) %>% mutate (uri = paste(uri,"/", sep =""))
 
 BODC$values <- rbind(L22s, L05s, S11s, S10s, M20s, EUNIS)
 
-rm(L22s, L05s, S11s, S10s, M20s, x,l, terms, EUNIS, P01s, Q01s)
+rm(L22s, L05s, S11s, S10s, M20s, x,l, terms, EUNIS, P01s, Q01s, parameters)
 
