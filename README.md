@@ -28,23 +28,30 @@ The tool performs a basic QC on OBIS-env datasets and occurrence core dataset.  
 -   List the non-matched taxa (including deleted and quarantined matches)
 -   Plots of the coordinates and the distribution of the temporal cover are provided to allow for quick comparison with the metadata. 
 -   A tree view of the event hierarchy to inspect the structure.
+ -  Has the unit provided the same base unit as specified by the measurementTypeID?
 
 Additional checks which are planned to be implemented are:
 
- -   Has the unit provided the same base unit as specified by the measurementTypeID?
- -   Are there non-marine / non-brackisch taxa found at sea? 
+ -  Are there non-marine / non-brackisch taxa found at sea? 
 
  
 The tool is was created using the OBIS tools package (https://github.com/iobis/obistools) and is avaiable from the LifeWatch services at http://rshiny.lifewatch.be/BioCheck/
 The R functions are available from the EMODnet github repository at https://github.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool
 
 
-## usage of the R Code:
+## Installation
+
+Installing `EMODnetBiocheck` requires the `devtools` and `obistools` package:
+
 ```R
-source("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/R/installallneededpackages.R")
-source("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/R/emodnetqc.R")
+install.packages("devtools")
+devtools::install_github("iobis/obistools")
+devtools::install_github("EMODnet/EMODnetBiocheck")
+```
+
+
+## usage:
+```R
 loopcheckIPTdataset ("http://ipt.iobis.org/training/archive?r=biofun_2009", tree="yes")
 loopcheckIPTdataset (c("http://ipt.iobis.org/training/archive?r=biofun_2009", "http://ipt.vliz.be/eurobis/resource?r=benthic-fauna-arrabida-2007-2009", tree="yes"))
-BODC <- updatelatestbodc(BODC) #updates the BODC paramters to latest version but takes +1 hour
-
 ```
