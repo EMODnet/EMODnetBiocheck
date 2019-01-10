@@ -1,4 +1,16 @@
-exportIPT = function (IPTreport, obisqc = FALSE) {
+#' Create QC report in markdown
+#'
+#' This function takes as input the output from checkdataset and checkIPTdataset and generates a QC report in markdown.
+#' @param IPTreport mandatory parameter, the output from checkdataset or checkIPTdataset
+#' @export
+#' @examples
+#' exportIPT(IPTreport)
+
+
+
+
+exportIPT = function (IPTreport) {
+
 
 if(is.null(IPTreport$name) == TRUE) {
   IPTreport$name <- "QCexport" }
@@ -21,9 +33,9 @@ formatLabel<-function (st,parname=NULL) {
   }
   
 
-download.file("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/R/overview.Rmd",
+download.file("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/files/overview.Rmd",
                 "overview.Rmd")
-download.file("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/R/qcreport.Rmd",
+download.file("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/files/qcreport.Rmd",
                 "qcreport.Rmd")
 
 render("overview.Rmd", "html_document", output_dir=paste(getwd(), "/" ,IPTreport$name, sep="" ) , output_file = paste0("overview", ".html"))

@@ -1,5 +1,18 @@
+#' Check the quality of the dataset
+#'
+#' This function does all QC checks of the package
+#' @param Event optional parameter, the name of the event core file
+#' @param Occurrence mandatory parameter, the name of the occurrence file
+#' @param eMoF optional parameter, the name of the mof or emof file
+#' @param IPTreport optional parameter, in case you want to append the result to an existing listfile
+#' @param tree optional parameter, takes value yes if you want the QC report to include the OBIS tree hierachy
+#' @export
+#' @examples
+#' IPTreport <-checkdataset(Event = event, Occurrence = occurrence, eMoF = emof, IPTreport = IPTreport, tree = FALSE)
+
+
 checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport = list(), tree = FALSE){
-  library(stringr)
+  
   
   if (is.null(Event)) {rm(Event)}
   if (is.null(eMoF)) {rm(eMoF)}
@@ -60,7 +73,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     if("absent" %in% occurrencetemp$occurrenceStatus | NA %in% occurrencetemp$occurrenceStatus  )   {     
       IPTreport$datasummary <- Event %>% fncols("type") %>% select (eventID, type) %>% left_join(occurrencetemp, by = "eventID") %>% 
         group_by(eventID, type, occurrenceStatus, basisOfRecord ) %>% summarise( occount = sum(!is.na(basisOfRecord))) %>%
-        dcast (type + eventID + basisOfRecord ~occurrenceStatus, value.var=c("occount"), fun=(sum)) %>% fncols(c("absent", "NA", "present")) %>%
+        data.table::dcast (type + eventID + basisOfRecord ~occurrenceStatus, value.var=c("occount"), fun=(sum)) %>% fncols(c("absent", "NA", "present")) %>%
         mutate(absent = as.integer(absent), `NA` = as.integer(`NA`) ) %>% group_by(type, basisOfRecord) %>% 
         summarise(n_events = sum(!is.na(unique(eventID))) , n_absent = sum(absent), n_present = sum(as.numeric(present)), n_NA = sum(`NA`)) %>%
         select(type,n_events, basisOfRecord, n_present, n_absent, n_NA )
@@ -70,7 +83,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
         group_by(type, occurrenceStatus, basisOfRecord ) %>% 
         summarise( occount = sum(!is.na(basisOfRecord)), n_events = sum(!is.na(unique(eventID)))) %>%  
         mutate (occount = if_else(occount =="0", as.integer(NA), occount )) %>% 
-        dcast (type + n_events + basisOfRecord ~occurrenceStatus, value.var=c("occount") )
+       data.table::dcast (type + n_events + basisOfRecord ~occurrenceStatus, value.var=c("occount") )
     }
     IPTreport$datasummary[IPTreport$datasummary =='0' | IPTreport$datasummary  =='NA'] <- NA
     IPTreport$datasummary <- IPTreport$datasummary[,names(IPTreport$datasummary) == "type" |colSums(is.na(IPTreport$datasummary))<nrow(IPTreport$datasummary)] 
@@ -82,10 +95,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   if (exists("eMoF")) {
     
-    if (exists("BODC")) {
       IPTreport$mofsummary <-  suppressWarnings(eMoF %>% mutate(type = if_else(is.na(occurrenceID) , "EventMoF", "OccurrenceMoF" ), measurementValue =  as.numeric(measurementValue)) %>% 
                                                   group_by(type, measurementType,  measurementTypeID, measurementUnit) %>% summarize(count = n(), minValue = min(measurementValue), maxValue = max(measurementValue) ) %>% ungroup() %>%
-                                                  left_join(BODC$parameters, by = c("measurementTypeID"="uri")) %>%
+                                                  left_join(BODCparameters, by = c("measurementTypeID"="uri")) %>%
                                                   select (type, measurementType, minValue,  maxValue, measurementUnit,  count,  standardunit, preflabel, definition))
       #IPTreport$mofsummary$minValue <- format(IPTreport$mofsummary$minValue, digits=2) 
       #IPTreport$mofsummary$maxValue <- format(IPTreport$mofsummary$maxValue, digits=2) 
@@ -93,15 +105,10 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       
       IPTreport$mofsummary_values <- eMoF %>% filter(!is.na(measurementValueID)) %>% mutate(type = if_else(is.na(occurrenceID) , "EventMoF", "OccurrenceMoF" )) %>% 
         group_by(type, measurementType, measurementValue, measurementValueID) %>% summarize(count = n()) %>% ungroup() %>%
-        left_join(BODC$values, by = c("measurementValueID"="uri")) %>%
+        left_join(BODCvalues, by = c("measurementValueID"="uri")) %>%
         select (type, measurementType, measurementValue,preflabel, definition)
       
-    } else {
-      IPTreport$mofsummary <-  suppressWarnings(eMoF %>% mutate(type = if_else(is.na(occurrenceID) , "EventMoF", "OccurrenceMoF"),  measurementValue =  as.numeric(measurementValue))   %>% 
-                                                  group_by(type, measurementType, measurementUnit) %>% summarize(count = n(), minValue = min(measurementValue), maxValue = max(measurementValue)) %>%
-                                                  select (type, measurementType, minValue,  maxValue, measurementUnit,count))
-      
-    }
+  
     
     if (is.data.frame(IPTreport$mofsummary)){if (nrow(IPTreport$mofsummary)>0){
       IPTreport$mofsummary  <- IPTreport$mofsummary %>% arrange(type , desc(count))
@@ -176,36 +183,35 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     mof_noValueID <- eMoF %>%
       filter ((is.na(measurementUnit) | (measurementUnit %in% mof_noUnit)  | measurementUnitID == "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/") &
-                is.na(measurementValueID) & (!measurementType %in% c("count") & !measurementTypeID %in% BODC$nomofvalues)) %>%
+                is.na(measurementValueID) & (!measurementType %in% c("count") & !measurementTypeID %in% BODCnomofvalues)) %>%
       mutate(IDlink = if_else(!is.na(occurrenceID),"occurrence", "event") ) %>%
       mutate(message = 'measurementValues which may need a measurementValueID') %>%  group_by (IDlink, measurementType, measurementValue, message) %>% summarize(count = n()) %>% arrange (desc(measurementType))
     
     
-    if (sum(grepl(BODC$instrument, unique(eMoF$measurementTypeID)))== 0){
+    if (sum(grepl(BODCinstrument, unique(eMoF$measurementTypeID)))== 0){
       mof_noInstrument <- data.frame(level = c('warning'),field = c('measurementType'), row = NA, 
                                      message = c('No sampling instrument present'))
     }
     
-    if (sum(grepl(paste(BODC$effort, collapse="|"), unique(eMoF$measurementTypeID)))== 0){
+    if (sum(grepl(paste(BODCeffort, collapse="|"), unique(eMoF$measurementTypeID)))== 0){
       mof_noSamplingdescriptor <- data.frame(level = c('warning'),field = c('measurementType'), row = NA, 
                                              message = c('No sampling descriptors present: see http://vocab.nerc.ac.uk/collection/Q01/current/'))
     }
     
     
-    if (  exists("BODC")){ 
       mof_oc_TypeID_NotResolve <- eMoF %>% filter (!is.na(occurrenceID), !is.na(measurementTypeID) ) %>% 
         select (measurementType, measurementTypeID, measurementUnit) %>% 
-        anti_join(BODC$parameters, by = c("measurementTypeID"="uri")) %>%
+        anti_join(BODCparameters, by = c("measurementTypeID"="uri")) %>%
         mutate(IDlink = 'occurrence', message = 'measurementTypeID does not resolve') %>% 
         group_by (IDlink,measurementType, measurementTypeID, measurementUnit, message) %>% summarize(count = n())
       
       mof_oc_ValueID_NotResolve <- eMoF %>% 
         filter (!is.na(occurrenceID), !is.na(measurementValueID) ) %>% 
         select (measurementValue, measurementValueID) %>% 
-        anti_join(BODC$values, by = c("measurementValueID"="uri")) %>%
+        anti_join(BODCvalues, by = c("measurementValueID"="uri")) %>%
         mutate(IDlink = 'occurrence', message = 'measurementValueID does not resolve') %>% 
         group_by (IDlink,measurementValue, measurementValueID, message) %>% summarize(count = n())
-    }
+    
     
     
     mof_ValueNull <- eMoF %>%
@@ -241,10 +247,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
         mutate(IDlink = 'event', message = 'measurementtypeID is missing') %>% 
         group_by (IDlink,measurementType, measurementUnit, message) %>% summarize(count = n())
       
-      if (  exists("BODC")){      
         mof_ev_TypeID_NotResolve <- eMoF %>% filter (!is.na(eventID), is.na(occurrenceID),  !is.na(measurementTypeID) ) %>% 
           select (measurementType, measurementTypeID, measurementUnit) %>% 
-          anti_join(BODC$parameters, by = c("measurementTypeID"="uri")) %>%
+          anti_join(BODCparameters, by = c("measurementTypeID"="uri")) %>%
           mutate(IDlink = 'event', message = 'measurementTypeID does not resolve') %>% 
           group_by (IDlink,measurementType, measurementTypeID, measurementUnit, message) %>% summarize(count = n())
         
@@ -252,10 +257,10 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
         mof_ev_ValueID_NotResolve <- eMoF %>% 
           filter (!is.na(eventID), is.na(occurrenceID), !is.na(measurementValueID) ) %>% 
           select (measurementValue, measurementValueID) %>% 
-          anti_join(BODC$values, by = c("measurementValueID"="uri")) %>%
+          anti_join(BODCvalues, by = c("measurementValueID"="uri")) %>%
           mutate(IDlink = 'event', message = 'measurementValueID does not resolve') %>% 
           group_by (IDlink,measurementValue, measurementValueID, message) %>% summarize(count = n())
-      }}
+      }
     
     
     IPTreport$dtb$mof_issues <- suppressWarnings(rbind(mof_oc_noTypeID, mof_noValueID,
@@ -451,7 +456,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   # QC checks potential duplicate occurrences  ---------------------------------
   #with emof
   if (  exists("eMoF")  ){
-    mof_biometric <- eMoF %>% filter (!is.na(occurrenceID), measurementTypeID %in% (BODC$biometrics) ) %>% group_by(occurrenceID, measurementType, measurementTypeID) %>%
+    mof_biometric <- eMoF %>% filter (!is.na(occurrenceID), measurementTypeID %in% (BODCbiometrics) ) %>% group_by(occurrenceID, measurementType, measurementTypeID) %>%
       summarise (measurementValue = max(measurementValue)) %>% ungroup()
     
     if (exists("Event") ) {
@@ -461,7 +466,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       
       if (nrow(mof_biometric) > 0 ) {
         
-        mof_biometric <-  mof_biometric  %>% dcast(occurrenceID  ~ measurementType, value.var=c("measurementValue"))
+        mof_biometric <-  mof_biometric  %>% data.table::dcast(occurrenceID  ~ measurementType, value.var=c("measurementValue"))
         biometricterms <- names(mof_biometric %>% select (-occurrenceID))
         duplicatescheck <- c(duplicatescheck, biometricterms)
         
@@ -477,7 +482,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                               'identificationQualifier') # terms to check in case of occurrence Core
         
         if (  nrow(mof_biometric) > 0  )    {
-          mof_biometric <-  mof_biometric %>% dcast(occurrenceID  ~ measurementType, value.var=c("measurementValue"))
+          mof_biometric <-  mof_biometric %>% data.table::dcast(occurrenceID  ~ measurementType, value.var=c("measurementValue"))
           biometricterms <- names(mof_biometric %>% select (-occurrenceID))
           duplicatescheck <- c(duplicatescheck, biometricterms)
           
@@ -578,17 +583,17 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   #Generate error tables
   
   if (exists("Event")) {if(is.null(eventerror) == FALSE & nrow(eventerror %>% filter (!is.na(row))) > 0){
-    IPTreport$dtb$eventerror_table <- suppressWarnings(eventerror %>% distinct() %>% filter (!is.na(row)) %>% dcast(row ~ field, value.var=c("message"), fun=max) %>%
+    IPTreport$dtb$eventerror_table <- suppressWarnings(eventerror %>% distinct() %>% filter (!is.na(row)) %>% data.table::dcast(row ~ field, value.var=c("message"), fun=max) %>%
                                                          inner_join (Event %>% mutate (row = row_number()), by = "row", suffix = c("_error", "")) %>% arrange(id, row) ) 
   } }
   
   if(is.null(occurrenceerror) == FALSE  & nrow (occurrenceerror %>% filter (!is.na(row))) >0 ) {
-    IPTreport$dtb$occurrenceerror_table <- suppressWarnings(occurrenceerror %>% distinct() %>% filter (!is.na(row)) %>% dcast(row ~ field, value.var=c("message"), fun=max) %>%
+    IPTreport$dtb$occurrenceerror_table <- suppressWarnings(occurrenceerror %>% distinct() %>% filter (!is.na(row)) %>% data.table::dcast(row ~ field, value.var=c("message"), fun=max) %>%
                                                               inner_join (Occurrence %>% mutate (row = row_number()), by = "row", suffix = c("_error", "")) %>% arrange(id, scientificName) )
   }
   
   if (exists("eMoF")) {if(is.null(emoferror) ==FALSE & nrow(emoferror %>% filter (!is.na(row))) > 0) {
-    IPTreport$dtb$emoferror_table <- emoferror %>% distinct() %>% filter (!is.na(row)) %>% dcast(row ~ field, value.var=c("message")) %>%
+    IPTreport$dtb$emoferror_table <- emoferror %>% distinct() %>% filter (!is.na(row)) %>% data.table::dcast(row ~ field, value.var=c("message")) %>%
       inner_join (eMoF %>% mutate (row = row_number()), by = "row", suffix = c("_error", "")) %>% arrange(id, row)
   } }
   

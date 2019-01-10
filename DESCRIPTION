@@ -1,0 +1,23 @@
+Package: EMODnetBiocheck
+Title: LifeWatch & EMODnet Biology QC tool
+Version: 0.0.0.9000
+Authors@R: person("Daphnis", "De Pooter", email = "daphnisd@vliz.be", role = c("aut", "cre"))
+Description: This tool allows you to assess to what extend a dataset published on an IPT or a DwC-A file meets the EMODnet Biology Data Quality Criteria.
+Depends: R (>= 3.4.4)
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports:
+	rgdal,
+	RCurl,
+	httr,
+	dplyr,
+	finch,
+	data.table,
+	ggplot2,
+	knitr,
+	leaflet,
+	xml2,
+	rmarkdown,
+	stringr
+RoxygenNote: 6.1.1

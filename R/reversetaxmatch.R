@@ -1,6 +1,16 @@
+#' reversed taxonmatch
+#'
+#' adds the classification from worms to a vector with aphiaIDs
+#' @param aphiaIDs mandatory parameter, a vector with aphiaIDs from WoRMS
+#' @export
+#' @examples
+#' reversetaxmatch(aphiaIDs)
+
+
 
   reversetaxmatch = function(aphiaIDs) {
-    result <- NULL
+
+        result <- NULL
     
     grab_data     <-    function(webserviceurls) {
       out <- tryCatch(
