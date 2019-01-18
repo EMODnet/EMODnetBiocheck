@@ -11,54 +11,24 @@
 #' IPTreport <-checkdataset(Event = event, Occurrence = occurrence, eMoF = emof, IPTreport = IPTreport, tree = FALSE)
 
 
-checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport = list(), tree = FALSE){
+checkdataset2 = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport = list(), tree = FALSE){
+
+  
+  
+  if (!is.null(IPTreport$Event)) { if (is.data.frame(IPTreport$Event)) {
+    Event <- IPTreport$Event
+  }}
+  if (!is.null(IPTreport$Occurrence)) { if (is.data.frame(IPTreport$Occurrence)) {
+    Occurrence <- IPTreport$Occurrence
+  }}
+  if (!is.null(IPTreport$eMoF)) { if (is.data.frame(IPTreport$eMoF)) {
+    eMoF <- IPTreport$eMoF
+  }}
   
   
   if (is.null(Event)) {rm(Event)}
   if (is.null(eMoF)) {rm(eMoF)}
-  
-  #---------------------------------------------------------------------------#
-  ###                   Fix formatting                                        ####
-  #---------------------------------------------------------------------------#      
-  #### Occurrence fix
-  
-  
-  Occurrence[Occurrence =='NA' | Occurrence =='' | Occurrence ==' '] <- NA
-  Occurrence <- Occurrence[,colSums(is.na(Occurrence))<nrow(Occurrence)]
-  #     Occurrence <- fncols(Occurrence, c("eventDate"))
-  
-  
-  #### Event fix
-  
-  if (  exists("Event") == TRUE  )
-  {
-    Event[Event =='NA' | Event =='' | Event ==' '] <- NA
-    Event <- Event[,colSums(is.na(Event))<nrow(Event)]
-    Event <- fncols(Event, c("parentEventID"))
-    #        Event[Event =='NA' | Event =='' | Event ==' '] <- NA
-    
-    #       Event <- fncols(Event, c("eventDate"))
-  }
-  
-  #### MoF fix
-  
-  if ( exists("eMoF") == TRUE  )
-  { eMoF[eMoF =='NA' | eMoF =='' | eMoF ==' '] <- NA
-  eMoF <- eMoF[,colSums(is.na(eMoF))<nrow(eMoF)]
-  eMoF <- fncols(eMoF, c("occurrenceID", "measurementTypeID","measurementValueID", "measurementValue", "measurementUnitID", "eventID", "measurementUnit"))
-  #       eMoF[eMoF =='NA' | eMoF =='' | eMoF ==' '] <- NA
-  
-  eMoF <- eMoF %>% mutate (measurementTypeID = if_else(str_sub(measurementTypeID, -1, -1)=='/',measurementTypeID, paste(measurementTypeID, "/",  sep = '') ),
-                           measurementValueID = if_else(str_sub(measurementValueID, -1, -1)=='/',measurementValueID, paste(measurementValueID, "/",  sep = ''))
-  ) 
-  
-  if ( exists("Event") == TRUE){
-    eMoF$eventID <- eMoF$id #eventID column is required in the measurements table.
-  } else {
-    eMoF$occurrenceID <- eMoF$id #occurrenceID column is required in the measurements table.
-  }
-  }
-  
+
   
   
   #----------------------------------------------------------------------------#

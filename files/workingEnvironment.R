@@ -19,6 +19,29 @@ BODCeffort <- c('AREABEDS', 'Q01', 'VOLWBSMP', 'LENTRACK' , 'AZDRZZ01' ,'VOLFFMX
 BODCinstrument <- c('Q0100002')
 
 
+
+
+BODCquantity <- c('http://vocab.nerc.ac.uk/collection/P01/current/SDBIOL07/',
+                  'http://vocab.nerc.ac.uk/collection/P01/current/SDBIOL08/',
+                  'http://vocab.nerc.ac.uk/collection/P01/current/SDBIOL09/',
+                  'http://vocab.nerc.ac.uk/collection/P01/current/SDBIOL10/',
+                  'http://vocab.nerc.ac.uk/collection/P01/current/SDBIOL12/',
+                  'http://vocab.nerc.ac.uk/collection/P01/current/SDBIOL13/',
+                  'http://vocab.nerc.ac.uk/collection/P01/current/SDBIOL14/',
+                  'http://vocab.nerc.ac.uk/collection/P01/current/SACFORN1/',
+                  'http://vocab.nerc.ac.uk/collection/P01/current/SACFOR01/',
+                  'http://vocab.nerc.ac.uk/collection/P01/current/SDBIOL01/',
+                  'http://vocab.nerc.ac.uk/collection/P01/current/SDBIOL02/',
+                  'http://vocab.nerc.ac.uk/collection/P01/current/SDBIOL03/',
+                  'http://vocab.nerc.ac.uk/collection/P01/current/SDBIOL04/',
+                  'http://vocab.nerc.ac.uk/collection/P01/current/SDBIOL05/',
+                  'http://vocab.nerc.ac.uk/collection/P01/current/ADBIOL01/',
+                  'http://vocab.nerc.ac.uk/collection/P01/current/ADBIOL02/',
+                  'http://vocab.nerc.ac.uk/collection/P01/current/ODRYBM01/',
+                  'http://vocab.nerc.ac.uk/collection/P01/current/OWETBM01/')
+
+
+
 use_data(BODCunits)
 use_data(BODCvalues)
 use_data(BODCparameters)
@@ -26,4 +49,6 @@ use_data(BODCnomofvalues)
 use_data(BODCbiometrics)
 use_data(BODCeffort)
 use_data(BODCinstrument)
+use_data(BODCquantity)
+
 
