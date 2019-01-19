@@ -10,6 +10,9 @@
 
   reversetaxmatch = function(aphiaIDs) {
 
+    aphiaIDs <- unique(aphiaIDs[!is.na(aphiaIDs)])
+    aphiaIDs <- aphiaIDs[(aphiaIDs != "")]
+    
         result <- NULL
     
     grab_data     <-    function(webserviceurls) {

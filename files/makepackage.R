@@ -42,7 +42,7 @@ link <- "http://ipt.iobis.org/training/resource?r=biofun_2009"
 
 loopcheckIPTdataset (link)
 
-
+rm(list=ls())
 getwd()
 setwd("BIOCHECK")
 

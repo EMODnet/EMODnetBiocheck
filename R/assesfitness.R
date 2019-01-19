@@ -68,8 +68,7 @@ if (exists("Event")) {
   if (!is.null(Occurrence$scientificNameID)){ 
     if ( length(unique(Occurrence$scientificNameID[nchar(Occurrence$scientificNameID)>35]))!=0  ){
     
-    reversedmatch <- reversetaxmatch (as.integer(gsub("urn:lsid:marinespecies.org:taxname:", "", unique(Occurrence$scientificNameID[nchar(Occurrence$scientificNameID)>35]))))
-    
+    reversedmatch <- reversetaxmatch( as.integer(gsub("urn:lsid:marinespecies.org:taxname:", "", unique(Occurrence$scientificNameID[nchar(Occurrence$scientificNameID)>35]))))
     genusorlower <- Occurrence %>% group_by (scientificName, scientificNameID) %>% summarise(count = n()) %>% 
       left_join(reversedmatch, by = c("scientificNameID" = "lsid")) %>% group_by(rank)  %>% summarise(counts = sum(count))  %>% 
       mutate(freq = counts/ sum(counts)) %>% filter(rank %in% c(
