@@ -27,11 +27,11 @@ if (!is.null(IPTreport$dtb$emoferror_table)){
 }
 issuesperc <- nrow(bind_rows(if(exists("occevents"))occevents, if(exists("occs"))occs, if(exists("occmofs"))occmofs ) %>% distinct()) / nrow(output$Occurrence)
 
-if (issuesperc==0) {qcflag = "A"}
-if (issuesperc < 0.10) {qcflag = "B"}
-if (issuesperc < 0.20) {qcflag = "C"}
-if (issuesperc > 0.20) {qcflag = "F"}
-
+#if (issuesperc==0) {qcflag = "A"}
+#if (issuesperc < 0.10) {qcflag = "B"}
+#if (issuesperc < 0.20) {qcflag = "C"}
+#if (issuesperc > 0.20) {qcflag = "F"}
+qcflag = suppressWarnings(as.integer(10 - (issuesperc *10)))
 
 
 out <- data.frame(IPT = link , fitness = fitness$fitvalue, qc = qcflag)

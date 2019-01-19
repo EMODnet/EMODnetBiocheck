@@ -28,7 +28,7 @@ assessfitness <- function(Event = NULL, Occurrence = NULL, eMoF = NULL, output =
   if (is.null(eMoF)) {rm(eMoF)}
   
 
-# Class A
+# Class C
 ##### missing ev_check_id
   
   
@@ -98,7 +98,7 @@ if (  exists("eMoF")){
     }
 
     
-  if (exists("event") == FALSE) {
+  if (exists("Event") == FALSE) {
      if(!"eventID" %in% colnames(Occurrence)) {
         if(length(unique(Occurrence$eventID)) == nrow(Occurrence %>% fncols(c("eventID", "eventDate","decimalLatitude","decimalLongitude","minimumDepthInMeters", "maximumDepthInMeters")) %>% 
                                                       select(eventID, eventDate,decimalLatitude,decimalLongitude,minimumDepthInMeters,maximumDepthInMeters) %>% distinct())
@@ -112,7 +112,7 @@ if (  exists("eMoF")){
   }
   
 
-### Checks for C
+### Checks for A
   
     if (sum(grepl(paste(BODCquantity, collapse="|"), unique(eMoF$measurementTypeID)))== 0){
       mof_noQuantity <- data.frame(level = c('warning'),field = c('measurementType'), row = NA, 

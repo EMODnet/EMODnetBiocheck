@@ -51,8 +51,11 @@ links<-unique(files$IPT)
 links <- links[(links != "")]
 
 
+options(stringsAsFactors = FALSE)
 
 link <- "http://ipt.vliz.be/eurobis/archive?r=ices_Stomach_Content_Data"
+link <- "http://ipt.vliz.be/eurobis/archive?r=CP-EGGS"
+
 out <-loopfitnessandqc(links)
 out <-loopfitnessandqc(link)
 
