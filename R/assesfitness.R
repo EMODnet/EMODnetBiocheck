@@ -78,7 +78,7 @@ if (exists("Event")) {
         "Subvariety",         "Variety" 
       )) %>% summarise(sum(freq))
     }
-  }
+  } else {genusorlower = 0}
   
   
 
