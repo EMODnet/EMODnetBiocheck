@@ -14,12 +14,12 @@ loopfitnessandqc <- function (links) {
     
     out <- assesfitnessandqc(link)
 
-  }
+  
 
 if (exists("qcout")) {
   qcout <- bind_rows(qcout, out) } else {
   qcout <- out }
-    
+  }  
   return (qcout)  
     
   }
