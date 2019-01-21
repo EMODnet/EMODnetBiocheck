@@ -38,17 +38,19 @@ BODCquantity <- c('http://vocab.nerc.ac.uk/collection/P01/current/SDBIOL07/',
                   'http://vocab.nerc.ac.uk/collection/P01/current/ADBIOL01/',
                   'http://vocab.nerc.ac.uk/collection/P01/current/ADBIOL02/',
                   'http://vocab.nerc.ac.uk/collection/P01/current/ODRYBM01/',
-                  'http://vocab.nerc.ac.uk/collection/P01/current/OWETBM01/')
+                  'http://vocab.nerc.ac.uk/collection/P01/current/OWETBM01/',
+                  'http://vocab.nerc.ac.uk/collection/P01/current/OCOUNT01/',
+                  'http://vocab.nerc.ac.uk/collection/P01/current/USPBIOSV/')
 
 
 
-use_data(BODCunits)
-use_data(BODCvalues)
-use_data(BODCparameters)
-use_data(BODCnomofvalues)
-use_data(BODCbiometrics)
-use_data(BODCeffort)
-use_data(BODCinstrument)
-use_data(BODCquantity)
+use_data(BODCunits, overwrite = TRUE)
+use_data(BODCvalues, overwrite = TRUE)
+use_data(BODCparameters, overwrite = TRUE)
+use_data(BODCnomofvalues, overwrite = TRUE)
+use_data(BODCbiometrics, overwrite = TRUE)
+use_data(BODCeffort, overwrite = TRUE)
+use_data(BODCinstrument, overwrite = TRUE)
+use_data(BODCquantity, overwrite = TRUE)
 
 

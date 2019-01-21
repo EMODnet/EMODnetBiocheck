@@ -136,7 +136,7 @@ output <- list()
 
 fitvalue <- if ( any(grepl("is missing", checks$message)) | genusorlower < 0.8) {"F"} else {
   if (exists("eMoF") == FALSE ) {"C"} else {
-    if (any(grepl("No sampling", checks$message)) | any(grepl("no unique eventID", checks$message))) {"c"} else {
+    if (any(grepl("No sampling", checks$message)) | any(grepl("no unique eventID", checks$message))) {"C"} else {
     if (any(grepl("no quantity present", checks$message)) | any(grepl("no unique eventID", checks$message))) {"B"} else {
     "A"}    
       }

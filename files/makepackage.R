@@ -55,7 +55,9 @@ options(stringsAsFactors = FALSE)
 
 link <- "http://ipt.vliz.be/eurobis/archive?r=ices_Stomach_Content_Data"
 link <- "http://ipt.vliz.be/eurobis/archive?r=CP-EGGS"
+link <- "http://ipt.gbif.pt/ipt/archive.do?r=macrozoobenthos-portugal-2010"
 
+link <- 'http://ipt.nioz.nl/archive.do?r=kom-fyke-mokbaai'
 out <-loopfitnessandqc(links)
 out <-loopfitnessandqc(link)
 
