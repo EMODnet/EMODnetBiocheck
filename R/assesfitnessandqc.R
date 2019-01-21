@@ -12,6 +12,7 @@ assesfitnessandqc <- function (link) {
 
 output <- importiptdata (link)
 
+if (is.null(output$error)) {
 fitness <- assessfitness (output=output)
 
 IPTreport <- checkdataset2(IPTreport=output)
@@ -35,6 +36,10 @@ qcflag = suppressWarnings(as.integer(10 - (issuesperc *10)))
 
 
 out <- data.frame(IPT = link , fitness = fitness$fitvalue, qc = qcflag)
+} else {
+out <- data.frame(IPT = link ,error = output$error)
+}
+
 
 return(out)
 }

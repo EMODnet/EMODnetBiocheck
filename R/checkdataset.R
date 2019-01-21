@@ -11,54 +11,24 @@
 #' IPTreport <-checkdataset(Event = event, Occurrence = occurrence, eMoF = emof, IPTreport = IPTreport, tree = FALSE)
 
 
-checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport = list(), tree = FALSE){
+checkdataset2 = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport = list(), tree = FALSE){
+
+  
+  
+  if (!is.null(IPTreport$Event)) { if (is.data.frame(IPTreport$Event)) {
+    Event <- IPTreport$Event
+  }}
+  if (!is.null(IPTreport$Occurrence)) { if (is.data.frame(IPTreport$Occurrence)) {
+    Occurrence <- IPTreport$Occurrence
+  }}
+  if (!is.null(IPTreport$eMoF)) { if (is.data.frame(IPTreport$eMoF)) {
+    eMoF <- IPTreport$eMoF
+  }}
   
   
   if (is.null(Event)) {rm(Event)}
   if (is.null(eMoF)) {rm(eMoF)}
-  
-  #---------------------------------------------------------------------------#
-  ###                   Fix formatting                                        ####
-  #---------------------------------------------------------------------------#      
-  #### Occurrence fix
-  
-  
-  Occurrence[Occurrence =='NA' | Occurrence =='' | Occurrence ==' '] <- NA
-  Occurrence <- Occurrence[,colSums(is.na(Occurrence))<nrow(Occurrence)]
-  #     Occurrence <- fncols(Occurrence, c("eventDate"))
-  
-  
-  #### Event fix
-  
-  if (  exists("Event") == TRUE  )
-  {
-    Event[Event =='NA' | Event =='' | Event ==' '] <- NA
-    Event <- Event[,colSums(is.na(Event))<nrow(Event)]
-    Event <- fncols(Event, c("parentEventID"))
-    #        Event[Event =='NA' | Event =='' | Event ==' '] <- NA
-    
-    #       Event <- fncols(Event, c("eventDate"))
-  }
-  
-  #### MoF fix
-  
-  if ( exists("eMoF") == TRUE  )
-  { eMoF[eMoF =='NA' | eMoF =='' | eMoF ==' '] <- NA
-  eMoF <- eMoF[,colSums(is.na(eMoF))<nrow(eMoF)]
-  eMoF <- fncols(eMoF, c("occurrenceID", "measurementTypeID","measurementValueID", "measurementValue", "measurementUnitID", "eventID", "measurementUnit"))
-  #       eMoF[eMoF =='NA' | eMoF =='' | eMoF ==' '] <- NA
-  
-  eMoF <- eMoF %>% mutate (measurementTypeID = if_else(str_sub(measurementTypeID, -1, -1)=='/',measurementTypeID, paste(measurementTypeID, "/",  sep = '') ),
-                           measurementValueID = if_else(str_sub(measurementValueID, -1, -1)=='/',measurementValueID, paste(measurementValueID, "/",  sep = ''))
-  ) 
-  
-  if ( exists("Event") == TRUE){
-    eMoF$eventID <- eMoF$id #eventID column is required in the measurements table.
-  } else {
-    eMoF$occurrenceID <- eMoF$id #occurrenceID column is required in the measurements table.
-  }
-  }
-  
+
   
   
   #----------------------------------------------------------------------------#
@@ -99,9 +69,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                   group_by(type, measurementType,  measurementTypeID, measurementUnit) %>% summarize(count = n(), minValue = min(measurementValue), maxValue = max(measurementValue) ) %>% ungroup() %>%
                                                   left_join(BODCparameters, by = c("measurementTypeID"="uri")) %>%
                                                   select (type, measurementType, minValue,  maxValue, measurementUnit,  count,  standardunit, preflabel, definition))
-      #IPTreport$mofsummary$minValue <- format(IPTreport$mofsummary$minValue, digits=2) 
-      #IPTreport$mofsummary$maxValue <- format(IPTreport$mofsummary$maxValue, digits=2) 
-      
+
       
       IPTreport$mofsummary_values <- eMoF %>% filter(!is.na(measurementValueID)) %>% mutate(type = if_else(is.na(occurrenceID) , "EventMoF", "OccurrenceMoF" )) %>% 
         group_by(type, measurementType, measurementValue, measurementValueID) %>% summarize(count = n()) %>% ungroup() %>%
@@ -128,7 +96,6 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     if (  exists("eMoF")){
       mof.ev_check_id <- check_extension_eventids(Event,eMoF)  # Checks the all eventIDs in your eMoF extentsion  link to the event Core
-      
       
       
       if ( sum(is.na(eMoF$occurrenceID)) != nrow(eMoF)  ){
@@ -166,11 +133,15 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   ####                    Tree structure                               ####
   #-----------------------------------------------------------------------#
   
-  if ( exists("Event") &  exists("eMoF")  & tree == "yes" ) {if ( nrow(ev_check_id) == 0 & nrow(mof.oc_check_id) ==0 & nrow(mof.oc.ev_check_id) ==0 &
-                                                                  nrow(mof.ev_check_id) ==0) {
-    IPTreport$tree <- treeStructure(Event, Occurrence, eMoF)
-  } 
-  }
+  if ( exists("Event") &  exists("eMoF")  & tree == "yes" ) {if ( if(exists("ev_check_id") ){nrow(ev_check_id) == 0} & 
+                                                                if(exists("mof.oc_check_id") ){nrow(mof.oc_check_id) ==0} & 
+                                                                if(exists("mof.oc.ev_check_id") ){nrow(mof.oc.ev_check_id) ==0} &
+                                                                if(exists("mof.ev_check_id") ){nrow(mof.ev_check_id) ==0} ) {
+  
+      tryCatch({IPTreport$tree <- treeStructure(Event, Occurrence, eMoF)}, error = function(x){print("tree gives error")})
+    } 
+    }
+  
   
   
   
@@ -289,7 +260,6 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   #-----------------------------------------------------------------------#
   ####                    QC checks                                    ####
   #-----------------------------------------------------------------------#
-  
   
   
   # QC checks - Check if all required fields are there  ---------------------------------

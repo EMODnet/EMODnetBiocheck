@@ -12,7 +12,7 @@ loopfitnessandqc <- function (links) {
 
   for (link in links) {
     
-    out <- assesfitnessandqc(link)
+   out <- assesfitnessandqc(link)
 
   
 

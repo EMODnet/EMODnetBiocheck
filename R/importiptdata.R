@@ -25,7 +25,7 @@ dwca_cache$delete_all()
 
 tryCatch(
   {out <- dwca_read(file, read = TRUE)}, 
-  error=function(x) {"Link does not resolve to a public IPT resource"}
+  error=function(x) { print("Link does not resolve to a public IPT resource")}
 )
 
 if (exists("out") == FALSE) {

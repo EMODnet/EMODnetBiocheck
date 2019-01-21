@@ -18,9 +18,6 @@ loopcheckIPTdataset = function(x, tree = FALSE){
   
   for(i in names(x)) {
 
-    #empty workspace again
-    rm(list=setdiff(ls(), c("x", "i", "j", "BODC", "fncols", "getPackage", "obisqc", "tree")))
-
     ## create the export folder
     if (file.exists(names(x[i]))){
       setwd(file.path(getwd()))
