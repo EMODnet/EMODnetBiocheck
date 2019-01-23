@@ -151,12 +151,12 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   #-----------------------------------------------------------------------#
   
   if (  exists("eMoF")){
-    mof_noUnit <- c('N', 'NA', 'Dimensionless', 'Dmnless', '', ' ') # add values to the list if there refer to 'no unit'
+    mof_noUnit <- c('N', 'NA', 'Dimensionless', 'Dmnless', '', ' ') # add values to the list if they refer to 'no unit'
     
     mof_oc_noTypeID <- eMoF %>% filter (!is.na(occurrenceID), is.na(measurementTypeID) ) %>% select (measurementType, measurementUnit) %>% mutate(IDlink = 'occurrence', message = 'measurementtypeID is missing') %>% group_by (IDlink,measurementType, measurementUnit, message) %>% summarize(count = n())
     
     mof_noValueID <- eMoF %>%
-      filter ((is.na(measurementUnit) | (measurementUnit %in% mof_noUnit)  | measurementUnitID == "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/") &
+      filter ((is.na(measurementUnit) | (measurementUnit %in% mof_noUnit)  | measurementUnitID == "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/" | measurementUnitID == "http://vocab.nerc.ac.uk/collection/P06/current/XXXX/") &
                 is.na(measurementValueID) & (!measurementType %in% c("count") & !measurementTypeID %in% BODCnomofvalues)) %>%
       mutate(IDlink = if_else(!is.na(occurrenceID),"occurrence", "event") ) %>%
       mutate(message = 'measurementValues which may need a measurementValueID') %>%  group_by (IDlink, measurementType, measurementValue, message) %>% summarize(count = n()) %>% arrange (desc(measurementType))

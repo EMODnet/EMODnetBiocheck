@@ -58,7 +58,7 @@ for (i in DataVariables) {
 }
 
 ### to add other un-R-ly codes
-lables <- gsub(" |%|[[]|[]]|#", ".", lables) 
+lables <- gsub(" |%|[[]|[]]|#|/", ".", lables) 
 
 parameters <- data.frame(lables, P01s, P06s, stringsAsFactors = FALSE)
 
@@ -79,7 +79,6 @@ cdiconvert <- list(
    datasetName = "EDMED.references",
    datasetName2 =  "Data.set.name",
    eventDate = "yyyy.mm.ddThh.mm.ss.sss",
-   eventID3 = "LOCAL_CDI_ID",
    locationID =  "Station.name"  ,
    locality = "Station",
    decimalLongitude = "Longitude..degrees_east.",
@@ -99,14 +98,15 @@ df2<- obistools::map_fields(df, convertnames)
 
 
 df2 <- df2 %>% fncols(unique(c(names(convertnames), p01todwc$dwc))) %>% 
-                                mutate (institutionCode = if_else(is.na(institutionCode), institutionCode2, institutionCode3),
+                                mutate (institutionCode = if_else(!is.na(institutionCode),institutionCode, 
+                                                                  if_else(!is.na(institutionCode2),institutionCode2, institutionCode3)),
                                         datasetName = if_else(is.na(datasetName), datasetName2, datasetName),
                                         basisOfRecord = basisOfRecord,
                                         eventDate = if_else (grepl("T00:00:00.000", eventDate),leftfrom(eventDate, "T00:00:00.000", 1),
                                                              if_else (grepl("00.000", eventDate), leftfrom(eventDate, "00.000", 1), eventDate)),      
                                         eventID = if_else (is.na(eventID) & !is.na(eventID2),eventID2,
                                                         if_else (!is.na(parentEventID), parentEventID,
-                                                                 if_else(!is.na(eventID3), eventID3,
+                                                                 if_else(!is.na(LOCAL_CDI_ID), LOCAL_CDI_ID,
                                                         eventID))),
                                         parentEventID = if_else(!is.na(parentEventID) & parentEventID!=eventID, parentEventID, "NA"),
                                         occurrenceStatus = if_else(is.na(occurrenceStatus) | as.integer(occurrenceStatus) == "1", "present",
@@ -132,7 +132,7 @@ df2 <- df2 %>% fncols(unique(c(names(convertnames), p01todwc$dwc))) %>%
 ####                    create occurrence table                                   ####
 #------------------------------------------------------------------------------------#
 
-suppressWarnings(Occurrence <- df2 %>% select (one_of(obistools::occurrence_fields())))
+suppressWarnings(Occurrence <- df2 %>% select (one_of(obistools::occurrence_fields()), LOCAL_CDI_ID))
 
 Occurrence$id = Occurrence$occurrenceID
 
@@ -148,9 +148,9 @@ Occurrence$id = Occurrence$occurrenceID
 parametersforemof <- parameters %>% filter (!P01s %in% p01todwc$P01s) 
 
 
-df3 <- df2 %>% select(occurrenceID, Instrument.Info, parametersforemof$lables)
+df3 <- df2 %>% select(occurrenceID, LOCAL_CDI_ID, Instrument.Info, parametersforemof$lables)
 
-emof <- cleandataframe(data.table::melt (df3, id.vars="occurrenceID", factorsAsStrings = FALSE)) %>% 
+emof <- cleandataframe(data.table::melt (df3, id.vars=c("occurrenceID","LOCAL_CDI_ID"), factorsAsStrings = FALSE)) %>% 
  filter(!is.na(value) & value != "" )  %>% 
   rename (measurementType=variable, measurementValue=value ) %>%
   left_join(parametersforemof, by =c("measurementType" = "lables")) %>% 
@@ -158,7 +158,7 @@ emof <- cleandataframe(data.table::melt (df3, id.vars="occurrenceID", factorsAsS
       measurementTypeID = paste0("http://vocab.nerc.ac.uk/collection/P01/current/",P01s, "/"),
       measurementUnitID = if_else(!is.na(P06s),paste0("http://vocab.nerc.ac.uk/collection/P06/current/",P06s, "/"),"http://vocab.nerc.ac.uk/collection/P06/current/XXXX/"), 
       measurementTypeID = if_else(measurementType == "Instrument.Info", "http://vocab.nerc.ac.uk/collection/Q01/current/Q0100002/", measurementTypeID),
-      measurementValueID = if_else(measurementType == "Instrument.Info", paste0("http://vocab.nerc.ac.uk/collection/L22/current/",midstring(measurementValue, first="L22::", last ="L22::", n=5, m=12), "/"), "NA")
+      measurementValueID = if_else(measurementType == "Instrument.Info", paste0("http://vocab.nerc.ac.uk/collection/L22/current/",midstring(measurementValue, first="L22::", last ="L22::", n=5, m=12), "/"), "")
       ) %>% 
   select (-P01s, -P06s ) %>% 
   left_join(EMODnetBiocheck::BODCunits %>% select (uri,  measurementUnit=altLabel), by =c("measurementUnitID" = "uri")) %>%
@@ -171,7 +171,7 @@ emof <- cleandataframe(data.table::melt (df3, id.vars="occurrenceID", factorsAsS
 output <- list()
 output$Occurrence <- cleandataframe(Occurrence) %>% mutate (decimalLatitude = as.numeric(decimalLatitude) , 
                                             decimalLongitude = as.numeric(decimalLongitude))
-output$eMoF <- cleandataframe(emof)
+output$eMoF <- cleanemof(emof)
 
 return (output)
 }

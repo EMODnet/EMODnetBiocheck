@@ -64,13 +64,23 @@ cleandataframe <- function (x, vector = TRUE) {
 #' @export
 
 cleanemof <- function (x) {
-  x <- x %>% fncols(c("occurrenceID", "measurementTypeID","measurementValueID", "measurementValue", "measurementUnitID", "eventID", "measurementUnit")) %>%
-    mutate (measurementTypeID =  if_else(str_sub(measurementTypeID, -1, -1)=='/',measurementTypeID, paste(measurementTypeID, "/",  sep = '')) ,
-            measurementValueID =  if_else(str_sub(measurementValueID, -1, -1)=='/',measurementValueID, paste(measurementValueID, "/",  sep = '')),
-            measurementUnitID =  if_else(str_sub(measurementUnitID, -1, -1)=='/',measurementUnitID, paste(measurementUnitID, "/",  sep = '')))
   
+  x <- x %>% fncols(c("occurrenceID", "measurementTypeID","measurementValueID", "measurementValue", "measurementUnitID", "eventID", "measurementUnit")) %>%
+      mutate (
+      measurementTypeID = if_else (!is.na(measurementTypeID) & measurementTypeID != "" ,
+               if_else(str_sub(measurementTypeID, -1, -1)=='/',measurementTypeID, paste(measurementTypeID, "/",  sep = '')),
+               measurementTypeID) ,
+      measurementValueID = if_else (!is.na(measurementValueID) & measurementValueID!="",
+                if_else(str_sub(measurementValueID, -1, -1)=='/',measurementValueID, paste(measurementValueID, "/",  sep = '')),
+               measurementValueID),
+      measurementUnitID = if_else (!is.na(measurementUnitID) & measurementUnitID!="",
+                if_else(str_sub(measurementUnitID, -1, -1)=='/',measurementUnitID, paste(measurementUnitID, "/",  sep = '')),
+               measurementUnitID)
+      )
+  x[x =='NA' | x =='' | x ==' '] <- NA
   return(x)
 }
+
 
 
 #' convert IPT names to vector
