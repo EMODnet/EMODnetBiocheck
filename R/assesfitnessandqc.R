@@ -15,7 +15,7 @@ output <- importiptdata (link)
 if (is.null(output$error)) {
 fitness <- assessfitness (output=output)
 
-IPTreport <- checkdataset2(IPTreport=output)
+IPTreport <- checkdataset(IPTreport=output)
 
 if (!is.null(IPTreport$dtb$eventerror_table)) {
   occevents <- IPTreport$dtb$eventerror_table %>% inner_join(output$Occurrence, by = "eventID") %>% select (occurrenceID)

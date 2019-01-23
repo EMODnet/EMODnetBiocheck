@@ -44,6 +44,11 @@ BODCquantity <- c('http://vocab.nerc.ac.uk/collection/P01/current/SDBIOL07/',
 
 
 
+p01todwc <- data.frame(P01s = c("SNANID01", "SCNAME01", "SSAMID01", "SAMPPROT", "SAMPID01", "MAXWDIST", "MINWDIST", "PRESABS1", "EVNTID01"),
+                       dwc  = c("scientificNameID", "scientificName", "eventID" ,"samplingProtocol", "parentEventID","maximumDepthInMeters", "minimumDepthInMeters", "occurrenceStatus", "eventID2"),
+                       stringsAsFactors = FALSE)
+
+
 use_data(BODCunits, overwrite = TRUE)
 use_data(BODCvalues, overwrite = TRUE)
 use_data(BODCparameters, overwrite = TRUE)
@@ -52,5 +57,5 @@ use_data(BODCbiometrics, overwrite = TRUE)
 use_data(BODCeffort, overwrite = TRUE)
 use_data(BODCinstrument, overwrite = TRUE)
 use_data(BODCquantity, overwrite = TRUE)
-
+use_data(p01todwc, overwrite = TRUE)
 

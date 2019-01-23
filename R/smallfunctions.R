@@ -95,3 +95,17 @@ NamesToVector = function (x) {
 }
 
 
+#' find and select charcters in a string
+#'
+#' Function and select charcters in a string
+#' @export
+#' @param x mandatory parameter, the input string
+#' @param first mandatory parameter, the character before the text you need
+#' @param last mandatory parameter, the character after the text you need
+#' @param n optional paramter, the offset to first
+#' @param m optional paramter, the offset to last
+
+
+midstring <- function (x, first, last, n=0, m=0) {
+  substring (x, stringr::str_locate(x, first)[[2]] + n, stringr::str_locate(x, last)[[1]] + m )}
+
