@@ -4,7 +4,7 @@
 #' @param data mandatory parameter, name dataframe
 #' @param cname mandatory parameter, collumn name
 #' @import RCurl finch dplyr ggplot2
-#' @import knitr leaflet xml2 obistools rmarkdown
+#' @import knitr leaflet xml2 obistools rmarkdown stringr
 #' @importFrom data.table dcast
 #' @importFrom stringr str_sub
 #' @export
@@ -24,11 +24,25 @@ substrRight <- function(x, n){
   substr(x, nchar(x)-n+1, nchar(x))
 }
 
+
+substrLeft <- function(x, n){
+  substr(x, 1, n)
+}
+
+
+
 #' get the rightmost characters from a string
 #' @export
 
 richtfrom <- function(x, y, n = 0) {
   substrRight(x, nchar(x)-stringr::str_locate(x, y)[1] - n)
+}
+
+#' get the characters left from some chars in a string
+#' @export
+
+leftfrom <- function(x, y, n = 0) {
+  substr(x, 1, stringr::str_locate(x, y)[1] - n)
 }
 
 

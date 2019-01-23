@@ -75,7 +75,7 @@ df <-read.delim(file, skip = commentlines, colClasses = "character", na.strings 
 cdiconvert <- list(
    institutionCode = "Originator",
    institutionCode2 = "Data.Holding.centre",
-   institutionCode2 = "EDMO_code",
+   institutionCode3 = "EDMO_code",
    datasetName = "EDMED.references",
    datasetName2 =  "Data.set.name",
    eventDate = "yyyy.mm.ddThh.mm.ss.sss",
@@ -99,9 +99,11 @@ df2<- obistools::map_fields(df, convertnames)
 
 
 df2 <- df2 %>% fncols(unique(c(names(convertnames), p01todwc$dwc))) %>% 
-                                mutate (institutionCode = if_else(is.na(institutionCode), institutionCode2, institutionCode),
+                                mutate (institutionCode = if_else(is.na(institutionCode), institutionCode2, institutionCode3),
                                         datasetName = if_else(is.na(datasetName), datasetName2, datasetName),
                                         basisOfRecord = basisOfRecord,
+                                        eventDate = if_else (grepl("T00:00:00.000", eventDate),leftfrom(eventDate, "T00:00:00.000", 1),
+                                                             if_else (grepl("00.000", eventDate), leftfrom(eventDate, "00.000", 1), eventDate)),      
                                         eventID = if_else (is.na(eventID) & !is.na(eventID2),eventID2,
                                                         if_else (!is.na(parentEventID), parentEventID,
                                                                  if_else(!is.na(eventID3), eventID3,
@@ -132,7 +134,6 @@ df2 <- df2 %>% fncols(unique(c(names(convertnames), p01todwc$dwc))) %>%
 
 suppressWarnings(Occurrence <- df2 %>% select (one_of(obistools::occurrence_fields())))
 
-Occurrence <- EMODnetBiocheck::cleandataframe(Occurrence)
 Occurrence$id = Occurrence$occurrenceID
 
 #------------------------------------------------------------------------------------#
@@ -149,7 +150,9 @@ parametersforemof <- parameters %>% filter (!P01s %in% p01todwc$P01s)
 
 df3 <- df2 %>% select(occurrenceID, Instrument.Info, parametersforemof$lables)
 
-emof <- data.table::melt (df3, id.vars="occurrenceID", factorsAsStrings = FALSE) %>% rename (measurementType=variable, measurementValue=value ) %>%
+emof <- cleandataframe(data.table::melt (df3, id.vars="occurrenceID", factorsAsStrings = FALSE)) %>% 
+ filter(!is.na(value) & value != "" )  %>% 
+  rename (measurementType=variable, measurementValue=value ) %>%
   left_join(parametersforemof, by =c("measurementType" = "lables")) %>% 
     mutate(
       measurementTypeID = paste0("http://vocab.nerc.ac.uk/collection/P01/current/",P01s, "/"),
@@ -166,9 +169,9 @@ emof <- data.table::melt (df3, id.vars="occurrenceID", factorsAsStrings = FALSE)
 
 
 output <- list()
-output$Occurrence <- Occurrence %>% mutate (decimalLatitude = as.numeric(decimalLatitude) , 
+output$Occurrence <- cleandataframe(Occurrence) %>% mutate (decimalLatitude = as.numeric(decimalLatitude) , 
                                             decimalLongitude = as.numeric(decimalLongitude))
-output$eMoF <- emof
+output$eMoF <- cleandataframe(emof)
 
 return (output)
 }
