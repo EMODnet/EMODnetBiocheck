@@ -11,7 +11,7 @@
 #' IPTreport <-checkdataset(Event = event, Occurrence = occurrence, eMoF = emof, IPTreport = IPTreport, tree = FALSE)
 
 
-checkdataset2 = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport = list(), tree = FALSE){
+checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport = list(), tree = FALSE){
 
   
   
