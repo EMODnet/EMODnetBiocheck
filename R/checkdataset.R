@@ -133,14 +133,16 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   ####                    Tree structure                               ####
   #-----------------------------------------------------------------------#
   
-  if ( exists("Event") &  exists("eMoF")  & tree == "yes" ) {if ( if(exists("ev_check_id") ){nrow(ev_check_id) == 0} & 
-                                                                if(exists("mof.oc_check_id") ){nrow(mof.oc_check_id) ==0} & 
-                                                                if(exists("mof.oc.ev_check_id") ){nrow(mof.oc.ev_check_id) ==0} &
-                                                                if(exists("mof.ev_check_id") ){nrow(mof.ev_check_id) ==0} ) {
+  if ( exists("Event") &  exists("eMoF")  & tree == "yes" ) 
+   if ( if(exists("ev_check_id") ){nrow(ev_check_id) == 0} & 
+                                                                  if(exists("mof.oc_check_id") ){nrow(mof.oc_check_id) ==0} & 
+                                                                  if(exists("mof.oc.ev_check_id") ){nrow(mof.oc.ev_check_id) ==0} &
+                                                                  if(exists("mof.ev_check_id") ){nrow(mof.ev_check_id) ==0} ) {
+   tryCatch({IPTreport$tree <- treeStructure(Event, Occurrence, eMoF)}, error = function(x){print("tree gives error")})
   
-      tryCatch({IPTreport$tree <- treeStructure(Event, Occurrence, eMoF)}, error = function(x){print("tree gives error")})
-    } 
-    }
+    
+  }
+  
   
   
   
