@@ -126,7 +126,8 @@ df2 <- df2 %>% fncols(unique(c(names(convertnames), p01todwc$dwc))) %>%
 #------------------------------------------------------------------------------------#
 
 # should we create this?
-
+## we should (see example where 2 different sampling area's are associated to the same sample / event. Use list at http://vocab.nerc.ac.uk/collection/S25/current/BE007117/ to distinghuish between event and occurrence MoFs. This needs to make use of an on the fly scipt reading BODC vocab? ( 
+  
 
 #------------------------------------------------------------------------------------#
 ####                    create occurrence table                                   ####
