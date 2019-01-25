@@ -58,7 +58,7 @@ skossxmlinfo <- function (skossxml) {
 skossxmlrelations <- function (skossxml) {
   
   for (x in 1:length(skossxml)) {
-    for (j in skossrelations) {
+    for (j in skossconcepts) {
       options(stringsAsFactors = FALSE)
       templ <- xml2::xml_find_all(skossxml[x],paste0(".//",j))
       tempid <- xml2::xml_attr(skossxml[x], "about")
