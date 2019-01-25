@@ -74,5 +74,25 @@ P01 <- P01 %>% inner_join(links, by ="uri") } else {P01}
 
 
 
+X <- "http://vocab.nerc.ac.uk/collection/S25/current/BE007117/"
+
+x <- xml2::read_xml(X)
+concept <- xml2::xml_find_all(x, ".//skos:Concept")
+
+l <- lapply(concept, function(term) {
+  element <- xml2::as_list(term)
+  return(list(
+    identifier = unlist(element$identifier),
+    preflabel = unlist(element$prefLabel),
+    deprecated = unlist(element$deprecated),
+    uri = xml2::xml_attr(term, "about")))})
+
+narrower <- xml2::xml_find_all(concept,".//skos:narrower")
+narrower <- dplyr::bind_rows(lapply(xml2::xml_attrs(narrower), function(x) data.frame(as.list(x), stringsAsFactors=FALSE)))
+
+
+
+
+
 
 
