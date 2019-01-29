@@ -65,8 +65,30 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   }
   
   if (exists("eMoF")) {
-      parameters <- suppressWarnings(getunitsandparams(vocid = unique(eMoF$measurementTypeID), vocabs ="P01|Q01"))
-      values <- bind_rows(getskossxmldata(vocid = unique(eMoF$measurementValueID), vocabs ="S10|S11|L22|L05|M20|M21|M22|M23|C35|C17")$terminfos, eunishabitats)
+      
+      parastolookup <- (eMoF %>% select (measurementTypeID) %>% distinct() %>% filter(!measurementTypeID %in% BODCparameters$uri))$measurementTypeID
+      
+      suppressWarnings(
+      if(length(parastolookup[!is.na(parastolookup)&parastolookup!=""])>0){
+      parastolookedup <- suppressWarnings(getunitsandparams(vocid = parastolookup, vocabs ="P01|Q01"))
+      parameters <- bind_rows(BODCparameters, parastolookedup)
+          } else { parameters <- BODCparameters}
+      )
+      
+      #parameters <- suppressWarnings(getunitsandparams(vocid = unique(eMoF$measurementTypeID), vocabs ="P01|Q01"))
+      
+      
+      valuestolookup <- (eMoF %>% select (measurementValueID) %>% distinct() %>% filter(!measurementValueID %in% BODCvalues$uri))$measurementValueID
+      
+      suppressWarnings(
+      if(length(valuestolookup[!is.na(valuestolookup)&valuestolookup!=""])>0){
+        valuestolookedup <- suppressWarnings(getskossxmldatainfo(vocid = valuestolookup, vocabs ="S10|S11|L22|L05|M20|M21|M22|M23|C35|C17"))
+        values <- bind_rows(BODCvalues, valuestolookedup)
+      } else { values <- BODCvalues}
+      )
+      #values <- suppressWarnings(getskossxmldatainfo(vocid = unique(eMoF$measurementValueID), vocabs ="S10|S11|L22|L05|M20|M21|M22|M23|C35|C17"))
+      
+      
       IPTreport$mofsummary <-  suppressWarnings(eMoF %>% mutate(type = if_else(is.na(occurrenceID) , "EventMoF", "OccurrenceMoF" ), measurementValue =  as.numeric(measurementValue)) %>% 
                                                   group_by(type, measurementType,  measurementTypeID, measurementUnit) %>% summarize(count = n(), minValue = min(measurementValue), maxValue = max(measurementValue) ) %>% ungroup() %>%
                                                   left_join(parameters , by = c("measurementTypeID"="uri")) %>%

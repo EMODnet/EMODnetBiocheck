@@ -59,5 +59,6 @@ use_data(BODCinstrument, overwrite = TRUE)
 use_data(BODCquantity, overwrite = TRUE)
 use_data(p01todwc, overwrite = TRUE)
 use_data(skossconcepts, overwrite = TRUE)
+use_data(eunishabitats, overwrite = TRUE)
 
 
