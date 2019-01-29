@@ -21,7 +21,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   }}
   if (!is.null(IPTreport$Occurrence)) { if (is.data.frame(IPTreport$Occurrence)) {
     Occurrence <- IPTreport$Occurrence
-  }}
+      }}
   if (!is.null(IPTreport$eMoF)) { if (is.data.frame(IPTreport$eMoF)) {
     eMoF <- IPTreport$eMoF
   }}
@@ -325,6 +325,12 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   # QC checks - Check coordinates  ---------------------------------
   
   if (  exists("Event")) {
+    
+    if ("decimalLongitude" %in% names(Event)) {
+      suppressWarnings(ev_flat$decimalLongitude <- as.numeric(ev_flat$decimalLongitude))
+      suppressWarnings(ev_flat$decimalLatitude <- as.numeric(ev_flat$decimalLatitude))
+    }
+    
     GoodCords <- suppressWarnings(ev_flat %>% fncols(c("minimumDepthInMeters", "maximumDepthInMeters", "coordinateUncertaintyInMeters")) %>% 
                                     select (-coordinateUncertaintyInMeters) %>%
                                     filter (decimalLatitude < 90, decimalLatitude > -90, !is.na(decimalLatitude),
@@ -332,7 +338,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                     inner_join(Event %>% select (eventID, one_of(c("coordinateUncertaintyInMeters"))), by = "eventID") %>%  
                                     select (eventID,decimalLatitude, decimalLongitude, one_of (c("coordinateUncertaintyInMeters")), minimumDepthInMeters, maximumDepthInMeters)) 
     
-    
+    if (nrow(GoodCords)>0){
+      
     OnLand <- suppressWarnings(check_onland(GoodCords, buffer = 3000))
     
     depth <- tryCatch({suppressWarnings(check_depth(GoodCords %>% filter (!is.na(minimumDepthInMeters) | !is.na(!maximumDepthInMeters)), depthmargin = 150))},
@@ -385,14 +392,23 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     
     eventerror <- bind_rows(eventerror, coord_rep, Cords00_rep)
+  } 
+  } else 
+    {
     
-  } else {
+  if ("decimalLongitude" %in% names(Occurrence)) {
+      suppressWarnings(Occurrence$decimalLongitude <- as.numeric(Occurrence$decimalLongitude))
+      suppressWarnings(Occurrence$decimalLatitude <- as.numeric(Occurrence$decimalLatitude))
+    }
+    
     
     GoodCords <- suppressWarnings(Occurrence %>%fncols(c("minimumDepthInMeters", "maximumDepthInMeters"))  %>% 
                                     filter (decimalLatitude < 90, decimalLatitude > -90, !is.na(decimalLatitude),
                                             decimalLongitude < 180, decimalLongitude > -180, !is.na(decimalLongitude)) %>%
                                     select (occurrenceID,decimalLatitude, decimalLongitude, one_of (c("coordinateUncertaintyInMeters")), minimumDepthInMeters, maximumDepthInMeters))
     
+    
+    if (nrow(GoodCords)>0){
     OnLand <- suppressWarnings(check_onland(GoodCords, buffer = 3000))
     
     depth <- tryCatch({suppressWarnings(check_depth(GoodCords %>% filter (!is.na(minimumDepthInMeters) | !is.na(!maximumDepthInMeters)), depthmargin = 150))},
@@ -423,11 +439,11 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     occurrenceerror <- bind_rows(occurrenceerror, coord_rep, Cords00_rep)  
     
     
-  }   
+    } }  
   
+  if (exists("plot_coordinates")){
   IPTreport$plot_coordinates <- plot_coordinates
-  
-  
+  }
   
   
   # QC checks - Check dates against the ISO format  ---------------------------------
@@ -531,7 +547,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     IPTreport$dtb$taxa <- Occurrence %>% group_by (scientificName, scientificNameID) %>% summarise(count = n()) %>% 
       left_join(reversedmatch, by = c("scientificNameID" = "lsid"))
     
-    if (exists ("Event")) { 
+    if (exists ("Event") & exists ("plot_coordinates") ) { 
       IPTreport$MarTaxaonLand <- IPTreport$dtb$taxa %>% ungroup() %>% filter (isMarine == 1 & (isBrackish == 0 | is.na(isBrackish))  &  (isFreshwater == 0 | is.na(isFreshwater)) & (isTerrestrial == 0 | is.na(isTerrestrial)) ) %>% inner_join (fncols(Occurrence, c("occurrenceStatus")) %>%  filter (is.na(occurrenceStatus) | occurrenceStatus == 'present' ), by = c("scientificNameID"), suffix = c("", "_orig")) %>% filter (eventID %in% (OnLand$eventID))
       #    IPTreport$nonMartaxaonAtSea <- IPTreport$dtb$taxa %>%  ungroup() %>% filter (isMarine == 0 & isBrackish == 0) %>% inner_join (Occurrence, by = c("scientificNameID")) %>% filter (!eventID %in% (OnLand$eventID))
       IPTreport$plot_coordinates <- IPTreport$plot_coordinates %>% mutate (quality = if_else ((eventID %in% IPTreport$MarTaxaonLand$eventID), 'Marine Taxa on Land', quality))
@@ -543,7 +559,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       
       occurrenceerror <- rbind(occurrenceerror, occ_onland)                                     
       
-    } else {
+    } else if (exists ("plot_coordinates")) {
       
       IPTreport$MarTaxaonLand <- IPTreport$dtb$taxa %>% ungroup() %>% filter (isMarine == 1 & (isBrackish == 0 | is.na(isBrackish))  &  (isFreshwater == 0 | is.na(isFreshwater)) & (isTerrestrial == 0 | is.na(isTerrestrial)) ) %>% inner_join (OnLand %>% select (occurrenceID) %>% inner_join (fncols(Occurrence, c("occurrenceStatus")) %>%  filter (is.na(occurrenceStatus) | occurrenceStatus == 'present' ), by =c("occurrenceID"),  suffix = c("", "_orig")) %>% select (occurrenceID, scientificNameID ), by = c("scientificNameID"))
       #    IPTreport$nonMartaxaonAtSea <- IPTreport$dtb$taxa %>%  ungroup() %>% filter (isMarine == 0 & isBrackish == 0) %>% filter (!scientificNameID %in% (OnLand$scientificNameID))
