@@ -16,7 +16,7 @@ checkIPTdataset = function(link, tree = FALSE){
   
   if (is.null(output$error)) {
    
-    IPTreport <- checkdataset(IPTreport=output, tree = tree)
+  suppressWarnings(IPTreport <- checkdataset(IPTreport=output, tree = tree))
 
       }
   else {

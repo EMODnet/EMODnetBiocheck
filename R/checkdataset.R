@@ -392,9 +392,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     
     eventerror <- bind_rows(eventerror, coord_rep, Cords00_rep)
-  } 
-  } else 
-    {
+    
+  }   } else {
     
   if ("decimalLongitude" %in% names(Occurrence)) {
       suppressWarnings(Occurrence$decimalLongitude <- as.numeric(Occurrence$decimalLongitude))
