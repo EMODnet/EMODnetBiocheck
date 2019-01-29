@@ -6,7 +6,7 @@
 #' @param eMoF optional parameter, the name of the mof or emof file
 #' @param IPTreport optional parameter, in case you want to append the result to an existing listfile
 #' @param tree optional parameter, takes value yes if you want the QC report to include the OBIS tree hierachy
-#' @import skossxml
+#' @import skosxml
 #' @export
 #' @examples
 #' IPTreport <-checkdataset(Event = event, Occurrence = occurrence, eMoF = emof, IPTreport = IPTreport, tree = FALSE)
