@@ -125,10 +125,14 @@ df2 <- df2 %>% fncols(unique(c(names(convertnames), p01todwc$dwc))) %>%
 ####                    create event core                                         ####
 #------------------------------------------------------------------------------------#
 
-# should we create this?
-## we should (see example where 2 different sampling area's are associated to the same sample / event. Use list at http://vocab.nerc.ac.uk/collection/S25/current/BE007117/ to distinghuish between event and occurrence MoFs. This needs to make use of an on the fly scipt reading BODC vocab? ( 
-  
+event <- df2 %>% select (one_of(obistools::event_fields()), LOCAL_CDI_ID) %>% distinct()
 
+if(length(unique(event$eventID) != nrow(event))) { print("Critical integrety issue: the eventIDs are not unique")
+  } else {
+
+#event <- bind_rows(event, event %>% select (parenteventID, type="sample")) <- somehow the event hierarchy (<- after rebuilding the ODV format)
+  
+  
 #------------------------------------------------------------------------------------#
 ####                    create occurrence table                                   ####
 #------------------------------------------------------------------------------------#
@@ -145,8 +149,12 @@ Occurrence$id = Occurrence$occurrenceID
 
 # terms to examine later maybe combine with instrument.info for cleaner code: 
 # Bot..Depth..m,   Cruise 
+# the 
 
 parametersforemof <- parameters %>% filter (!P01s %in% p01todwc$P01s) 
+#occparametersforemof <- parametersforemof %>% filter(P01s %in% getrelatedterms("http://vocab.nerc.ac.uk/collection/S25/current/BE007117/")$termrelation %>% filter (relation == "narrower"))$resource)
+
+
 
 
 df3 <- df2 %>% select(occurrenceID, LOCAL_CDI_ID, Instrument.Info, parametersforemof$lables)
@@ -177,4 +185,4 @@ output$eMoF <- cleanemof(emof)
 return (output)
 }
 
-
+}

@@ -41,11 +41,12 @@ The R functions are available from the EMODnet github repository at https://gith
 
 ## Installation
 
-Installing `EMODnetBiocheck` requires the `devtools` and `obistools` package:
+Installing `EMODnetBiocheck` requires the `devtools`, `skosxml` and `obistools` packages:
 
 ```R
 install.packages("devtools")
 devtools::install_github("iobis/obistools")
+devtools::install_github("EMODnet/skosxml")
 devtools::install_github("EMODnet/EMODnetBiocheck")
 ```
 

@@ -6,6 +6,7 @@
 #' @param eMoF optional parameter, the name of the mof or emof file
 #' @param IPTreport optional parameter, in case you want to append the result to an existing listfile
 #' @param tree optional parameter, takes value yes if you want the QC report to include the OBIS tree hierachy
+#' @import skossxml
 #' @export
 #' @examples
 #' IPTreport <-checkdataset(Event = event, Occurrence = occurrence, eMoF = emof, IPTreport = IPTreport, tree = FALSE)
@@ -64,17 +65,18 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   }
   
   if (exists("eMoF")) {
-    
+      parameters <- suppressWarnings(getunitsandparams(vocid = unique(eMoF$measurementTypeID), vocabs ="P01|Q01"))
+      values <- bind_rows(getskossxmldata(vocid = unique(eMoF$measurementValueID), vocabs ="S10|S11|L22|L05|M20|M21|M22|M23|C35|C17")$terminfos, eunishabitats)
       IPTreport$mofsummary <-  suppressWarnings(eMoF %>% mutate(type = if_else(is.na(occurrenceID) , "EventMoF", "OccurrenceMoF" ), measurementValue =  as.numeric(measurementValue)) %>% 
                                                   group_by(type, measurementType,  measurementTypeID, measurementUnit) %>% summarize(count = n(), minValue = min(measurementValue), maxValue = max(measurementValue) ) %>% ungroup() %>%
-                                                  left_join(BODCparameters, by = c("measurementTypeID"="uri")) %>%
+                                                  left_join(parameters , by = c("measurementTypeID"="uri")) %>%
                                                   select (type, measurementType, minValue,  maxValue, measurementUnit,  count,  standardunit, preflabel, definition))
 
       
       IPTreport$mofsummary_values <- eMoF %>% filter(!is.na(measurementValueID)) %>% mutate(type = if_else(is.na(occurrenceID) , "EventMoF", "OccurrenceMoF" )) %>% 
         group_by(type, measurementType, measurementValue, measurementValueID) %>% summarize(count = n()) %>% ungroup() %>%
-        left_join(BODCvalues, by = c("measurementValueID"="uri")) %>%
-        select (type, measurementType, measurementValue,preflabel, definition)
+        left_join(values, by = c("measurementValueID"="uri")) %>%
+        select (type, measurementType, measurementValue, preflabel, definition)
       
   
     
@@ -177,14 +179,14 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
       mof_oc_TypeID_NotResolve <- eMoF %>% filter (!is.na(occurrenceID), !is.na(measurementTypeID) ) %>% 
         select (measurementType, measurementTypeID, measurementUnit) %>% 
-        anti_join(BODCparameters, by = c("measurementTypeID"="uri")) %>%
+        anti_join(parameters, by = c("measurementTypeID"="uri")) %>%
         mutate(IDlink = 'occurrence', message = 'measurementTypeID does not resolve') %>% 
         group_by (IDlink,measurementType, measurementTypeID, measurementUnit, message) %>% summarize(count = n())
       
       mof_oc_ValueID_NotResolve <- eMoF %>% 
         filter (!is.na(occurrenceID), !is.na(measurementValueID) ) %>% 
         select (measurementValue, measurementValueID) %>% 
-        anti_join(BODCvalues, by = c("measurementValueID"="uri")) %>%
+        anti_join(values, by = c("measurementValueID"="uri")) %>%
         mutate(IDlink = 'occurrence', message = 'measurementValueID does not resolve') %>% 
         group_by (IDlink,measurementValue, measurementValueID, message) %>% summarize(count = n())
     
@@ -192,7 +194,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     mof_ValueNull <- eMoF %>%
       mutate (level = 'error', field = 'measurementValue', row = row_number(),
-              message = 'MeasurmentValue of Null') %>%
+              message = 'MeasurementValue of Null') %>%
       filter (is.na(measurementValue))  %>% select (level,field, row ,message)
     
     if ( sum(is.na(eMoF$occurrenceID)) != nrow(eMoF)  ){
@@ -225,7 +227,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       
         mof_ev_TypeID_NotResolve <- eMoF %>% filter (!is.na(eventID), is.na(occurrenceID),  !is.na(measurementTypeID) ) %>% 
           select (measurementType, measurementTypeID, measurementUnit) %>% 
-          anti_join(BODCparameters, by = c("measurementTypeID"="uri")) %>%
+          anti_join(parameters, by = c("measurementTypeID"="uri")) %>%
           mutate(IDlink = 'event', message = 'measurementTypeID does not resolve') %>% 
           group_by (IDlink,measurementType, measurementTypeID, measurementUnit, message) %>% summarize(count = n())
         
@@ -233,7 +235,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
         mof_ev_ValueID_NotResolve <- eMoF %>% 
           filter (!is.na(eventID), is.na(occurrenceID), !is.na(measurementValueID) ) %>% 
           select (measurementValue, measurementValueID) %>% 
-          anti_join(BODCvalues, by = c("measurementValueID"="uri")) %>%
+          anti_join(values, by = c("measurementValueID"="uri")) %>%
           mutate(IDlink = 'event', message = 'measurementValueID does not resolve') %>% 
           group_by (IDlink,measurementValue, measurementValueID, message) %>% summarize(count = n())
       }
