@@ -62,3 +62,15 @@ out <-loopfitnessandqc(links)
 out <-loopfitnessandqc(link)
 
 
+
+Event = NULL
+Occurrence = NULL
+eMoF = NULL
+tree = FALSE
+
+require(dplyr)
+require(obistools)
+
+IPTreport <- importiptdata(link)
+IPTreport <- checkdataset(IPTreport = IPTreport)
+
