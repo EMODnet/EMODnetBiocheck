@@ -13,5 +13,5 @@ ODVtoDwC(file)
 converts ODV files exported from ODV to DwC (occurrence and eMoF tables)
 }
 \examples{
-reversetaxmatch(aphiaIDs)
+ODVtoDwC("data_from_collection_MinimumObservationDepth.txt")
 }

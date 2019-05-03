@@ -5,7 +5,7 @@
 #' @import obistools dplyr
 #' @export
 #' @examples
-#' reversetaxmatch(aphiaIDs)
+#' ODVtoDwC("data_from_collection_MinimumObservationDepth.txt")
 
 
 ODVtoDwC <- function (file) {
