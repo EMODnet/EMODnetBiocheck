@@ -70,7 +70,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       
       suppressWarnings(
       if(length(parastolookup[!is.na(parastolookup)&parastolookup!=""])>0){
-      parastolookedup <- suppressWarnings(getunitsandparams(vocid = parastolookup, vocabs ="P01|Q01"))
+      parastolookedup <- suppressWarnings(getunitsandparams(vocids = parastolookup, vocabs ="P01|Q01"))
       parameters <- bind_rows(BODCparameters, parastolookedup)
           } else { parameters <- BODCparameters}
       )
@@ -636,7 +636,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       mutate (message = (if_else(grepl("is greater than maximum", message, fixed = TRUE),
                                  "Minimum depth is greater than maximum depth" , as.character(message)))) %>% 
       group_by (field, message) %>% summarize(count = n()) %>% 
-      mutate (table = "occurrrence")
+      mutate (table = "occurrence")
   }
   
   if (exists("eMoF")) {if(is.null(emoferror) ==FALSE) {
