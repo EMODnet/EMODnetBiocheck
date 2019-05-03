@@ -97,14 +97,17 @@ convertnames <- setNames(as.list(dfterms),dwcterms)
 df2<- obistools::map_fields(df, convertnames)  
 
 
+
+
 df2 <- df2 %>% fncols(unique(c(names(convertnames), p01todwc$dwc))) %>% 
                                 mutate (institutionCode = if_else(!is.na(institutionCode),institutionCode, 
                                                                   if_else(!is.na(institutionCode2),institutionCode2, institutionCode3)),
                                         datasetName = if_else(is.na(datasetName), datasetName2, datasetName),
                                         basisOfRecord = basisOfRecord,
-                                        eventDate = if_else (grepl("T00:00:00.000", eventDate),leftfrom(eventDate, "T00:00:00.000", 1),
-                                                             if_else (grepl(":00.000", eventDate), leftfrom(eventDate, ":00.000", 1), eventDate)),      
-                                        eventID = if_else (is.na(eventID) & !is.na(eventID2),eventID2,
+                                        eventDate = case_when(
+                                          grepl("T00:00:00.000", eventDate)   ~ leftfrom(eventDate, ":00.000", 7),  #### no Idea why leftfrom(eventDate, "T00:00:00.000", 1) doesn't work :(
+                                          grepl(":00.000", eventDate) ~ leftfrom(eventDate, ":00.000", 1)
+                                        ),  eventID = if_else (is.na(eventID) & !is.na(eventID2),eventID2,
                                                         if_else (!is.na(parentEventID), parentEventID,
                                                                  if_else(!is.na(LOCAL_CDI_ID), LOCAL_CDI_ID,
                                                         eventID))),
