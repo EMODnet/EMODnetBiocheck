@@ -127,7 +127,7 @@ df2 <- df2 %>% fncols(unique(c(names(convertnames), p01todwc$dwc))) %>%
 
 event <- df2 %>% select (one_of(obistools::event_fields()), LOCAL_CDI_ID) %>% distinct()
 
-if(length(unique(event$eventID) != nrow(event))) { print("Critical integrety issue: the eventIDs are not unique")
+if(length(unique(event$eventID)) != nrow(event)) { print("Critical integrety issue: the eventIDs are not unique")
   } else {
 
 #event <- bind_rows(event, event %>% select (parenteventID, type="sample")) <- somehow the event hierarchy (<- after rebuilding the ODV format)
