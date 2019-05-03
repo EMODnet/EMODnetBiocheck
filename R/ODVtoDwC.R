@@ -103,7 +103,7 @@ df2 <- df2 %>% fncols(unique(c(names(convertnames), p01todwc$dwc))) %>%
                                         datasetName = if_else(is.na(datasetName), datasetName2, datasetName),
                                         basisOfRecord = basisOfRecord,
                                         eventDate = if_else (grepl("T00:00:00.000", eventDate),leftfrom(eventDate, "T00:00:00.000", 1),
-                                                             if_else (grepl("00.000", eventDate), leftfrom(eventDate, "00.000", 1), eventDate)),      
+                                                             if_else (grepl(":00.000", eventDate), leftfrom(eventDate, ":00.000", 1), eventDate)),      
                                         eventID = if_else (is.na(eventID) & !is.na(eventID2),eventID2,
                                                         if_else (!is.na(parentEventID), parentEventID,
                                                                  if_else(!is.na(LOCAL_CDI_ID), LOCAL_CDI_ID,
