@@ -2,13 +2,16 @@
 #'
 #' converts ODV files exported from ODV to DwC (occurrence and eMoF tables)
 #' @param file mandatory parameter, the location of the .txt file you want to convert
+#' @param ignore_eventerror optional parameter, when the eventID is not unique the script stops, this parameter provides an overwrite
 #' @import obistools dplyr
 #' @export
 #' @examples
 #' ODVtoDwC("data_from_collection_MinimumObservationDepth.txt")
+#' ODVtoDwC("data_from_collection_MinimumObservationDepth.txt", ignore_eventerror = TRUE)
 
 
-ODVtoDwC <- function (file, ignore_eventeror = FALSE) {
+
+ODVtoDwC <- function (file, ignore_eventerror = FALSE) {
 
 options(stringsAsFactors = FALSE) ## should be built in somewhere!
 

@@ -4,14 +4,17 @@
 \alias{ODVtoDwC}
 \title{ODV to DwC}
 \usage{
-ODVtoDwC(file)
+ODVtoDwC(file, ignore_eventerror = FALSE)
 }
 \arguments{
 \item{file}{mandatory parameter, the location of the .txt file you want to convert}
+
+\item{ignore_eventerror}{optional parameter, when the eventID is not unique the script stops, this parameter provides an overwrite}
 }
 \description{
 converts ODV files exported from ODV to DwC (occurrence and eMoF tables)
 }
 \examples{
 ODVtoDwC("data_from_collection_MinimumObservationDepth.txt")
+ODVtoDwC("data_from_collection_MinimumObservationDepth.txt", ignore_eventerror = TRUE)
 }
