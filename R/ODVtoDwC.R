@@ -103,9 +103,9 @@ df2<- obistools::map_fields(df, convertnames)
 
 
 df2 <- df2 %>% fncols(unique(c(names(convertnames), p01todwc$dwc))) %>% 
-                                mutate (institutionCode = if_else(!is.na(institutionCode),institutionCode, 
-                                                                  if_else(!is.na(institutionCode2),institutionCode2, institutionCode3)),
-                                        datasetName = if_else(is.na(datasetName), datasetName2, datasetName),
+                                mutate (institutionCode = if_else(!is.na(institutionCode),substr(institutionCode, 1, 245) , 
+                                                                  if_else(!is.na(institutionCode2),substr(institutionCode2, 1, 245), substr(institutionCode3,1, 245) )),
+                                        datasetName = if_else(is.na(datasetName), substr(datasetName2, 1, 245)  , substr(datasetName, 1, 245)),
                                         basisOfRecord = basisOfRecord,
                                         eventDate = case_when(
                                           grepl("T00:00:00.000", eventDate)   ~ leftfrom(eventDate, ":00.000", 7),  #### no Idea why leftfrom(eventDate, "T00:00:00.000", 1) doesn't work :(
@@ -117,7 +117,7 @@ df2 <- df2 %>% fncols(unique(c(names(convertnames), p01todwc$dwc))) %>%
                                         parentEventID = if_else(!is.na(parentEventID) & parentEventID!=eventID, parentEventID, "NA"),
                                         occurrenceStatus = if_else(is.na(occurrenceStatus) | as.integer(occurrenceStatus) == "1", "present",
                                                         if_else(as.integer(occurrenceStatus) == "0", "absent", occurrenceStatus)),
-                                        occurrenceID = if_else (!is.na(datasetName) ,  paste(institutionCode, datasetName, row_number(), sep = "_"), paste(institutionCode, Cruise, row_number(), sep = "_"))
+                                        occurrenceID = if_else (!is.na(datasetName) ,  paste(substr(institutionCode, 1,50), substr(datasetName, 1, 50), row_number(), sep = "_"), paste(substr(institutionCode,1,50), substr(Cruise, 1 , 50),  row_number(), sep = "_"))
                                 ) %>% select(-institutionCode2,-datasetName2,-eventID2)
 
 ####to does: 
@@ -183,10 +183,12 @@ emof <- cleandataframe(data.table::melt (df3, id.vars=c("occurrenceID","LOCAL_CD
   
 
 
+
+
 output <- list()
 output$Occurrence <- cleandataframe(Occurrence) %>% mutate (decimalLatitude = as.numeric(decimalLatitude) , 
                                             decimalLongitude = as.numeric(decimalLongitude))
-output$eMoF <- cleanemof(emof)
+output$eMoF <- cleanemof(emof) %>% distinct()
 
 return (output)
 }
