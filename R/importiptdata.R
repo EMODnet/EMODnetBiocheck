@@ -33,12 +33,12 @@ if (exists("out") == FALSE) {
   } else  { 
   
   output$name <- names(NamesToVector(file))
-  output$title <- out$emlmeta@dataset@title[[1]]@.Data  
+  output$title <- out$emlmeta$dataset$title$title[[1]]@.Data
   
-  if (length(out$emlmeta@dataset@coverage@temporalCoverage)>0) {
-    for (i in 1:length(out$emlmeta@dataset@coverage@temporalCoverage)) {
-      output$startdate <- c(output$startdate, out$emlmeta@dataset@coverage@temporalCoverage[[i]]@rangeOfDates@beginDate@calendarDate@.Data)
-      output$enddate <- c(output$enddate, out$emlmeta@dataset@coverage@temporalCoverage[[i]]@rangeOfDates@endDate@calendarDate@.Data)
+  if (length(out$emlmeta$dataset$coverage$temporalCoverage)>0) {
+    for (i in 1:length(out$emlmeta$dataset$coverage$temporalCoverage)) {
+      output$startdate <- c(output$startdate, out$emlmeta$dataset$coverage$temporalCoverage[[1]]$beginDate$calendarDate@.Data)
+      output$enddate <- c(output$enddate, out$emlmeta$dataset$coverage$temporalCoverage[[i]]$endDate$calendarDate@.Data)
     }
     if(length(output$startdate)>0) {output$startdate <- min(output$startdate)}
     if(length(output$enddate)>0) {output$enddate <- max(output$enddate)}
