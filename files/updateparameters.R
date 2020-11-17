@@ -1,3 +1,7 @@
+library(dplyr)
+library(xml2)
+
+##### Parameters
 x <- read_xml("http://vocab.nerc.ac.uk/collection/P01/current/")
 termsp01 <- xml_find_all(x, ".//skos:Concept")
 l <- lapply(termsp01, function(term) {
@@ -110,6 +114,36 @@ l <- lapply(terms, function(term) {
 })
 S10s <- bind_rows(l)
 
+
+x <- read_xml("http://vocab.nerc.ac.uk/collection/C17/current/")
+terms <- xml_find_all(x, ".//skos:Concept")
+l <- lapply(terms, function(term) {
+  element <- as_list(term)
+  definition <- if (length(element$definition) > 0) unlist(element$definition) else NA
+  return(list(
+    preflabel = unlist(element$prefLabel),
+    definition = definition,
+    uri = xml_attr(term, "about"))
+  )
+})
+C17s <- bind_rows(l)
+
+
+x <- read_xml("http://vocab.nerc.ac.uk/collection/F02/current/")
+terms <- xml_find_all(x, ".//skos:Concept")
+l <- lapply(terms, function(term) {
+  element <- as_list(term)
+  definition <- if (length(element$definition) > 0) unlist(element$definition) else NA
+  return(list(
+    preflabel = unlist(element$prefLabel),
+    definition = definition,
+    uri = xml_attr(term, "about"))
+  )
+})
+F02s <- bind_rows(l)
+
+
+
 x <- read_xml("http://vocab.nerc.ac.uk/collection/S11/current/")
 terms <- xml_find_all(x, ".//skos:Concept")
 l <- lapply(terms, function(term) {
@@ -149,7 +183,7 @@ l <- lapply(terms, function(term) {
 })
 EUNIS <- bind_rows(l) %>% mutate (uri = paste(uri,"/", sep ="")) 
 
-values <- rbind(L22s, L05s, S11s, S10s, M20s, EUNIS)
+values <- rbind(L22s, L05s, F02s, C17s, S11s, S10s, M20s, EUNIS)
 
 
 
@@ -159,12 +193,12 @@ values <- rbind(L22s, L05s, S11s, S10s, M20s, EUNIS)
 
 dir.create(file.path(getwd(), "BODCdata"))
 
+# To-do: locate this file under the BODCdata (or the data folder actually)
+write.csv(parameters, 'parameters.csv', row.names = FALSE, na = "" ) 
+write.csv(units, 'units.csv', row.names = FALSE, na = "" ) 
+write.csv(values, 'values.csv', row.names = FALSE, na = "" ) 
 
-write.csv(parameters, 'parameters.csv', row.names = FALSE, na = "" )
-write.csv(units, 'units.csv', row.names = FALSE, na = "" )
-write.csv(values, 'values.csv', row.names = FALSE, na = "" )
-
-
+# These should go into the data folder directly using the previous "write...()" call
 BODCparameters <- parameters
 BODCunits <- units
 BODCvalues <- values

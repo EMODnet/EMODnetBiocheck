@@ -6,6 +6,11 @@ BODCunits  <- read.csv("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMOD
 BODCvalues <-read.csv("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/BODCdata/values.csv", stringsAsFactors = FALSE )
 BODCparameters <-read.csv("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/BODCdata/parameters.csv", stringsAsFactors = FALSE )
 
+# To-do: Call data from data folder instead of from github
+# load("data/BODCunits.rda")
+# load("data/BODCvalues.rda")
+# load("data/BODCparameters.rda")
+
 
 BODCnomofvalues <- c('http://vocab.nerc.ac.uk/collection/P01/current/OCOUNT01/', 'http://vocab.nerc.ac.uk/collection/P01/current/SSAMPC01/')
 
