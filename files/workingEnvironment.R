@@ -1,16 +1,18 @@
 
-
-BODC = list()
-
-BODCunits  <- read.csv("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/BODCdata/units.csv", stringsAsFactors = FALSE )
-BODCvalues <-read.csv("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/BODCdata/values.csv", stringsAsFactors = FALSE )
-BODCparameters <-read.csv("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/BODCdata/parameters.csv", stringsAsFactors = FALSE )
-
+# These lines might be deprecated-----
+# BODC = list()
+# 
+# BODCunits  <- read.csv("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/BODCdata/units.csv", stringsAsFactors = FALSE )
+# BODCvalues <-read.csv("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/BODCdata/values.csv", stringsAsFactors = FALSE )
+# BODCparameters <-read.csv("https://raw.githubusercontent.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool/master/BODCdata/parameters.csv", stringsAsFactors = FALSE )
+# 
 # To-do: Call data from data folder instead of from github
 # load("data/BODCunits.rda")
 # load("data/BODCvalues.rda")
 # load("data/BODCparameters.rda")
+# -------------------------------------
 
+# Update data files
 
 BODCnomofvalues <- c('http://vocab.nerc.ac.uk/collection/P01/current/OCOUNT01/', 'http://vocab.nerc.ac.uk/collection/P01/current/SSAMPC01/')
 
@@ -55,9 +57,9 @@ p01todwc <- data.frame(P01s = c("SNANID01", "SCNAME01", "SSAMID01", "SAMPPROT", 
                        stringsAsFactors = FALSE)
 
 
-use_data(BODCunits, overwrite = TRUE)
-use_data(BODCvalues, overwrite = TRUE)
-use_data(BODCparameters, overwrite = TRUE)
+# use_data(BODCunits, overwrite = TRUE)
+# use_data(BODCvalues, overwrite = TRUE)
+# use_data(BODCparameters, overwrite = TRUE)
 use_data(BODCnomofvalues, overwrite = TRUE)
 use_data(BODCbiometrics, overwrite = TRUE)
 use_data(BODCeffort, overwrite = TRUE)

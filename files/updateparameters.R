@@ -188,18 +188,20 @@ values <- rbind(L22s, L05s, F02s, C17s, S11s, S10s, M20s, EUNIS)
 
 
 
-
-
-
-dir.create(file.path(getwd(), "BODCdata"))
-
-# To-do: locate this file under the BODCdata (or the data folder actually)
-write.csv(parameters, 'parameters.csv', row.names = FALSE, na = "" ) 
-write.csv(units, 'units.csv', row.names = FALSE, na = "" ) 
-write.csv(values, 'values.csv', row.names = FALSE, na = "" ) 
-
-# These should go into the data folder directly using the previous "write...()" call
+# Update the data files  
 BODCparameters <- parameters
 BODCunits <- units
 BODCvalues <- values
 
+use_data(BODCunits, overwrite = TRUE)
+use_data(BODCvalues, overwrite = TRUE)
+use_data(BODCparameters, overwrite = TRUE)
+
+
+# Deprecated
+# dir.create(file.path(getwd(), "BODCdata"))
+
+# To-do: locate this file under the BODCdata (or the data folder actually)
+# write.csv(parameters, 'parameters.csv', row.names = FALSE, na = "" ) 
+# write.csv(units, 'units.csv', row.names = FALSE, na = "" ) 
+# write.csv(values, 'values.csv', row.names = FALSE, na = "" ) 
