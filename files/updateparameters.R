@@ -188,11 +188,12 @@ values <- rbind(L22s, L05s, F02s, C17s, S11s, S10s, M20s, EUNIS)
 
 
 
-# Update the data files  
+# Update the data files # Make sure that the tables look  
 BODCparameters <- parameters
 BODCunits <- units
 BODCvalues <- values
 
+# Make sure that the tables look correct before overwriting the BODC following files
 use_data(BODCunits, overwrite = TRUE)
 use_data(BODCvalues, overwrite = TRUE)
 use_data(BODCparameters, overwrite = TRUE)
