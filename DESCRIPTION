@@ -19,5 +19,6 @@ Imports:
 	leaflet,
 	xml2,
 	rmarkdown,
-	stringr
+	stringr,
+	skosxml
 RoxygenNote: 7.1.1
