@@ -4,8 +4,13 @@
 \alias{checkdataset}
 \title{Check the quality of the dataset}
 \usage{
-checkdataset(Event = NULL, Occurrence = NULL, eMoF = NULL,
-  IPTreport = list(), tree = FALSE)
+checkdataset(
+  Event = NULL,
+  Occurrence = NULL,
+  eMoF = NULL,
+  IPTreport = list(),
+  tree = FALSE
+)
 }
 \arguments{
 \item{Event}{optional parameter, the name of the event core file}

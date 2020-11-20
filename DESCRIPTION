@@ -20,4 +20,4 @@ Imports:
 	xml2,
 	rmarkdown,
 	stringr
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1

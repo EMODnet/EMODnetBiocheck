@@ -7,6 +7,7 @@
 #' @param IPTreport optional parameter, in case you want to append the result to an existing listfile
 #' @param tree optional parameter, takes value yes if you want the QC report to include the OBIS tree hierachy
 #' @import skosxml
+#' @import stringr
 #' @export
 #' @examples
 #' IPTreport <-checkdataset(Event = event, Occurrence = occurrence, eMoF = emof, IPTreport = IPTreport, tree = FALSE)
@@ -30,6 +31,51 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   if (is.null(Event)) {rm(Event)}
   if (is.null(eMoF)) {rm(eMoF)}
 
+
+  #---------------------------------------------------------------------------#
+  ###                   Fix formatting                                        ####
+  #---------------------------------------------------------------------------#      
+  #### Occurrence fix
+  
+  Occurrence[Occurrence =='NA' | Occurrence =='' | Occurrence ==' '] <- NA
+  Occurrence <- Occurrence[,colSums(is.na(Occurrence))<nrow(Occurrence)]
+  #     Occurrence <- fncols(Occurrence, c("eventDate"))
+  
+  
+  #### Event fix
+  
+  if (  exists("Event") == TRUE ) {
+    if(length(Event) < 2 )  {rm(Event)} else {
+      
+      {
+        Event[Event =='NA' | Event =='' | Event ==' '] <- NA
+        Event <- Event[,colSums(is.na(Event))<nrow(Event)]
+        Event <- fncols(Event, c("parentEventID"))
+        #        Event[Event =='NA' | Event =='' | Event ==' '] <- NA
+        
+        #       Event <- fncols(Event, c("eventDate"))
+      }}}
+  
+  #### MoF fix
+  
+  if ( exists("eMoF") == TRUE  )    { 
+    if(length(eMoF) < 2 ) {rm(eMoF)} else {
+      
+      eMoF[eMoF =='NA' | eMoF =='' | eMoF ==' '] <- NA
+      eMoF <- eMoF[,colSums(is.na(eMoF))<nrow(eMoF)]
+      eMoF <- fncols(eMoF, c("occurrenceID", "measurementType", "measurementTypeID","measurementValueID", "measurementValue", "measurementUnitID", "eventID", "measurementUnit"))
+      #       eMoF[eMoF =='NA' | eMoF =='' | eMoF ==' '] <- NA
+      
+      eMoF <- eMoF %>% mutate (measurementTypeID = if_else(str_sub(measurementTypeID, -1, -1)=='/',measurementTypeID, paste(measurementTypeID, "/",  sep = '') ),
+                               measurementValueID = if_else(str_sub(measurementValueID, -1, -1)=='/',measurementValueID, paste(measurementValueID, "/",  sep = ''))
+      ) 
+      
+      if ( exists("Event") == TRUE){
+        eMoF$eventID <- eMoF$id #eventID column is required in the measurements table.
+      } else {
+        eMoF$occurrenceID <- eMoF$id #occurrenceID column is required in the measurements table.
+      }
+    }}
   
   
   #----------------------------------------------------------------------------#
@@ -94,6 +140,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                   left_join(parameters , by = c("measurementTypeID"="uri")) %>%
                                                   select (type, measurementType, minValue,  maxValue, measurementUnit,  count,  standardunit, preflabel, definition))
 
+      #IPTreport$mofsummary$minValue <- format(IPTreport$mofsummary$minValue, digits=2)
+      #IPTreport$mofsummary$maxValue <- format(IPTreport$mofsummary$maxValue, digits=2)
+      
       
       IPTreport$mofsummary_values <- eMoF %>% filter(!is.na(measurementValueID)) %>% mutate(type = if_else(is.na(occurrenceID) , "EventMoF", "OccurrenceMoF" )) %>% 
         group_by(type, measurementType, measurementValue, measurementValueID) %>% summarize(count = n()) %>% ungroup() %>%
@@ -110,7 +159,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   
   #-----------------------------------------------------------------------#
-  ####                    Integrety Checks			                   ####
+  ####                    Integrity Checks			                   ####
   #-----------------------------------------------------------------------#
   
   
@@ -539,9 +588,12 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   # taxa --------------------------------------
   
-  if (!is.null(Occurrence$scientificNameID)){ if ( length(unique(Occurrence$scientificNameID[nchar(Occurrence$scientificNameID)>35]))!=0  ){
+  if (!is.null(Occurrence$scientificNameID)){
+    snidUnique <- unique(na.omit(Occurrence$scientificNameID[nchar(Occurrence$scientificNameID)>35]))
+    if ( length(snidUnique)!=0){
     
-    reversedmatch <- reversetaxmatch (as.integer(gsub("urn:lsid:marinespecies.org:taxname:", "", unique(Occurrence$scientificNameID[nchar(Occurrence$scientificNameID)>35]))))
+      as.integer(gsub("urn:lsid:marinespecies.org:taxname:", "", snidUnique)) # Ruben thinks that this line is useless
+      reversedmatch <- reversetaxmatch (as.integer(gsub("urn:lsid:marinespecies.org:taxname:", "", snidUnique)))
     
     IPTreport$dtb$taxa <- Occurrence %>% group_by (scientificName, scientificNameID) %>% summarise(count = n()) %>% 
       left_join(reversedmatch, by = c("scientificNameID" = "lsid"))

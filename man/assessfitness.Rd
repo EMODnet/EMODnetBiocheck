@@ -4,8 +4,7 @@
 \alias{assessfitness}
 \title{asses fitnes}
 \usage{
-assessfitness(Event = NULL, Occurrence = NULL, eMoF = NULL,
-  output = list())
+assessfitness(Event = NULL, Occurrence = NULL, eMoF = NULL, output = list())
 }
 \arguments{
 \item{Event}{optional a DwC event table}
