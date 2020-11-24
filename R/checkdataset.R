@@ -159,9 +159,19 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                                     count,  measTypeID_standardunit = standardunit, measTypeID_preflabel = preflabel, 
                                                                     measTypeID_definition = definition))
 
-      IPTreport$mofsummary$minValue <- format(IPTreport$mofsummary$minValue, digits=2)
-      IPTreport$mofsummary$maxValue <- format(IPTreport$mofsummary$maxValue, digits=2)
       
+      # Rounding up values and eliminating decimals of max-min
+      IPTreport$mofsummary$minValue <- ifelse(IPTreport$mofsummary$minValue > 0, 
+                                              ifelse(IPTreport$mofsummary$minValue > 0.01 , 
+                                                     format(round(IPTreport$mofsummary$minValue, 2), digits = 2, nsmall = 2), 
+                                                     sprintf("%.7f", IPTreport$mofsummary$minValue)), 0)
+      IPTreport$mofsummary$maxValue <- ifelse(IPTreport$mofsummary$maxValue > 0, 
+                                              ifelse(IPTreport$mofsummary$maxValue > 0.01 , 
+                                                     format(round(IPTreport$mofsummary$maxValue, 2), digits = 2, nsmall = 2), 
+                                                     sprintf("%.7f", IPTreport$mofsummary$maxValue)), 0)
+      
+
+            
       
       IPTreport$mofsummary_values <- eMoF %>% filter(!is.na(measurementValueID)) %>% 
                                               mutate(type = if_else(is.na(occurrenceID) , "EventMoF", "OccurrenceMoF" )) %>% 
