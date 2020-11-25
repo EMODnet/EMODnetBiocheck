@@ -48,6 +48,8 @@ if (exists("out") == FALSE) {
     Event <-out$data[["event.txt"]]
     
     if (length(Event) >1 ) {
+    
+    Event$eventDate <- as.character(Event$eventDate)    
     Event<-cleandataframe(Event, vector = FALSE)
     output$Event <- fncols(Event, c("parentEventID"))
     }
