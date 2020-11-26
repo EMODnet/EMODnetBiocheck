@@ -130,7 +130,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       
       suppressWarnings(
       if(length(parastolookup[!is.na(parastolookup)&parastolookup!=""])>0){
-      parastolookedup <- suppressWarnings(getunitsandparams(vocids = parastolookup, vocabs ="P01|Q01"))
+      parastolookedup <- suppressWarnings(getunitsandparams(vocids = parastolookup, vocabs ="P01|Q01")) # add error when params not in vocabs collections
       parameters <- bind_rows(BODCparameters, parastolookedup)
       } else { parameters <- BODCparameters}
       )
@@ -143,7 +143,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       
       suppressWarnings(
       if(length(valuestolookup[!is.na(valuestolookup)&valuestolookup!=""])>0){
-        valuestolookedup <- suppressWarnings(getskossxmldatainfo(vocid = valuestolookup, vocabs ="S10|S11|L22|L05|M20|M21|M22|M23|C35|C17"))
+        valuestolookedup <- suppressWarnings(getskossxmldatainfo(vocid = valuestolookup, vocabs ="S10|S11|L22|L05|M20|M21|M22|M23|C35|C17")) # add error when values not in vocabs collections
         values <- bind_rows(BODCvalues, valuestolookedup)
       } else { values <- BODCvalues}
       )
