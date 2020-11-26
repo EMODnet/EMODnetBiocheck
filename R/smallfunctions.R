@@ -133,3 +133,20 @@ NamesToVector = function (x) {
 midstring <- function (x, first, last, n=0, m=0) {
   substring (x, stringr::str_locate(x, first)[[2]] + n, stringr::str_locate(x, last)[[1]] + m )}
 
+
+
+
+#' Checks if an url exist
+#'
+#' Checks if an url exist better than the url.exist function
+#' @export
+#' @param url_in mandatory parameter, the input string
+#' @param t optional parameter, the timeout of the open.connection
+
+
+valid_url <- function(url_in,t=2){
+  con <- url(url_in)
+  check <- suppressWarnings(try(open.connection(con,open="rt",timeout=t),silent=T)[1])
+  suppressWarnings(try(close.connection(con),silent=T))
+  ifelse(is.null(check),TRUE,FALSE)
+}
