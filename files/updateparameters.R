@@ -194,9 +194,9 @@ BODCunits <- units
 BODCvalues <- values
 
 # Make sure that the tables look correct before overwriting the BODC following files
-use_data(BODCunits, overwrite = TRUE)
-use_data(BODCvalues, overwrite = TRUE)
-use_data(BODCparameters, overwrite = TRUE)
+usethis::use_data(BODCunits, overwrite = TRUE)
+usethis::use_data(BODCvalues, overwrite = TRUE)
+usethis::use_data(BODCparameters, overwrite = TRUE)
 
 
 # Deprecated
