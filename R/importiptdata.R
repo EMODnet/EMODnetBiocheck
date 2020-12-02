@@ -49,7 +49,7 @@ if (exists("out") == FALSE) {
     
     if (length(Event) >1 ) {
     
-    Event$eventDate <- as.character(Event$eventDate)    
+    #Event$eventDate <- as.character(Event$eventDate)    
     Event<-cleandataframe(Event, vector = FALSE)
     output$Event <- fncols(Event, c("parentEventID"))
     }
