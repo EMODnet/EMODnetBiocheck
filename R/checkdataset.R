@@ -656,8 +656,12 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
   } else {
     
-        date_rep <- check_eventdate(Occurrence %>% fncols(c("eventDate")))  %>% 
-                                                   filter (message !='eventDate NA does not seem to be a valid date')
+        date_rep <- check_eventdate(Occurrence %>% fncols(c("eventDate")))
+        if(nrow(date_rep)> 0) {
+             date_rep <- filter (date_rep, message != "eventDate NA does not seem to be a valid date")
+           }
+          
+                                                 
         dates_plot <- Occurrence %>% fncols(c("eventDate")) %>% 
                                      select (eventDate) %>% 
                                      filter (!is.na(eventDate)) %>% 

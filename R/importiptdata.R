@@ -2,6 +2,7 @@
 #'
 #' imports and cleans IPT datasets
 #' @param file mandatory a link the DWC-A file (URL to IPT or a zip file)
+#' @import parsedate
 #' @export
 #' @examples
 #' output <- importiptdata("http://ipt.vliz.be/training/archive?r=biofun_2009")
@@ -49,9 +50,12 @@ if (exists("out") == FALSE) {
     
     if (length(Event) >1 ) {
     
-    #Event$eventDate <- as.character(Event$eventDate)    
-    Event<-cleandataframe(Event, vector = FALSE)
-    output$Event <- fncols(Event, c("parentEventID"))
+      if(TRUE %in% (class(Event$eventDate) != "character")){
+        Event$eventDate <- format_iso_8601(Event$eventDate)
+      } # format to ISO 8601 if not character (can also use lubridate::format_ISO8601)
+      
+      Event<-cleandataframe(Event, vector = FALSE)
+      output$Event <- fncols(Event, c("parentEventID"))
     }
     
     }
