@@ -644,8 +644,11 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   # QC checks - Check dates against the ISO format  ---------------------------------
   if (  exists("Event") ) {
     
-        date_rep <- check_eventdate(Event %>% fncols(c("eventDate"))) %>% 
-                                              filter (message !='eventDate NA does not seem to be a valid date')
+        date_rep <- check_eventdate(Event %>% fncols(c("eventDate"))) 
+        if(nrow(date_rep)> 0) {
+          date_rep <- filter (date_rep, message != "eventDate NA does not seem to be a valid date")
+        }  
+          
         dates_plot <- Event %>% fncols(c("eventDate")) %>% 
                                 select (eventDate) %>% 
                                 filter (!is.na(eventDate)) %>% 
