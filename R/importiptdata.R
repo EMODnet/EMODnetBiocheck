@@ -49,13 +49,13 @@ if (exists("out") == FALSE) {
     Event <-out$data[["event.txt"]]
     
     if (length(Event) >1 ) {
-    
-      if(TRUE %in% (class(Event$eventDate) != "character")){
-        Event$eventDate <- format_iso_8601(Event$eventDate)
-      } # format to ISO 8601 if not character (can also use lubridate::format_ISO8601)
-      
+      if("eventDate" %in% colnames(Event)){
+        if(TRUE %in% (class(Event$eventDate) != "character")){
+          Event$eventDate <- format_iso_8601(Event$eventDate)
+        } # format to ISO 8601 if not character (can also use lubridate::format_ISO8601)
+      }
       Event<-cleandataframe(Event, vector = FALSE)
-      output$Event <- fncols(Event, c("parentEventID"))
+      output$Event <- fncols(Event, c("parentEventID", "eventDate"))
     }
     
     }
