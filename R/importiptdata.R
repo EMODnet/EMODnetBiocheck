@@ -8,18 +8,16 @@
 #' output <- importiptdata("http://ipt.vliz.be/training/archive?r=biofun_2009")
 
 
-importiptdata <- function (file){
+importiptdata <- function (file){ 
   output<-list()
   
   if (grepl("resource?", file)==TRUE) {
     file <- gsub("resource?", "archive", file) }
   
   
-  if ( ((grepl("archive?", file)==FALSE | url.exists(file) == FALSE & valid_url(file) == FALSE)) & grepl(".zip", file) == FALSE)
-  {
+  if ( ((grepl("archive?", file)==FALSE | url.exists(file) == FALSE & valid_url(file) == FALSE)) & grepl(".zip", file) == FALSE){
     output$error <- ("Link does not resolve to a public IPT resource")
-  }  else   
-  {
+  }  else   {
   
   
 dwca_cache$delete_all()
@@ -49,11 +47,17 @@ if (exists("out") == FALSE) {
     Event <-out$data[["event.txt"]]
     
     if (length(Event) >1 ) {
+      
       if("eventDate" %in% colnames(Event)){
         if(TRUE %in% (class(Event$eventDate) != "character")){
           Event$eventDate <- format_iso_8601(Event$eventDate)
         } # format to ISO 8601 if not character (can also use lubridate::format_ISO8601)
       }
+      if("modified" %in% colnames(Event)){
+        if(TRUE %in% (class(Event$modified) != "character")){
+          Event$modified <- format_iso_8601(Event$modified)
+        }
+      } # format to ISO 8601 if not character 
       Event<-cleandataframe(Event, vector = FALSE)
       output$Event <- fncols(Event, c("parentEventID", "eventDate"))
     }
@@ -62,8 +66,23 @@ if (exists("out") == FALSE) {
   
   if (is.null(out$data[["occurrence.txt"]]) == FALSE){
     Occurrence <-out$data[["occurrence.txt"]] 
+    
+    if (length(Occurrence) >1 ) {
+      
+      if("modified" %in% colnames(Occurrence)){
+        if(TRUE %in% (class(Occurrence$modified) != "character")){
+          Occurrence$modified <- format_iso_8601(Occurrence$modified)
+          }
+        } # format to ISO 8601 if not character 
+        
+      if("eventDate" %in% colnames(Occurrence)){
+        if(TRUE %in% (class(Occurrence$eventDate) != "character")){
+          Occurrence$eventDate <- format_iso_8601(Occurrence$eventDate)
+          }
+        } # format to ISO 8601 if not character 
+    
     if (length(Occurrence) < 2 ){ rm(Occurrence)} else {
-    output$Occurrence<-cleandataframe(Occurrence,  vector = FALSE)}}
+    output$Occurrence<-cleandataframe(Occurrence,  vector = FALSE)}}}
   
     if (  exists("Occurrence") == FALSE  ) {   
     output$error <- ("The dataset does not have an occurrence file")
@@ -76,19 +95,20 @@ if (exists("out") == FALSE) {
   if(exists("eMoF") == FALSE & is.null(out$data[["measurementorfact.txt"]]) == FALSE) { 
     eMoF <- out$data[["measurementorfact.txt"]] }
   
-  if(exists("eMoF") ) { if (length(eMoF) > 2 ){
+  if(exists("eMoF") ) { 
+    if (length(eMoF) > 2 ){
     
-    eMoF<-cleandataframe(eMoF,  vector = FALSE)
-    eMoF <- cleanemof(eMoF) 
+      eMoF<-cleandataframe(eMoF,  vector = FALSE)
+      eMoF <- cleanemof(eMoF) 
   
-  if ( exists("Event") == TRUE){
-    eMoF$eventID <- eMoF$id #eventID column is required in the measurements table.
-  } else {
-    eMoF$occurrenceID <- eMoF$id #occurrenceID column is required in the measurements table.
+      if ( exists("Event") == TRUE){
+        eMoF$eventID <- eMoF$id #eventID column is required in the measurements table.
+      } else {
+        eMoF$occurrenceID <- eMoF$id #occurrenceID column is required in the measurements table.
     
   }
-   output$eMoF <- eMoF
-}}
+      output$eMoF <- eMoF
+  }}
   
   
 } }
