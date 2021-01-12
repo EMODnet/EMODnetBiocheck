@@ -255,7 +255,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   ####                    Tree structure                               ####
   #-----------------------------------------------------------------------#
   
-  if ( exists("Event") &  exists("eMoF")  & tree == "yes" ) 
+  if ( exists("Event") &  exists("eMoF")  & tree == "yes" ) { 
    if ( if(exists("ev_check_id") ){nrow(ev_check_id) == 0} & 
         if(exists("mof.oc_check_id") ){nrow(mof.oc_check_id) ==0} & 
         if(exists("mof.oc.ev_check_id") ){nrow(mof.oc.ev_check_id) ==0} &
@@ -263,7 +263,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
    tryCatch({IPTreport$tree <- treeStructure(Event, Occurrence, eMoF)}, error = function(x){print("tree gives error")})
   
     
-  }
+  }}
   
   
   
@@ -929,7 +929,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
      IPTreport$dtb$emoferror_table <- emoferror %>% distinct() %>% 
                                                     filter (!is.na(row)) %>% 
-                                                    data.table::dcast(row ~ field, value.var=c("message")) %>%
+                                                    data.table::dcast(row ~ field, value.var=c("message"), fun=max) %>%
                                                     inner_join (eMoF %>% mutate (row = row_number()), 
                                                                 by = "row", 
                                                                 suffix = c("_error", "")) %>% 
