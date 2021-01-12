@@ -30,7 +30,13 @@ l <- lapply(terms, function(term) {
   )
 })
 Q01s <- bind_rows(l)
-parameters <- rbind(Q01s,P01s )
+
+# Manually adding the eunis habitat collection as a vocab term <- requested by MBA and approved by OBIS-VLIZ
+eunis_col <- data.frame("eunishabitats","EUNIS habitats","Classification of habitat types according to the EUNIS Biodiversity database", "http://dd.eionet.europa.eu/vocabulary/biodiversity/eunishabitats/")
+names(eunis_col)<-c("identifier", "preflabel","definition", "uri")
+
+parameters <- rbind(Q01s,P01s) %>% 
+              bind_rows(eunis_col)
 
 
 

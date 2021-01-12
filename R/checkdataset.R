@@ -74,9 +74,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       ) 
       
       if ( exists("Event") == TRUE){
-        eMoF$eventID <- eMoF$id #eventID column is required in the measurements table.
+        eMoF$eventID <- as.character(eMoF$id) #eventID column is required in the measurements table.
       } else {
-        eMoF$occurrenceID <- eMoF$id #occurrenceID column is required in the measurements table.
+        eMoF$occurrenceID <- as.character(eMoF$id) #occurrenceID column is required in the measurements table.
       }
     }}
   
@@ -227,7 +227,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                        inner_join(Occurrence, by = "occurrenceID") %>% 
                                        anti_join(eMoF, by = c(  "eventID.y"=  "eventID", "occurrenceID" = "occurrenceID")) %>%
                                        select (level, field, row, message) # Checks the all eMoF eventIDs linked to the same event as the related occurrence
-      }}
+      }
+      }
   }
   
   if ( exists("Event") == FALSE &  exists("eMoF") == TRUE  ){
