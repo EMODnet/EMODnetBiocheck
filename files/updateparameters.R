@@ -1,8 +1,19 @@
 library(dplyr)
 library(xml2)
+library(curl)
+library(magrittr)
+
+
+# Accept header needed after the complete revamp of BODC web services
+# More headers can be added to this handle if needed
+h <- new_handle() %>% 
+  handle_setheaders("Accept"="application/rdf+xml")
+
 
 ##### Parameters
-x <- read_xml("http://vocab.nerc.ac.uk/collection/P01/current/")
+x <- read_xml("https://raw.githubusercontent.com/EMODnet/EMODnetBiocheck/master/files/P01_old.rdf")
+x <-read_xml("files/P01_old_fix.rdf") # This is an old version of the P01 RDF to be used while BODC fixes their webservices and we can access BODC from the URL (to use in case githubusercontent doesn't work)
+# x <- read_xml("http://vocab.nerc.ac.uk/collection/P01/current/") # To be used after BODC has repared their web services
 termsp01 <- xml_find_all(x, ".//skos:Concept")
 l <- lapply(termsp01, function(term) {
   element <- as_list(term)
@@ -16,7 +27,11 @@ l <- lapply(termsp01, function(term) {
 })
 P01s <- bind_rows(l)
 
-x <- read_xml("http://vocab.nerc.ac.uk/collection/Q01/current/")
+#x <- read_xml("http://vocab.nerc.ac.uk/collection/Q01/current/") # DEPRECATED
+x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/Q01/current/") %$% 
+  content %>% 
+  rawToChar %>% 
+  read_xml()
 terms <- xml_find_all(x, ".//skos:Concept")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
@@ -58,7 +73,11 @@ for (i in 1:nrow(P01s)){
 
 ##### Units
 
-x <- read_xml("http://vocab.nerc.ac.uk/collection/P06/current/")
+# x <- read_xml("http://vocab.nerc.ac.uk/collection/P06/current/") DEPRECATED
+x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/P06/current/") %$% 
+  content %>% 
+  rawToChar %>% 
+  read_xml()
 terms <- xml_find_all(x, ".//skos:Concept")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
@@ -80,7 +99,11 @@ parameters <- parameters %>% left_join(P01sunits, by=c("uri" = "p01s")) %>%
 
 #### Values
 
-x <- read_xml("http://vocab.nerc.ac.uk/collection/L22/current/")
+# x <- read_xml("http://vocab.nerc.ac.uk/collection/L22/current/") DEPRECATED
+x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/L22/current/") %$% 
+  content %>% 
+  rawToChar %>% 
+  read_xml()
 terms <- xml_find_all(x, ".//skos:Concept")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
@@ -93,7 +116,11 @@ l <- lapply(terms, function(term) {
 })
 L22s <- bind_rows(l)
 
-x <- read_xml("http://vocab.nerc.ac.uk/collection/L05/current/")
+#x <- read_xml("http://vocab.nerc.ac.uk/collection/L05/current/") DEPRECATED
+x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/L05/current/") %$% 
+  content %>% 
+  rawToChar %>% 
+  read_xml()
 terms <- xml_find_all(x, ".//skos:Concept")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
@@ -107,7 +134,11 @@ l <- lapply(terms, function(term) {
 L05s <- bind_rows(l)
 
 
-x <- read_xml("http://vocab.nerc.ac.uk/collection/S10/current/")
+# x <- read_xml("http://vocab.nerc.ac.uk/collection/S10/current/") DEPRECATED
+x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/S10/current/") %$% 
+  content %>% 
+  rawToChar %>% 
+  read_xml()
 terms <- xml_find_all(x, ".//skos:Concept")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
@@ -121,7 +152,11 @@ l <- lapply(terms, function(term) {
 S10s <- bind_rows(l)
 
 
-x <- read_xml("http://vocab.nerc.ac.uk/collection/C17/current/")
+# x <- read_xml("http://vocab.nerc.ac.uk/collection/C17/current/") DEPRECATED
+x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/C17/current/") %$% 
+  content %>% 
+  rawToChar %>% 
+  read_xml()
 terms <- xml_find_all(x, ".//skos:Concept")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
@@ -135,7 +170,11 @@ l <- lapply(terms, function(term) {
 C17s <- bind_rows(l)
 
 
-x <- read_xml("http://vocab.nerc.ac.uk/collection/F02/current/")
+# x <- read_xml("http://vocab.nerc.ac.uk/collection/F02/current/") DEPRECATED
+x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/F02/current/") %$% 
+  content %>% 
+  rawToChar %>% 
+  read_xml()
 terms <- xml_find_all(x, ".//skos:Concept")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
@@ -150,7 +189,11 @@ F02s <- bind_rows(l)
 
 
 
-x <- read_xml("http://vocab.nerc.ac.uk/collection/S11/current/")
+# x <- read_xml("http://vocab.nerc.ac.uk/collection/S11/current/") DEPRECATED
+x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/S11/current/") %$% 
+  content %>% 
+  rawToChar %>% 
+  read_xml()
 terms <- xml_find_all(x, ".//skos:Concept")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
@@ -163,7 +206,11 @@ l <- lapply(terms, function(term) {
 })
 S11s <- bind_rows(l)
 
-x <- read_xml("http://vocab.nerc.ac.uk/collection/M20/current/")
+# x <- read_xml("http://vocab.nerc.ac.uk/collection/M20/current/") DEPRECATED
+x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/M20/current/") %$% 
+  content %>% 
+  rawToChar %>% 
+  read_xml()
 terms <- xml_find_all(x, ".//skos:Concept")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
@@ -192,6 +239,10 @@ EUNIS <- bind_rows(l) %>% mutate (uri = paste(uri,"/", sep =""))
 values <- rbind(L22s, L05s, F02s, C17s, S11s, S10s, M20s, EUNIS)
 
 
+### USE IF: pulling data from EMODnetBiocheck R package and not from BODC web services (mainly for P01 collection)
+# Get params that are in EMODnetBiocheck/data/BODCparameters but not in EMODnetBiocheck/files/P01_old_fix
+# missingparams <- BODCparameters %>% anti_join(parameters, by = "identifier")
+# parameters <- rbind(parameters, missingparams) %>% distinct()
 
 
 # Update the data files # Make sure that the tables look  
