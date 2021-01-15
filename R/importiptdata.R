@@ -98,6 +98,12 @@ if (exists("out") == FALSE) {
   if(exists("eMoF") ) { 
     if (length(eMoF) > 2 ){
     
+      if("measurementDeterminedDate" %in% colnames(eMoF)){
+        if(TRUE %in% (class(eMoF$measurementDeterminedDate) != "character")){
+          eMoF$measurementDeterminedDate <- format_iso_8601(eMoF$measurementDeterminedDate)
+        }
+      } # format to ISO 8601 if not character
+      
       eMoF<-cleandataframe(eMoF,  vector = FALSE)
       eMoF <- cleanemof(eMoF) 
   
