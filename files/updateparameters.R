@@ -7,7 +7,8 @@ library(magrittr)
 # Accept header needed after the complete revamp of BODC web services
 # More headers can be added to this handle if needed
 h <- new_handle() %>% 
-  handle_setheaders("Accept"="application/rdf+xml")
+  handle_setheaders("Accept" = "application/rdf+xml",
+                    "Accept-Profile" = "<https://w3id.org/profile/nvs-col>") # This header is set by default, but keep it here because BODC could change the default again
 
 
 ##### Parameters
