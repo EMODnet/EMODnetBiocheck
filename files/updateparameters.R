@@ -11,9 +11,13 @@ h <- new_handle() %>%
 
 
 ##### Parameters
-x <- read_xml("https://raw.githubusercontent.com/EMODnet/EMODnetBiocheck/master/files/P01_old.rdf")
-x <-read_xml("files/P01_old_fix.rdf") # This is an old version of the P01 RDF to be used while BODC fixes their webservices and we can access BODC from the URL (to use in case githubusercontent doesn't work)
+# x <- read_xml("https://raw.githubusercontent.com/EMODnet/EMODnetBiocheck/master/files/P01_old.rdf")
+# x <- read_xml("files/P01_old_fix.rdf") # This is an old version of the P01 RDF to be used while BODC fixes their webservices and we can access BODC from the URL (to use in case githubusercontent doesn't work)
 # x <- read_xml("http://vocab.nerc.ac.uk/collection/P01/current/") # To be used after BODC has repared their web services
+x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/P01/current/") %$% 
+  content %>% 
+  rawToChar %>% 
+  read_xml()
 termsp01 <- xml_find_all(x, ".//skos:Concept")
 l <- lapply(termsp01, function(term) {
   element <- as_list(term)

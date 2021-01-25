@@ -50,8 +50,11 @@ if (exists("out") == FALSE) {
       
       if("eventDate" %in% colnames(Event)){
         if(TRUE %in% (class(Event$eventDate) != "character")){
-          Event$eventDate <- format_iso_8601(Event$eventDate)
-        } # format to ISO 8601 if not character (can also use lubridate::format_ISO8601)
+          if(class(Event$eventDate) == "integer"){
+            Event$eventDate <- as.character(Event$eventDate) 
+          } else {          
+            Event$eventDate <- format_iso_8601(Event$eventDate)
+        }} # format to ISO 8601 if not character (can also use lubridate::format_ISO8601)
       }
       if("modified" %in% colnames(Event)){
         if(TRUE %in% (class(Event$modified) != "character")){
@@ -74,11 +77,20 @@ if (exists("out") == FALSE) {
           Occurrence$modified <- format_iso_8601(Occurrence$modified)
           }
         } # format to ISO 8601 if not character 
+      
+      if("dateIdentified" %in% colnames(Occurrence)){
+        if(TRUE %in% (class(Occurrence$dateIdentified) != "character")){
+          Occurrence$dateIdentified <- format_iso_8601(Occurrence$dateIdentified)
+        }
+      } # format to ISO 8601 if not character 
         
       if("eventDate" %in% colnames(Occurrence)){
         if(TRUE %in% (class(Occurrence$eventDate) != "character")){
-          Occurrence$eventDate <- format_iso_8601(Occurrence$eventDate)
-          }
+          if(class(Event$eventDate) == "integer"){
+            Occurrence$eventDate <- as.character(Occurrence$eventDate) 
+          } else { 
+            Occurrence$eventDate <- format_iso_8601(Occurrence$eventDate)
+          }}
         } # format to ISO 8601 if not character 
     
     if (length(Occurrence) < 2 ){ rm(Occurrence)} else {
