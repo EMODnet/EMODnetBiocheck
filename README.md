@@ -53,6 +53,10 @@ devtools::install_github("EMODnet/EMODnetBiocheck")
 
 ## usage:
 ```R
+# For IPT resources (recommended)
 loopcheckIPTdataset ("http://ipt.iobis.org/training/archive?r=biofun_2009", tree="yes")
 loopcheckIPTdataset (c("http://ipt.iobis.org/training/archive?r=biofun_2009", "http://ipt.vliz.be/eurobis/resource?r=benthic-fauna-arrabida-2007-2009", tree="yes"))
+
+# For data tables (if no IPT resource available)
+IPTreport <- checkdataset(Event = youreventtablename, Occurrence = youroccurrencetablename, eMoF = youremoftablename)
 ```
