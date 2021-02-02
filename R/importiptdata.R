@@ -61,6 +61,13 @@ if (exists("out") == FALSE) {
           Event$modified <- format_iso_8601(Event$modified)
         }
       } # format to ISO 8601 if not character 
+      
+      if("verbatimEventDate" %in% colnames(Event)){
+        if(TRUE %in% (class(Event$verbatimEventDate) != "character")){
+          Event$verbatimEventDate <- format_iso_8601(Event$verbatimEventDate)
+        }
+      } # format to ISO 8601 if not character
+      
       Event<-cleandataframe(Event, vector = FALSE)
       output$Event <- fncols(Event, c("parentEventID", "eventDate"))
     }
@@ -83,6 +90,12 @@ if (exists("out") == FALSE) {
           Occurrence$dateIdentified <- format_iso_8601(Occurrence$dateIdentified)
         }
       } # format to ISO 8601 if not character 
+      
+      if("verbatimEventDate" %in% colnames(Occurrence)){
+        if(TRUE %in% (class(Occurrence$verbatimEventDate) != "character")){
+          Occurrence$verbatimEventDate <- format_iso_8601(Occurrence$verbatimEventDate)
+        }
+      } # format to ISO 8601 if not character
         
       if("eventDate" %in% colnames(Occurrence)){
         if(TRUE %in% (class(Occurrence$eventDate) != "character")){
