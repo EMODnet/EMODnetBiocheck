@@ -30,4 +30,6 @@ Imports:
 	rmarkdown,
 	stringr,
 	skosxml
+Remotes:
+  github::EMODnet/skosxml
 RoxygenNote: 7.1.1
