@@ -48,25 +48,6 @@ if (exists("out") == FALSE) {
     
     if (length(Event) >1 ) {
       
-      if("eventDate" %in% colnames(Event)){
-        if(TRUE %in% (class(Event$eventDate) != "character")){
-          if(class(Event$eventDate) == "integer"){
-            Event$eventDate <- as.character(Event$eventDate) 
-          } else {          
-            Event$eventDate <- format_iso_8601(Event$eventDate)
-        }} # format to ISO 8601 if not character (can also use lubridate::format_ISO8601)
-      }
-      if("modified" %in% colnames(Event)){
-        if(TRUE %in% (class(Event$modified) != "character")){
-          Event$modified <- format_iso_8601(Event$modified)
-        }
-      } # format to ISO 8601 if not character 
-      
-      if("verbatimEventDate" %in% colnames(Event)){
-        if(TRUE %in% (class(Event$verbatimEventDate) != "character")){
-          Event$verbatimEventDate <- format_iso_8601(Event$verbatimEventDate)
-        }
-      } # format to ISO 8601 if not character
       
       Event<-cleandataframe(Event, vector = FALSE)
       output$Event <- fncols(Event, c("parentEventID", "eventDate"))
@@ -79,32 +60,6 @@ if (exists("out") == FALSE) {
     
     if (length(Occurrence) >1 ) {
       
-      if("modified" %in% colnames(Occurrence)){
-        if(TRUE %in% (class(Occurrence$modified) != "character")){
-          Occurrence$modified <- format_iso_8601(Occurrence$modified)
-          }
-        } # format to ISO 8601 if not character 
-      
-      if("dateIdentified" %in% colnames(Occurrence)){
-        if(TRUE %in% (class(Occurrence$dateIdentified) != "character")){
-          Occurrence$dateIdentified <- format_iso_8601(Occurrence$dateIdentified)
-        }
-      } # format to ISO 8601 if not character 
-      
-      if("verbatimEventDate" %in% colnames(Occurrence)){
-        if(TRUE %in% (class(Occurrence$verbatimEventDate) != "character")){
-          Occurrence$verbatimEventDate <- format_iso_8601(Occurrence$verbatimEventDate)
-        }
-      } # format to ISO 8601 if not character
-        
-      if("eventDate" %in% colnames(Occurrence)){
-        if(TRUE %in% (class(Occurrence$eventDate) != "character")){
-          if(class(Event$eventDate) == "integer"){
-            Occurrence$eventDate <- as.character(Occurrence$eventDate) 
-          } else { 
-            Occurrence$eventDate <- format_iso_8601(Occurrence$eventDate)
-          }}
-        } # format to ISO 8601 if not character 
     
     if (length(Occurrence) < 2 ){ rm(Occurrence)} else {
     output$Occurrence<-cleandataframe(Occurrence,  vector = FALSE)}}}
@@ -123,12 +78,7 @@ if (exists("out") == FALSE) {
   if(exists("eMoF") ) { 
     if (length(eMoF) > 2 ){
     
-      if("measurementDeterminedDate" %in% colnames(eMoF)){
-        if(TRUE %in% (class(eMoF$measurementDeterminedDate) != "character")){
-          eMoF$measurementDeterminedDate <- format_iso_8601(eMoF$measurementDeterminedDate)
-        }
-      } # format to ISO 8601 if not character
-      
+     
       eMoF<-cleandataframe(eMoF,  vector = FALSE)
       eMoF <- cleanemof(eMoF) 
   

@@ -51,7 +51,10 @@ leftfrom <- function(x, y, n = 0) {
 
 cleandataframe <- function (x, vector = TRUE) {
   
-  x[x =='NA' | x =='' | x ==' '] <- NA
+  x <- x %>% mutate_all(na_if, 'NA') %>%
+             mutate_all(na_if, '') %>%
+             mutate_all(na_if, ' ')
+  
   x <- x[,colSums(is.na(x))<nrow(x)]
   
   if (vector == TRUE ){
@@ -77,7 +80,10 @@ cleanemof <- function (x) {
                 if_else(str_sub(measurementUnitID, -1, -1)=='/',measurementUnitID, paste(measurementUnitID, "/",  sep = '')),
                measurementUnitID)
       )
-  x[x =='NA' | x =='' | x ==' '] <- NA
+  x <- x %>% mutate_all(na_if, 'NA') %>%
+             mutate_all(na_if, '') %>%
+             mutate_all(na_if, ' ')
+  
   return(x)
 }
 
