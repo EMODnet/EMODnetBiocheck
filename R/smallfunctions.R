@@ -47,9 +47,16 @@ leftfrom <- function(x, y, n = 0) {
 
 
 #' remove empty collumns and make all collumns into characters
+#' @import parsedate
 #' @export
 
 cleandataframe <- function (x, vector = TRUE) {
+  
+  if("eventDate" %in% colnames(x)){	
+    if(TRUE %in% (class(x$eventDate) == "POSIXct")){	
+      x$eventDate <- format_iso_8601(x$eventDate)	
+    }	
+  } # format to ISO 8601 if class POSIXct
   
   x <- x %>% mutate_all(na_if, 'NA') %>%
              mutate_all(na_if, '') %>%
