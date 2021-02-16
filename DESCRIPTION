@@ -29,7 +29,10 @@ Imports:
 	xml2,
 	rmarkdown,
 	stringr,
-	skosxml
+	skosxml,
+	rjson,
+	parsedate,
+	reshape2
 Remotes:
   github::EMODnet/skosxml
 RoxygenNote: 7.1.1
