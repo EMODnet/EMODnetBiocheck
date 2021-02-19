@@ -5,7 +5,9 @@
 #' @import parsedate
 #' @export
 #' @examples
+#' \dontrun{
 #' output <- importiptdata("http://ipt.vliz.be/training/archive?r=biofun_2009")
+#' }
 
 
 importiptdata <- function (file){ 

@@ -6,6 +6,16 @@
 \usage{
 richtfrom(x, y, n = 0)
 }
+\arguments{
+\item{x}{string to get the characters from}
+
+\item{y}{string marking where in x we want to start getting characters, excluding y}
+
+\item{n}{numeric. number of characters not selected from y to the right}
+}
 \description{
 get the rightmost characters from a string
+}
+\examples{
+richtfrom(x = "abcdeT12345", y = "T", n = 2)
 }

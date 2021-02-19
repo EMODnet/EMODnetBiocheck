@@ -15,6 +15,8 @@ ODVtoDwC(file, ignore_eventerror = FALSE)
 converts ODV files exported from ODV to DwC (occurrence and eMoF tables)
 }
 \examples{
+\dontrun{
 ODVtoDwC("data_from_collection_MinimumObservationDepth.txt")
 ODVtoDwC("data_from_collection_MinimumObservationDepth.txt", ignore_eventerror = TRUE)
+}
 }

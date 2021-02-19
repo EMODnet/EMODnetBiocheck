@@ -27,5 +27,7 @@ checkdataset(
 This function does all QC checks of the package
 }
 \examples{
+\dontrun{
 IPTreport <-checkdataset(Event = event, Occurrence = occurrence, eMoF = emof, IPTreport = IPTreport, tree = FALSE)
+}
 }

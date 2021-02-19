@@ -13,5 +13,7 @@ exportIPT(IPTreport)
 This function takes as input the output from checkdataset and checkIPTdataset and generates a QC report in markdown.
 }
 \examples{
+\dontrun{
 exportIPT(IPTreport)
+}
 }

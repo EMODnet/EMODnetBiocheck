@@ -1,10 +1,12 @@
 #' fitness and QC loop
 #'
 #' loops fitness and qc function
-#' @param mandatory a link the DWC-A file (URL to IPT or a zip file) 
+#' @param links a link the DWC-A file (URL to IPT or a zip file) 
 #' @export
 #' @examples
+#' \dontrun{
 #' qc <- assesfitnessandqc("http://ipt.vliz.be/training/archive?r=biofun_2009")
+#' }
 
 
 

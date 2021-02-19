@@ -7,7 +7,9 @@
 #' @param eMoF optional a DwC eMoF table 
 #' @export
 #' @examples
+#' \dontrun{
 #' fitness <- assessfitness(output)
+#' }
 
 
 

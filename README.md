@@ -1,3 +1,8 @@
+  <!-- badges: start -->
+  [![R-CMD-check](https://github.com/EMODnet/EMODnetBiocheck/workflows/R-CMD-check/badge.svg)](https://github.com/EMODnet/EMODnetBiocheck/actions)
+  [![Lifecycle:experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+  <!-- badges: end -->
+
 # LifeWatch-EMODnet-Biology-QC-tool
 
 ## Tool for checking if IPT datasets conform to the EMODnet guidelines 

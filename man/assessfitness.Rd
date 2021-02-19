@@ -19,5 +19,7 @@ assessfitness(Event = NULL, Occurrence = NULL, eMoF = NULL, output = list())
 assess the fitness of an imported IPT file
 }
 \examples{
+\dontrun{
 fitness <- assessfitness(output)
+}
 }

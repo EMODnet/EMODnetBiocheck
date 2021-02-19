@@ -15,5 +15,7 @@ loopcheckIPTdataset(x, tree = FALSE)
 This function takes multiple ipt or dwc files as input and generates html QC reports
 }
 \examples{
+\dontrun{
 loopcheckIPTdataset(c("http://ipt.vliz.be/upload/resource?r=biofun2009","http://ipt.vliz.be/upload/resource?r=ukranianromanian_benthos_blacksea_iaea_1998"))
+}
 }

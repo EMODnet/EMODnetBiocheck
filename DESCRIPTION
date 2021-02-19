@@ -33,7 +33,8 @@ Imports:
 	rjson,
 	parsedate,
 	reshape2,
-	obistools
+	obistools,
+	plyr
 Remotes:
   github::EMODnet/skosxml
   github::iobis/obistools

@@ -6,6 +6,16 @@
 \usage{
 leftfrom(x, y, n = 0)
 }
+\arguments{
+\item{x}{string to get the characters from}
+
+\item{y}{string marking where in x we want to start getting characters, including y}
+
+\item{n}{numeric. number of characters not selected y to the left}
+}
 \description{
 get the characters left from some chars in a string
+}
+\examples{
+leftfrom(x = "abcdeT12345", y = "T", n = 2)
 }

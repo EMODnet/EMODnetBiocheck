@@ -1,10 +1,12 @@
 #' fitness and QC 
 #'
 #' Function which returns codes refering to the fitness of use or an the quality
-#' @param mandatory a link the DWC-A file (URL to IPT or a zip file) 
+#' @param link a link the DWC-A file (URL to IPT or a zip file) 
 #' @export
 #' @examples
+#' \dontrun{
 #' qc <- assesfitnessandqc("http://ipt.vliz.be/training/archive?r=biofun_2009")
+#' }
 
 
 

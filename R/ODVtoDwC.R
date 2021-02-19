@@ -6,8 +6,10 @@
 #' @import obistools dplyr
 #' @export
 #' @examples
+#' \dontrun{
 #' ODVtoDwC("data_from_collection_MinimumObservationDepth.txt")
 #' ODVtoDwC("data_from_collection_MinimumObservationDepth.txt", ignore_eventerror = TRUE)
+#' }
 
 
 

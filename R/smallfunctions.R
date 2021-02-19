@@ -32,21 +32,39 @@ substrLeft <- function(x, n){
 
 
 #' get the rightmost characters from a string
+#' @param x string to get the characters from
+#' @param y string marking where in x we want to start getting characters, excluding y
+#' @param n numeric. number of characters not selected from y to the right
+#' 
+#' @import stringr
+#' 
 #' @export
+#' @examples
+#' richtfrom(x = "abcdeT12345", y = "T", n = 2)
 
 richtfrom <- function(x, y, n = 0) {
-  substrRight(x, nchar(x)-stringr::str_locate(x, y)[1] - n)
+  substrRight(x, nchar(x)-str_locate(x, y)[1] - n)
 }
 
 #' get the characters left from some chars in a string
+#' @param x string to get the characters from
+#' @param y string marking where in x we want to start getting characters, including y
+#' @param n numeric. number of characters not selected y to the left
+#' 
+#' @import stringr
+#' 
 #' @export
+#' @examples
+#' leftfrom(x = "abcdeT12345", y = "T", n = 2)
 
 leftfrom <- function(x, y, n = 0) {
-  substr(x, 1, stringr::str_locate(x, y)[1] - n)
+  substr(x, 1, str_locate(x, y)[1] - n)
 }
 
 
 #' remove empty collumns and make all collumns into characters
+#' @param x a dataframe
+#' @param vector A logical scalar. If TRUE x will be transformed to character dataframe
 #' @import parsedate
 #' @export
 
@@ -71,6 +89,7 @@ cleandataframe <- function (x, vector = TRUE) {
 }
 
 #' add "/" to value if missing
+#' @param x dataframe. the eMoF table
 #' @export
 
 cleanemof <- function (x) {
@@ -141,10 +160,13 @@ NamesToVector = function (x) {
 #' @param last mandatory parameter, the character after the text you need
 #' @param n optional paramter, the offset to first
 #' @param m optional paramter, the offset to last
+#' 
+#' @import stringr
+#' 
 
 
 midstring <- function (x, first, last, n=0, m=0) {
-  substring (x, stringr::str_locate(x, first)[[2]] + n, stringr::str_locate(x, last)[[1]] + m )}
+  substring (x, str_locate(x, first)[[2]] + n, str_locate(x, last)[[1]] + m )}
 
 
 

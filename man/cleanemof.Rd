@@ -6,6 +6,9 @@
 \usage{
 cleanemof(x)
 }
+\arguments{
+\item{x}{dataframe. the eMoF table}
+}
 \description{
 add "/" to value if missing
 }

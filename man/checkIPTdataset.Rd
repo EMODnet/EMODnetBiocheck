@@ -15,6 +15,8 @@ checkIPTdataset(link, tree = FALSE)
 This function takes a DWC file as input and carries out the checkdataset funtion. The output is a list.
 }
 \examples{
+\dontrun{
 IPTreport <- checkIPTdataset(link = "http://ipt.vliz.be/upload/resource?r=biofun2009", tree = FALSE)
 IPTreport <- checkIPTdataset(link = "dwca-biofun2009-v1.1.zip", tree = "yes")
+}
 }

@@ -5,8 +5,10 @@
 #' @param tree optional parameter, takes value yes if you want the QC report to include the OBIS tree hierachy 
 #' @export
 #' @examples
+#' \dontrun{
 #' IPTreport <- checkIPTdataset(link = "http://ipt.vliz.be/upload/resource?r=biofun2009", tree = FALSE)
 #' IPTreport <- checkIPTdataset(link = "dwca-biofun2009-v1.1.zip", tree = "yes")
+#' }
 
 
 checkIPTdataset = function(link, tree = FALSE){

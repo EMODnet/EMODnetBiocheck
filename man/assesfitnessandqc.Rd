@@ -7,11 +7,13 @@
 assesfitnessandqc(link)
 }
 \arguments{
-\item{mandatory}{a link the DWC-A file (URL to IPT or a zip file)}
+\item{link}{a link the DWC-A file (URL to IPT or a zip file)}
 }
 \description{
 Function which returns codes refering to the fitness of use or an the quality
 }
 \examples{
+\dontrun{
 qc <- assesfitnessandqc("http://ipt.vliz.be/training/archive?r=biofun_2009")
+}
 }

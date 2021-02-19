@@ -6,6 +6,11 @@
 \usage{
 cleandataframe(x, vector = TRUE)
 }
+\arguments{
+\item{x}{a dataframe}
+
+\item{vector}{A logical scalar. If TRUE x will be transformed to character dataframe}
+}
 \description{
 remove empty collumns and make all collumns into characters
 }

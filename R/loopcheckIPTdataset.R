@@ -5,7 +5,9 @@
 #' @param tree optional parameter, takes value yes if you want the QC report to include the OBIS tree hierachy 
 #' @export
 #' @examples
+#' \dontrun{
 #' loopcheckIPTdataset(c("http://ipt.vliz.be/upload/resource?r=biofun2009","http://ipt.vliz.be/upload/resource?r=ukranianromanian_benthos_blacksea_iaea_1998"))
+#' }
 
 
 

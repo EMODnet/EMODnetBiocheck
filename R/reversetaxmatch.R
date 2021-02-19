@@ -2,9 +2,12 @@
 #'
 #' adds the classification from worms to a vector with aphiaIDs
 #' @param aphiaIDs mandatory parameter, a vector with aphiaIDs from WoRMS
+#' @importFrom plyr rbind.fill
 #' @export
 #' @examples
+#' \dontrun{
 #' reversetaxmatch(aphiaIDs)
+#' }
 
 
 

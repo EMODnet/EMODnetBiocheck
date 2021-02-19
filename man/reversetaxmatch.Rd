@@ -13,5 +13,7 @@ reversetaxmatch(aphiaIDs)
 adds the classification from worms to a vector with aphiaIDs
 }
 \examples{
+\dontrun{
 reversetaxmatch(aphiaIDs)
+}
 }

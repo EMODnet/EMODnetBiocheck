@@ -4,7 +4,9 @@
 #' @param IPTreport mandatory parameter, the output from checkdataset or checkIPTdataset
 #' @export
 #' @examples
+#' \dontrun{
 #' exportIPT(IPTreport)
+#' }
 
 
 

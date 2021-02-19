@@ -7,11 +7,13 @@
 loopfitnessandqc(links)
 }
 \arguments{
-\item{mandatory}{a link the DWC-A file (URL to IPT or a zip file)}
+\item{links}{a link the DWC-A file (URL to IPT or a zip file)}
 }
 \description{
 loops fitness and qc function
 }
 \examples{
+\dontrun{
 qc <- assesfitnessandqc("http://ipt.vliz.be/training/archive?r=biofun_2009")
+}
 }
