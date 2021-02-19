@@ -36,6 +36,6 @@ Imports:
 	obistools,
 	plyr
 Remotes:
-  github::EMODnet/skosxml
+  github::EMODnet/skosxml,
   github::iobis/obistools
 RoxygenNote: 7.1.1
