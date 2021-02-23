@@ -9,6 +9,7 @@
 #' 
 #' @import skosxml
 #' @import stringr
+#' @import obistools
 #' 
 #' @export
 #' @examples

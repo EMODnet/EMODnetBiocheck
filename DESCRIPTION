@@ -1,5 +1,5 @@
 Package: EMODnetBiocheck
-Title: LifeWatch & EMODnet Biology QC tool
+Title: LifeWatch & EMODnet Biology QC Tool
 Version: 0.0.0.9000
 Authors@R: c(
   person(given = "Daphnis",
