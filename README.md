@@ -1,5 +1,4 @@
   <!-- badges: start -->
-  [![R-CMD-check](https://github.com/EMODnet/EMODnetBiocheck/workflows/R-CMD-check/badge.svg)](https://github.com/EMODnet/EMODnetBiocheck/actions)
   [![Lifecycle:experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
   [![Funding](https://img.shields.io/static/v1?label=powered+by&message=lifewatch.be&labelColor=1a4e8a&color=f15922)](http://lifewatch.be)
   <!-- badges: end -->
