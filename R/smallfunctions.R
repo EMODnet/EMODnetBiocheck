@@ -76,6 +76,12 @@ cleandataframe <- function (x, vector = TRUE) {
     }	
   } # format to ISO 8601 if class POSIXct
   
+  if("modified" %in% colnames(x)){	
+    if(TRUE %in% (class(x$modified) == "POSIXct")){	
+      x$modified <- format_iso_8601(x$modified)	
+    }	
+  } # format to ISO 8601 if class POSIXct
+  
   x <- x %>% mutate_all(na_if, 'NA') %>%
              mutate_all(na_if, '') %>%
              mutate_all(na_if, ' ')
