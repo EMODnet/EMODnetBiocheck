@@ -286,7 +286,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   #-----------------------------------------------------------------------#
   
   if (  exists("eMoF")){
-    mof_noUnit <- c('N', 'NA', 'Dimensionless', 'Dmnless', '', ' ') # add values to the list if they refer to 'no unit'
+    mof_noUnit <- c('N', 'NA', 'Dimensionless', 'Dmnless', '', ' ', 'None') # add values to the list if they refer to 'no unit'
     
     mof_oc_noTypeID <- eMoF %>% filter (!is.na(occurrenceID), is.na(measurementTypeID) ) %>% 
                                 select (measurementType, measurementUnit) %>% 
@@ -302,7 +302,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                        (!measurementType %in% c("count") & 
                                           !measurementTypeID %in% BODCnomofvalues)) %>%
                               mutate(IDlink = if_else(!is.na(occurrenceID),"occurrence", "event") ) %>%
-                              mutate(message = 'measurementValues which may need a measurementValueID') %>%  
+                              mutate(message = 'measurementValues which may need a measurementValueID or a Unit') %>%  
                               group_by (IDlink, measurementType, measurementValue, message) %>% 
                               summarize(count = n()) %>% 
                               arrange (desc(measurementType))
