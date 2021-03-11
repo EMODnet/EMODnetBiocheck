@@ -236,6 +236,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                row = row_number(),
                                                message = 'This eventID differs from the eventID provided in the related Occurrence') %>%
                                        inner_join(Occurrence, by = "occurrenceID") %>% 
+                                       mutate(eventID.y = as.character(eventID.y)) %>%
                                        anti_join(eMoF, by = c(  "eventID.y"=  "eventID", "occurrenceID" = "occurrenceID")) %>%
                                        select (level, field, row, message) # Checks the all eMoF eventIDs linked to the same event as the related occurrence
       }
