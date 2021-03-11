@@ -22,7 +22,6 @@ Imports:
 	httr,
 	dplyr,
 	finch,
-	data.table,
 	ggplot2,
 	knitr,
 	leaflet,
@@ -32,9 +31,9 @@ Imports:
 	skosxml,
 	rjson,
 	parsedate,
-	reshape2,
 	plyr,
-	obistools
+	obistools,
+	tidyr
 Remotes:
   github::EMODnet/skosxml,
   github::iobis/obistools

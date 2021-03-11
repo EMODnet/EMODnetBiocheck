@@ -10,6 +10,7 @@
 #' @import skosxml
 #' @import stringr
 #' @import obistools
+#' @importFrom tidyr pivot_wider
 #' 
 #' @export
 #' @examples
@@ -109,7 +110,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                          left_join(occurrencetemp, by = "eventID") %>% 
                                          group_by(eventID, type, occurrenceStatus, basisOfRecord ) %>% 
                                          summarise( occount = sum(!is.na(basisOfRecord))) %>%
-                                         data.table::dcast (type + eventID + basisOfRecord ~occurrenceStatus, value.var=c("occount"), fun=(sum)) %>% 
+                                         pivot_wider(names_from = occurrenceStatus, 
+                                                     values_from = occount, 
+                                                     values_fn = sum) %>% 
                                          fncols(c("absent", "NA", "present")) %>%
                                          mutate(absent = as.integer(absent), `NA` = as.integer(`NA`) ) %>% 
                                          group_by(type, basisOfRecord) %>% 
@@ -123,7 +126,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                          group_by(type, occurrenceStatus, basisOfRecord ) %>% 
                                          summarise( occount = sum(!is.na(basisOfRecord)), n_events = sum(!is.na(unique(eventID)))) %>%  
                                          mutate (occount = if_else(occount =="0", as.integer(NA), occount )) %>% 
-                                         data.table::dcast (type + n_events + basisOfRecord ~occurrenceStatus, value.var=c("occount") )
+                                         pivot_wider(names_from = occurrenceStatus, 
+                                                     values_from = occount) %>%
+                                         select(type, n_events, basisOfRecord, n_present)
     }
     
     IPTreport$datasummary[IPTreport$datasummary =='0' | IPTreport$datasummary  =='NA'] <- NA
@@ -714,7 +719,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       
       if (nrow(mof_biometric) > 0 ) {
         
-        mof_biometric <-  mof_biometric  %>% data.table::dcast(occurrenceID  ~ measurementType, value.var=c("measurementValue"))
+        mof_biometric <-  mof_biometric  %>% pivot_wider(id_cols = !measurementTypeID, 
+                                                         names_from = measurementType, 
+                                                         values_from = measurementValue)
         biometricterms <- names(mof_biometric %>% select (-occurrenceID))
         duplicatescheck <- c(duplicatescheck, biometricterms)
         
@@ -744,7 +751,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
         
         if (nrow(mof_biometric) > 0 )    {
           
-              mof_biometric <-  mof_biometric %>% data.table::dcast(occurrenceID  ~ measurementType, value.var=c("measurementValue"))
+              mof_biometric <-  mof_biometric %>% pivot_wider(id_cols = !measurementTypeID, 
+                                                              names_from = measurementType, 
+                                                              values_from = measurementValue)
               biometricterms <- names(mof_biometric %>% select (-occurrenceID))
               duplicatescheck <- c(duplicatescheck, biometricterms)
               
@@ -917,31 +926,40 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     if(is.null(eventerror) == FALSE & nrow(eventerror %>% filter (!is.na(row))) > 0){
       
-      IPTreport$dtb$eventerror_table <- suppressWarnings(eventerror %>% distinct() %>% 
-                                                                        filter (!is.na(row)) %>% 
-                                                                        data.table::dcast(row ~ field, value.var=c("message"), fun=max) %>%
-                                                                        inner_join (Event %>% mutate (row = row_number()), 
-                                                                                    by = "row", 
-                                                                                    suffix = c("_error", "")) %>% 
-                                                                        arrange(id, row) ) 
+      IPTreport$dtb$eventerror_table <- eventerror %>% distinct() %>% 
+                                                       filter (!is.na(row)) %>% 
+                                                       pivot_wider(id_cols = !level, 
+                                                                   names_from = field, 
+                                                                   values_from = message, 
+                                                                    values_fn = max) %>%
+                                                       inner_join (Event %>% mutate (row = row_number()), 
+                                                                   by = "row", 
+                                                                   suffix = c("_error", "")) %>% 
+                                                       arrange(id, row)
   } }
   
    if(is.null(occurrenceerror) == FALSE  & nrow (occurrenceerror %>% filter (!is.na(row))) >0 ) {
      
-     IPTreport$dtb$occurrenceerror_table <- suppressWarnings(occurrenceerror %>% distinct() %>% 
-                                                                                 filter (!is.na(row)) %>% 
-                                                                                 data.table::dcast(row ~ field, value.var=c("message"), fun=max) %>%
-                                                                                 inner_join (Occurrence %>% mutate (row = row_number()), 
-                                                                                             by = "row", 
-                                                                                             suffix = c("_error", "")) %>% 
-                                                                                 arrange(id, scientificName) )
+     IPTreport$dtb$occurrenceerror_table <- occurrenceerror %>% distinct() %>% 
+                                                                filter (!is.na(row)) %>% 
+                                                                pivot_wider(id_cols = !level, 
+                                                                            names_from = field, 
+                                                                            values_from = message, 
+                                                                            values_fn = max) %>%
+                                                                inner_join (Occurrence %>% mutate (row = row_number()), 
+                                                                            by = "row", 
+                                                                            suffix = c("_error", "")) %>% 
+                                                                arrange(id, scientificName) 
   }
   
   if (exists("eMoF")) {if(is.null(emoferror) ==FALSE & nrow(emoferror %>% filter (!is.na(row))) > 0) {
     
      IPTreport$dtb$emoferror_table <- emoferror %>% distinct() %>% 
                                                     filter (!is.na(row)) %>% 
-                                                    data.table::dcast(row ~ field, value.var=c("message"), fun=max) %>%
+                                                    pivot_wider(id_cols = !level, 
+                                                                names_from = field, 
+                                                                values_from = message, 
+                                                                values_fn = max) %>%
                                                     inner_join (eMoF %>% mutate (row = row_number()), 
                                                                 by = "row", 
                                                                 suffix = c("_error", "")) %>% 
@@ -963,7 +981,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                                     "Minimum depth is greater than maximum depth" , message))) %>% 
                                          mutate (message = (if_else(grepl("has no corresponding eventID", message, fixed = TRUE),
                                                                     "This parentEventID has no corresponding eventID" , message))) %>% 
-                                         group_by (field, message) %>% 
+                                         group_by (level, field, message) %>% 
                                          summarize(count = n()) %>% 
                                          mutate (table = "event")
   }} 
@@ -977,7 +995,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                                               "eventDate does not seem to be a valid date" , as.character(message)))) %>% 
                                                    mutate (message = (if_else(grepl("is greater than maximum", message, fixed = TRUE),
                                                                               "Minimum depth is greater than maximum depth" , as.character(message)))) %>% 
-                                                   group_by (field, message) %>% 
+                                                   group_by (level, field, message) %>% 
                                                    summarize(count = n()) %>% 
                                                    mutate (table = "occurrence")
   }
@@ -989,7 +1007,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                               message = as.character(message)) %>% 
                         mutate (message = (if_else(grepl("has no corresponding eventID in the core", message, fixed = TRUE),
                                                    "This eventID has no corresponding eventID in the core" , message))) %>%                         
-                        group_by (field, message) %>% 
+                        group_by (level, field, message) %>% 
                         summarize(count = n()) %>% 
                         mutate (table = "emof") 
   }}     

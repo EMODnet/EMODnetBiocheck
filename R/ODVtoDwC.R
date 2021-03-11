@@ -4,6 +4,7 @@
 #' @param file mandatory parameter, the location of the .txt file you want to convert
 #' @param ignore_eventerror optional parameter, when the eventID is not unique the script stops, this parameter provides an overwrite
 #' @import obistools dplyr
+#' @importFrom tidyr pivot_longer
 #' @export
 #' @examples
 #' \dontrun{
@@ -167,7 +168,10 @@ parametersforemof <- parameters %>% filter (!P01s %in% p01todwc$P01s)
 
 df3 <- df2 %>% select(occurrenceID, LOCAL_CDI_ID, Instrument.Info, parametersforemof$lables)
 
-emof <- cleandataframe(data.table::melt (df3, id.vars=c("occurrenceID","LOCAL_CDI_ID"), factorsAsStrings = FALSE)) %>% 
+emof <- cleandataframe(pivot_longer(data = df3, 
+                                    cols = !c("occurrenceID","LOCAL_CDI_ID"), 
+                                    names_to = "variable", 
+                                    values_to = "value")) %>% 
  filter(!is.na(value) & value != "" )  %>% 
   rename (measurementType=variable, measurementValue=value ) %>%
   left_join(parametersforemof, by =c("measurementType" = "lables")) %>% 
