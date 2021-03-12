@@ -314,6 +314,18 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                               arrange (desc(measurementType))
     
     
+    mof_noUnitID <- eMoF %>% filter(!is.na(measurementUnit) & 
+                                    !measurementUnit %in% mof_noUnit &
+                                    is.na(measurementUnitID)) %>%
+                             mutate(IDlink = if_else(!is.na(occurrenceID),"occurrenceMoF", "eventMoF") ) %>%
+                             mutate(message = 'measurementUnits which may need a measurementUnitID') %>%  
+                             group_by (IDlink, measurementType, measurementUnit, message) %>% 
+                             summarize(count = n()) %>% 
+                             arrange (desc(measurementType))
+                             
+    
+    
+    
     if (sum(grepl(BODCinstrument, unique(eMoF$measurementTypeID)))== 0){
       mof_noInstrument <- data.frame(level = c('warning'),
                                      field = c('measurementType'), 
@@ -424,7 +436,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       }
     
     
-    IPTreport$dtb$mof_issues <- suppressWarnings(rbind(mof_oc_noTypeID, mof_noValueID,
+    IPTreport$dtb$mof_issues <- suppressWarnings(rbind(mof_oc_noTypeID, mof_noValueID, mof_noUnitID,
                                                        if(exists("mof_oc_TypeID_NotResolve")) mof_oc_TypeID_NotResolve, 
                                                        if(exists("mof_oc_ValueID_NotResolve")) mof_oc_ValueID_NotResolve,
                                                        if(exists("mof_ev_noTypeID")) mof_ev_noTypeID, 
@@ -664,7 +676,40 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   }
   
+ 
+  ### QC checks - Check if the content of the fields is correct  ###
   
+  ## QC checks - occurrenceStatus is standardized ---------------------------------
+  
+  occStat_valid <- c("present", "absent")
+  
+  badOccStat <- Occurrence %>% mutate (level = 'error', 
+                                        field = 'occurrenceStatus', 
+                                        row = row_number(),
+                                        message = 'occurrenceStatus does not seem to contain a valid term such as: "present", "absent"') %>%
+                                filter (!is.na(occurrenceStatus) &
+                                        !occurrenceStatus %in% occStat_valid) %>% 
+                                select (level, field, row, message)
+  
+  
+  occurrenceerror <- bind_rows(occurrenceerror, badOccStat)
+  
+  ## QC checks - basisOfRecord is standardized ---------------------------------
+  
+  basORec_valid <- c("PreservedSpecimen", "FossilSpecimen", "LivingSpecimen", "HumanObservation",
+                     "MachineObservation", "MaterialSample", "Occurrence")
+  
+  badbasORec <- Occurrence %>% mutate (level = 'error', 
+                                       field = 'basisOfRecord', 
+                                       row = row_number(),
+                                       message = 'basisOfRecord does not seem to contain a valid term such as: "PreservedSpecimen", "FossilSpecimen", "LivingSpecimen", "HumanObservation", "MachineObservation", "MaterialSample", "Occurrence"') %>%
+                               filter (!is.na(basisOfRecord) &
+                                       !basisOfRecord %in% basORec_valid) %>% 
+                               select (level, field, row, message)
+  
+  
+  occurrenceerror <- bind_rows(occurrenceerror, badbasORec)
+   
   # QC checks - Check dates against the ISO format  ---------------------------------
   if (  exists("Event") ) {
     
