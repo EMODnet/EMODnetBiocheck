@@ -112,7 +112,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                          summarise( occount = sum(!is.na(basisOfRecord))) %>%
                                          pivot_wider(names_from = occurrenceStatus, 
                                                      values_from = occount, 
-                                                     values_fn = sum) %>% 
+                                                     values_fn = sum,
+                                                     values_fill = 0) %>% 
                                          fncols(c("absent", "NA", "present")) %>%
                                          mutate(absent = as.integer(absent), `NA` = as.integer(`NA`) ) %>% 
                                          group_by(type, basisOfRecord) %>% 
@@ -127,7 +128,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                          summarise( occount = sum(!is.na(basisOfRecord)), n_events = sum(!is.na(unique(eventID)))) %>%  
                                          mutate (occount = if_else(occount =="0", as.integer(NA), occount )) %>% 
                                          pivot_wider(names_from = occurrenceStatus, 
-                                                     values_from = occount) %>%
+                                                     values_from = occount,
+                                                     values_fill = 0) %>%
                                          select(type, n_events, basisOfRecord, n_present)
     }
     
