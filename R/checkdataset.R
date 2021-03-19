@@ -752,6 +752,51 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   
   occurrenceerror <- bind_rows(occurrenceerror, badbasORec)
+  
+  ## QC checks - datasetName is standardized ---------------------------------
+  
+  if(is.null(IPTreport$title) == FALSE & exists("no_ev_datasetName") == FALSE & exists("no_oc_datasetName") == FALSE) {
+      if(exists("Event")){
+        if(nrow(Event %>% select (datasetName) %>% filter (!is.na(datasetName)) %>% distinct()) != 1) {
+          manyDatname <- data.frame(level = 'warning',
+                                    field = 'datasetName',
+                                    message = 'datasetName contains more than one unique values, excluding NA values')
+        } else{
+          if (as.character(Event %>% select (datasetName) %>% filter (!is.na(datasetName)) %>% distinct()) != as.character(IPTreport$title)){
+            datnameNotTitle <- data.frame(level = 'warning',
+                                          field = 'datasetName',
+                                          message = 'datasetName is not equal to the title of the IPT resource')
+          }
+        }
+        
+        eventerror <- bind_rows(if(exists("eventerror")){
+                                  if(nrow(eventerror) > 0) {eventerror}}, 
+                                if(exists("manyDatname")) manyDatname,
+                                if(exists("datnameNotTitle")) datnameNotTitle) 
+        
+    } else {
+        if(nrow(Occurrence %>% select (datasetName) %>% filter (!is.na(datasetName)) %>% distinct()) != 1) {
+          manyDatname <- data.frame(level = 'warning',
+                                    field = 'datasetName',
+                                    message = 'datasetName contains more than one unique values, excluding NA values')
+        } else{
+          if (as.character(Occurrence %>% select (datasetName) %>% filter (!is.na(datasetName)) %>% distinct()) != as.character(IPTreport$title)){
+            datnameNotTitle <- data.frame(level = 'warning',
+                                          field = 'datasetName',
+                                          message = 'datasetName is not equal to the title of the IPT resource')
+          }
+        }
+      
+      occurrenceerror <- bind_rows(if(exists("occurrenceerror")){
+                                     if(nrow(occurrenceerror) > 0) {occurrenceerror}},  
+                                   if(exists("manyDatname")) manyDatname,
+                                   if(exists("datnameNotTitle")) datnameNotTitle)
+      
+    }
+  }
+  
+
+  
    
   # QC checks - Check dates against the ISO format  ---------------------------------
   if (  exists("Event") ) {
@@ -1076,7 +1121,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   if(is.null(occurrenceerror) == FALSE & nrow (occurrenceerror) >0) {
     
-    occurrenceerror_report <- occurrenceerror  %>% distinct() %>% 
+    occurrenceerror_report <- occurrenceerror  %>% distinct() %>%
                                                    mutate (message = (if_else(grepl("is greater than the value found in the bathymetry raster", message, fixed = TRUE),
                                                                               "Depth value is greater than the value found in the bathymetry raster" , as.character(message)))) %>%                         
                                                    mutate (message = (if_else(grepl("does not seem to be a valid date", message, fixed = TRUE),
@@ -1084,7 +1129,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                    mutate (message = (if_else(grepl("is greater than maximum", message, fixed = TRUE),
                                                                               "Minimum depth is greater than maximum depth" , as.character(message)))) %>% 
                                                    group_by (level, field, message) %>% 
-                                                   summarize(count = n()) %>% 
+                                                   summarize(count = n()) %>%
                                                    mutate (table = "occurrence")
   }
   
@@ -1102,9 +1147,10 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   
   if (is.null(IPTreport$ipt_url) == FALSE) {
-    if(is.null(metadataerror) == FALSE) {
-      metadataerror_report <- metadataerror
-    }}
+    if(exists("metadataerror")){
+      if(is.null(metadataerror) == FALSE) {
+        metadataerror_report <- metadataerror
+    }}}
   
   
   IPTreport$dtb$general_issues <- bind_rows(if(exists("eventerror_report")) eventerror_report, 
