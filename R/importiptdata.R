@@ -35,6 +35,7 @@ if (exists("out") == FALSE) {
   
   output$name <- names(NamesToVector(file))
   output$title <- out$emlmeta$dataset$title$title[[1]]@.Data
+  output$ipt_url <- file
   
   if (length(out$emlmeta$dataset$coverage$temporalCoverage)>0) {
     for (i in 1:length(out$emlmeta$dataset$coverage$temporalCoverage)) {

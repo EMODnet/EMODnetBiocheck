@@ -262,12 +262,14 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   }    
   
   
-  emoferror <- rbind(if(exists("mof.ev_check_id")) mof.ev_check_id, if(exists("mof.oc_check_id")) mof.oc_check_id,
-                     if(exists("mof.oc.ev_check_id")) mof.oc.ev_check_id, if(exists("mof.oc_check_id")) mof.oc_check_id)
+  emoferror <- bind_rows(if(exists("mof.ev_check_id")) mof.ev_check_id, 
+                     if(exists("mof.oc_check_id")) mof.oc_check_id,
+                     if(exists("mof.oc.ev_check_id")) mof.oc.ev_check_id, 
+                     if(exists("mof.oc_check_id")) mof.oc_check_id)
   
-  occurrenceerror <- rbind(if(exists("oc.ev_check_id")) oc.ev_check_id)
+  occurrenceerror <- bind_rows(if(exists("oc.ev_check_id")) oc.ev_check_id)
   
-  eventerror <- rbind(if(exists("ev_check_id")) ev_check_id)
+  eventerror <- bind_rows(if(exists("ev_check_id")) ev_check_id)
   
   
   #-----------------------------------------------------------------------#
@@ -465,10 +467,33 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   ####                    QC checks                                    ####
   #-----------------------------------------------------------------------#
   
+  # QC checks - Metadata
+  
+    # Check if IPT url is too long 
+  
+  if(is.null(IPTreport$ipt_url) == FALSE){
+    if(nchar(IPTreport$ipt_url) > 255){
+      metadataerror <- data.frame(level = "error",
+                                  field = "metadata",
+                                  message = "The IPT resource URL seem to be longer than 255 characters",
+                                  count = 1)
+    }
+  }
   
   # QC checks - Check if all required fields are there  ---------------------------------
   
+  other_fields <- c("datasetName", "institutionCode")
+  
   if (  exists("Event") ){ 
+    
+      for (i in other_fields){
+        if (i %in% names(Event) == FALSE){
+          
+          assign(paste0("no_ev_", i), data.frame(level = "error",
+                                              field = i,
+                                              message = paste0("Required field ", i, " is missing")))
+        }}
+    
     if ( nrow(ev_check_id) == 0) {
     
     ev_flat0 <- flatten_event(Event) 
@@ -496,12 +521,28 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                    rename (row=rownew) 
       
     }} else  {
+      
+        for (i in other_fields){
+          if (i %in% names(Occurrence) == FALSE){
+            
+            assign(paste0("no_oc_", i), data.frame(level = "error",
+                                                field = i,
+                                                message = paste0("Required field ", i, " is missing")))
+          }}
+      
       oc_CheckFields <- check_fields(Occurrence, level = "warning")
     }
   
   
-  occurrenceerror <- rbind(occurrenceerror, if(exists("oc_CheckFields")) oc_CheckFields)
-  eventerror <- rbind(eventerror, if(exists("ev_CheckFields")) ev_CheckFields)
+  occurrenceerror <- bind_rows(if(exists("occurrenceerror") & nrow(occurrenceerror) > 0) occurrenceerror, 
+                               if(exists("oc_CheckFields")) oc_CheckFields,
+                               if(exists("no_oc_datasetName")) no_oc_datasetName,
+                               if(exists("no_oc_institutionCode")) no_oc_institutionCode)
+  
+  eventerror <- bind_rows(if(exists("eventerror") & nrow(eventerror) > 0) eventerror, 
+                          if(exists("ev_CheckFields")) ev_CheckFields,
+                          if(exists("no_ev_datasetName")) no_ev_datasetName,
+                          if(exists("no_ev_institutionCode")) no_ev_institutionCode)
   
   
   
@@ -725,7 +766,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                 filter (!is.na(eventDate)) %>% 
                                 mutate (year = as.numeric((substr(eventDate, 1,4))))
     
-        eventerror <- rbind(eventerror, date_rep)  
+        eventerror <- bind_rows(eventerror, date_rep)  
     
     
   } else {
@@ -741,7 +782,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                      filter (!is.na(eventDate)) %>% 
                                      mutate (year = as.numeric((substr(eventDate, 1,4))))
     
-        occurrenceerror <- rbind(occurrenceerror, date_rep)  
+        occurrenceerror <- bind_rows(occurrenceerror, date_rep)  
   } 
   
   IPTreport$dates_plot <- dates_plot  
@@ -1060,9 +1101,16 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   }}     
   
   
-  IPTreport$dtb$general_issues <- rbind(if(exists("eventerror_report")) eventerror_report, 
-                                        if(exists("occurrenceerror_report")) occurrenceerror_report, 
-                                        if(exists("emoferror_report")) emoferror_report )
+  if (is.null(IPTreport$ipt_url) == FALSE) {
+    if(is.null(metadataerror) == FALSE) {
+      metadataerror_report <- metadataerror
+    }}
+  
+  
+  IPTreport$dtb$general_issues <- bind_rows(if(exists("eventerror_report")) eventerror_report, 
+                                            if(exists("occurrenceerror_report")) occurrenceerror_report, 
+                                            if(exists("emoferror_report")) emoferror_report,
+                                            if(exists("metadataerror_report")) metadataerror_report)
   
   
   
@@ -1072,7 +1120,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
   } else {
     
-    IPTreport$dtb$general_issues  <- IPTreport$dtb$general_issues %>% arrange(table , field, desc(count))
+    IPTreport$dtb$general_issues  <- IPTreport$dtb$general_issues %>% arrange(table, level, field, desc(count))
       
     }
   
