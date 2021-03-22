@@ -549,12 +549,31 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   # QC checks - Check coordinates  ---------------------------------
   
+  coords <- c("decimalLatitude", "decimalLongitude")
+  
   if (  exists("Event")) {
     
-    if ("decimalLongitude" %in% names(Event)) {
-      suppressWarnings(ev_flat$decimalLongitude <- as.numeric(ev_flat$decimalLongitude))
-      suppressWarnings(ev_flat$decimalLatitude <- as.numeric(ev_flat$decimalLatitude))
+    
+  if (sum(coords %in% names(Event)) == 2) {
+    
+    if (is.numeric(Event$decimalLatitude) == FALSE) {
+      
+      no_numeric_lat <- data.frame (level = 'error', 
+                                    field = 'decimalLatitude',
+                                    message = 'Some decimalLatitude values are not numeric')
     }
+    
+    if (is.numeric(Event$decimalLongitude) == FALSE) {
+      
+      no_numeric_long <- data.frame (level = 'error', 
+                                     field = 'decimalLongitude',
+                                     message = 'Some decimalLongitude values are not numeric')
+    }
+    
+    
+    suppressWarnings(ev_flat$decimalLongitude <- as.numeric(ev_flat$decimalLongitude))
+    suppressWarnings(ev_flat$decimalLatitude <- as.numeric(ev_flat$decimalLatitude))
+    
     
     GoodCords <- suppressWarnings(ev_flat %>% fncols(c("minimumDepthInMeters", "maximumDepthInMeters", "coordinateUncertaintyInMeters")) %>% 
                                               select (-coordinateUncertaintyInMeters) %>%
@@ -645,14 +664,41 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     
     
-    eventerror <- bind_rows(eventerror, coord_rep, Cords00_rep)
+    eventerror <- bind_rows(if(exists("eventerror")){
+                            if(nrow(eventerror) > 0) {eventerror}}, 
+                            if(exists("coord_rep")) coord_rep,
+                            if(exists("Cords00_rep")) Cords00_rep)
+                            
+  }  
     
-  }   } else {
+    eventerror <- bind_rows(if(exists("eventerror")){
+                            if(nrow(eventerror) > 0) {eventerror}},
+                            if(exists("no_numeric_lat")) no_numeric_lat,
+                            if(exists("no_numeric_long")) no_numeric_long)
     
-    if ("decimalLongitude" %in% names(Occurrence)) {
+    }} else {
+    
+    if (sum(coords %in% names(Occurrence)) == 2) {
+      
+      
+      if (is.numeric(Occurrence$decimalLatitude) == FALSE) {
+        
+        no_numeric_lat <- data.frame (level = 'error', 
+                                      field = 'decimalLatitude',
+                                      message = 'Some decimalLatitude values are not numeric')
+      }
+      
+      if (is.numeric(Occurrence$decimalLongitude) == FALSE) {
+        
+        no_numeric_long <- data.frame (level = 'error', 
+                                       field = 'decimalLongitude',
+                                       message = 'Some decimalLongitude values are not numeric')
+      }
+      
+      
         suppressWarnings(Occurrence$decimalLongitude <- as.numeric(Occurrence$decimalLongitude))
         suppressWarnings(Occurrence$decimalLatitude <- as.numeric(Occurrence$decimalLatitude))
-    }
+    
     
     
     GoodCords <- suppressWarnings(Occurrence %>% fncols(c("minimumDepthInMeters", "maximumDepthInMeters"))  %>% 
@@ -708,10 +754,18 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                     select (-occurrenceID)
     
     
-        occurrenceerror <- bind_rows(occurrenceerror, coord_rep, Cords00_rep)  
+        occurrenceerror <- bind_rows(if(exists("occurrenceerror")){
+                                     if(nrow(occurrenceerror) > 0) {occurrenceerror}}, 
+                                     if(exists("coord_rep")) coord_rep,
+                                     if(exists("Cords00_rep")) Cords00_rep)
+    }
     
+    occurrenceerror <- bind_rows(if(exists("occurrenceerror")){
+                                 if(nrow(occurrenceerror) > 0) {occurrenceerror}},
+                                 if(exists("no_numeric_lat")) no_numeric_lat,
+                                 if(exists("no_numeric_long")) no_numeric_long)
     
-    } }  
+    }}  
   
   if (exists("plot_coordinates")){
     
@@ -1166,7 +1220,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
   } else {
     
-    IPTreport$dtb$general_issues  <- IPTreport$dtb$general_issues %>% arrange(table, level, field, desc(count))
+    IPTreport$dtb$general_issues  <- IPTreport$dtb$general_issues %>% mutate (count = as.integer(count)) %>% 
+                                                                      arrange(table, level, field, desc(count))
       
     }
   
