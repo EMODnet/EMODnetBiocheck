@@ -56,9 +56,16 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   #### Event fix
   
   if (  exists("Event") == TRUE ) {
-    if(length(Event) < 2 )  {rm(Event)} else {
+    
+    if(!"eventID" %in% names(Event) & "id" %in% names(Event)) {
+      warning("There is no eventID field in the Event table; eventID created from id field")
+      Event <- Event %>% mutate(eventID = id)
+    }
+    
+    if(length(Event) < 2 ) {
+      rm(Event)
+      } else {
       
-      {
         Event <- Event %>% mutate_all(na_if, 'NA') %>%
                            mutate_all(na_if, '') %>%
                            mutate_all(na_if, ' ')
@@ -67,7 +74,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
         #        Event[Event =='NA' | Event =='' | Event ==' '] <- NA
         
         #       Event <- fncols(Event, c("eventDate"))
-      }}}
+      }
+    }
   
   #### MoF fix
   
