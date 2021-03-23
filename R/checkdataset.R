@@ -125,7 +125,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                          fncols(c("absent", "NA", "present")) %>%
                                          mutate(absent = as.integer(absent), `NA` = as.integer(`NA`) ) %>% 
                                          group_by(type, basisOfRecord) %>% 
-                                         summarise(n_events = sum(!is.na(unique(eventID))) , n_absent = sum(absent), n_present = sum(as.numeric(present)), n_NA = sum(`NA`)) %>%
+                                         summarise(n_events = sum(!is.na(unique(eventID))) , n_absent = sum(absent), n_present = sum(as.integer(present)), n_NA = sum(`NA`)) %>%
                                          select(type,n_events, basisOfRecord, n_present, n_absent, n_NA )
      } else {
       IPTreport$datasummary <- Event %>% fncols("type") %>% 
@@ -788,6 +788,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   occStat_valid <- c("present", "absent")
   
+  if("occurrenceStatus" %in% names(Occurrence)){
   badOccStat <- Occurrence %>% mutate (level = 'error', 
                                         field = 'occurrenceStatus', 
                                         row = row_number(),
@@ -796,14 +797,25 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                         !occurrenceStatus %in% occStat_valid) %>% 
                                 select (level, field, row, message)
   
+  if(!"present" %in% Occurrence$occurrenceStatus){
+  no_present <- data.frame(level = 'warning',
+                           field = 'occurrenceStatus',
+                           message = 'None of the occurrence records have occurrenceStatus = "present"')
+  }
   
-  occurrenceerror <- bind_rows(occurrenceerror, badOccStat)
+  occurrenceerror <- bind_rows(if(exists("occurrenceerror")){
+                               if(nrow(occurrenceerror) > 0) {occurrenceerror}}, 
+                               if(exists("badOccStat")) badOccStat,
+                               if(exists("no_present")) no_present)
+    
+  }
   
   ## QC checks - basisOfRecord is standardized ---------------------------------
   
   basORec_valid <- c("PreservedSpecimen", "FossilSpecimen", "LivingSpecimen", "HumanObservation",
                      "MachineObservation", "MaterialSample", "Occurrence")
   
+  if("basisOfRecord" %in% names(Occurrence)){
   badbasORec <- Occurrence %>% mutate (level = 'error', 
                                        field = 'basisOfRecord', 
                                        row = row_number(),
@@ -814,6 +826,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   
   occurrenceerror <- bind_rows(occurrenceerror, badbasORec)
+  }
   
   ## QC checks - datasetName is standardized ---------------------------------
   
