@@ -27,6 +27,7 @@ l <- lapply(termsp01, function(term) {
     definition = unlist(element$definition),
     preflabel = unlist(element$prefLabel),
     altLabel = unlist(element$altLabel),
+    deprecated = unlist(element$deprecated),
     uri = xml_attr(term, "about"))
   )
 })
@@ -46,14 +47,15 @@ l <- lapply(terms, function(term) {
     definition = unlist(element$definition),
     preflabel = unlist(element$prefLabel),
     altLabel = altLabel,
+    deprecated = unlist(element$deprecated),
     uri = xml_attr(term, "about"))
   )
 })
 Q01s <- bind_rows(l)
 
 # Manually adding the eunis habitat collection as a vocab term <- requested by MBA and approved by OBIS-VLIZ
-eunis_col <- data.frame("eunishabitats","EUNIS habitats","Classification of habitat types according to the EUNIS Biodiversity database", "http://dd.eionet.europa.eu/vocabulary/biodiversity/eunishabitats/")
-names(eunis_col)<-c("identifier", "preflabel","definition", "uri")
+eunis_col <- data.frame("eunishabitats","EUNIS habitats","Classification of habitat types according to the EUNIS Biodiversity database", "false", "http://dd.eionet.europa.eu/vocabulary/biodiversity/eunishabitats/")
+names(eunis_col)<-c("identifier", "preflabel","definition", "deprecated", "uri")
 
 parameters <- rbind(Q01s,P01s) %>% 
               bind_rows(eunis_col)
@@ -70,6 +72,7 @@ for (i in 1:nrow(P01s)){
   if (nrow(related)>0){
     links <- related %>% mutate(p01s = P01$about)
     P01sunits <- rbind(P01sunits, links)
+    print(paste0("Iteration number ", i, ". Be patient buddy, there are a bunch of records"))
   }
   rm(P01,related, links)
 }
@@ -90,6 +93,7 @@ l <- lapply(terms, function(term) {
     identifier = unlist(element$identifier),
     preflabel = unlist(element$prefLabel),
     altLabel = unlist(element$altLabel),
+    deprecated = unlist(element$deprecated),
     uri = xml_attr(term, "about"))
   )
 })
@@ -116,6 +120,7 @@ l <- lapply(terms, function(term) {
   return(list(
     preflabel = unlist(element$prefLabel),
     definition = definition,
+    deprecated = unlist(element$deprecated),
     uri = xml_attr(term, "about"))
   )
 })
@@ -133,6 +138,7 @@ l <- lapply(terms, function(term) {
   return(list(
     preflabel = unlist(element$prefLabel),
     definition = definition,
+    deprecated = unlist(element$deprecated),
     uri = xml_attr(term, "about"))
   )
 })
@@ -151,6 +157,7 @@ l <- lapply(terms, function(term) {
   return(list(
     preflabel = unlist(element$prefLabel),
     definition = definition,
+    deprecated = unlist(element$deprecated),
     uri = xml_attr(term, "about"))
   )
 })
@@ -169,6 +176,7 @@ l <- lapply(terms, function(term) {
   return(list(
     preflabel = unlist(element$prefLabel),
     definition = definition,
+    deprecated = unlist(element$deprecated),
     uri = xml_attr(term, "about"))
   )
 })
@@ -187,6 +195,7 @@ l <- lapply(terms, function(term) {
   return(list(
     preflabel = unlist(element$prefLabel),
     definition = definition,
+    deprecated = unlist(element$deprecated),
     uri = xml_attr(term, "about"))
   )
 })
@@ -206,6 +215,7 @@ l <- lapply(terms, function(term) {
   return(list(
     preflabel = unlist(element$prefLabel),
     definition = definition,
+    deprecated = unlist(element$deprecated),
     uri = xml_attr(term, "about"))
   )
 })
@@ -223,6 +233,7 @@ l <- lapply(terms, function(term) {
   return(list(
     preflabel = unlist(element$prefLabel),
     definition = definition,
+    deprecated = unlist(element$deprecated),
     uri = xml_attr(term, "about"))
   )
 })
@@ -233,9 +244,11 @@ terms <- xml_find_all(x, ".//skos:Concept")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
   definition <- if (length(element$definition) > 0) unlist(element$definition) else NA
+  deprecated <- if (length(element$status) > 0) unlist(element$status) else NA
   return(list(
     preflabel = unlist(element$prefLabel),
     definition = definition,
+    deprecated = deprecated,
     uri = xml_attr(term, "about"))
   )
 })
