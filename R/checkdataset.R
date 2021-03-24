@@ -133,12 +133,11 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                          left_join(occurrencetemp, by = "eventID") %>% 
                                          mutate (occurrenceStatus = if_else(!is.na(occurrenceStatus), paste("n_", occurrenceStatus, sep ="") , occurrenceStatus )) %>%
                                          group_by(type, occurrenceStatus, basisOfRecord ) %>% 
-                                         summarise( occount = sum(!is.na(basisOfRecord)), n_events = sum(!is.na(unique(eventID)))) %>%  
+                                         summarise(occount = sum(!is.na(basisOfRecord)), n_events = sum(!is.na(unique(eventID)))) %>%  
                                          mutate (occount = if_else(occount =="0", as.integer(NA), occount )) %>% 
                                          pivot_wider(names_from = occurrenceStatus, 
                                                      values_from = occount,
-                                                     values_fill = 0) %>%
-                                         select(type, n_events, basisOfRecord, n_present)
+                                                     values_fill = 0) 
     }
     
     IPTreport$datasummary[IPTreport$datasummary =='0' | IPTreport$datasummary  =='NA'] <- NA
@@ -336,6 +335,57 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                              arrange (desc(measurementType))
                              
     
+    # Checking if the BODC terms are deprecated
+    
+    deprec_typeID <- eMoF %>% select (measurementTypeID) %>% 
+                              distinct() %>%
+                              left_join(BODCparameters %>% select (uri, deprecated),
+                                        by = c("measurementTypeID" = "uri")) %>%
+                              filter(deprecated == "true") %>%
+                              select(measurementTypeID)
+    
+        if(nrow(deprec_typeID) > 0){
+                deprec_typeIDs <- eMoF %>% filter(measurementTypeID %in% deprec_typeID) %>%
+                                        mutate(IDlink = if_else(!is.na(occurrenceID),"occurrenceMoF", "eventMoF") ) %>%
+                                        mutate(message = 'This measurementTypeID is deprecated') %>%  
+                                        group_by (IDlink, measurementTypeID, message) %>% 
+                                        summarize(count = n()) %>% 
+                                        arrange (desc(measurementTypeID))
+        }
+    
+    deprec_valueID <- eMoF %>% select (measurementValueID) %>% 
+                              distinct() %>%
+                              left_join(BODCvalues %>% select (uri, deprecated),
+                                        by = c("measurementValueID" = "uri")) %>%
+                              filter(deprecated == "true") %>%
+                              select(measurementValueID)
+    
+        if(nrow(deprec_valueID) > 0){
+                deprec_valueIDs <- eMoF %>% filter(measurementValueID %in% deprec_valueID) %>%
+                                        mutate(IDlink = if_else(!is.na(occurrenceID),"occurrenceMoF", "eventMoF") ) %>%
+                                        mutate(message = 'This measurementValueID is deprecated') %>%  
+                                        group_by (IDlink, measurementValueID, message) %>% 
+                                        summarize(count = n()) %>% 
+                                        arrange (desc(measurementValueID))
+        }
+    
+    deprec_unitID <- eMoF %>% select (measurementUnitID) %>% 
+                               distinct() %>%
+                               left_join(BODCunits %>% select (uri, deprecated),
+                                         by = c("measurementUnitID" = "uri")) %>%
+                               filter(deprecated == "true") %>%
+                               select(measurementUnitID)
+    
+        if(nrow(deprec_unitID) > 0){
+                deprec_unitIDs <- eMoF %>% filter(measurementUnitID %in% deprec_unitID) %>%
+                                        mutate(IDlink = if_else(!is.na(occurrenceID),"occurrenceMoF", "eventMoF") ) %>%
+                                        mutate(message = 'This measurementUnitID is deprecated') %>%  
+                                        group_by (IDlink, measurementUnitID, message) %>% 
+                                        summarize(count = n()) %>% 
+                                        arrange (desc(measurementUnitID))
+        }
+    
+    
     
     
     if (sum(grepl(BODCinstrument, unique(eMoF$measurementTypeID)))== 0){
@@ -389,7 +439,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                  mutate(measurementValue = as.numeric(measurementValue)) %>% 
                                                  filter ( measurementValue == 0 ) %>%  
                                                  select (level,field, row ,message))
-    } else {mof_oc_Value0 <-NULL }
+      } else {mof_oc_Value0 <-NULL }
     
     mof_oc_dubs <- eMoF %>% filter (!is.na(occurrenceID), !is.na(measurementTypeID)) %>%
                             select (occurrenceID, measurementTypeID) %>% 
@@ -448,14 +498,17 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       }
     
     
-    IPTreport$dtb$mof_issues <- suppressWarnings(rbind(mof_oc_noTypeID, mof_noValueID, mof_noUnitID,
+    IPTreport$dtb$mof_issues <- bind_rows(mof_oc_noTypeID, mof_noValueID, mof_noUnitID,
+                                                       if(exists("deprec_typeIDs")) deprec_typeIDs,
+                                                       if(exists("deprec_valueIDs")) deprec_valueIDs,
+                                                       if(exists("deprec_unitIDs")) deprec_unitIDs,
                                                        if(exists("mof_oc_TypeID_NotResolve")) mof_oc_TypeID_NotResolve, 
                                                        if(exists("mof_oc_ValueID_NotResolve")) mof_oc_ValueID_NotResolve,
                                                        if(exists("mof_ev_noTypeID")) mof_ev_noTypeID, 
                                                        if(exists("mof_ev_TypeID_NotResolve"))  mof_ev_TypeID_NotResolve,
                                                        if(exists("mof_ev_ValueID_NotResolve"))  mof_ev_ValueID_NotResolve ) %>%
                                                  select (one_of(c("IDlink" , "measurementType", "measurementTypeID", "measurementValue", 
-                                                                    "measurementValueID",  "measurementUnit" , "message" , "count"))))
+                                                                    "measurementValueID",  "measurementUnit", "measurementUnitID", "message", "count")))
     
     if (is.data.frame(IPTreport$dtb$mof_issues)){
       if (nrow(IPTreport$dtb$mof_issues)>0){
@@ -463,7 +516,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                     arrange(IDlink , message, desc(count))
     }}
     
-    emoferror <- rbind(emoferror, mof_ValueNull, mof_oc_Value0, mof_oc_dubs, 
+    emoferror <- rbind(emoferror, mof_ValueNull, mof_oc_Value0, mof_oc_dubs,  
                        if(exists("mof_ev_dubs")) mof_ev_dubs,
                        if(exists("mof_noInstrument")) mof_noInstrument,  
                        if(exists("mof_noSamplingdescriptor")) mof_noSamplingdescriptor
