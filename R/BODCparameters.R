@@ -10,6 +10,7 @@
 #'   \item{definition}{definition of the vocab term}
 #'   \item{preflabel}{preferred label of the vocab term}
 #'   \item{altLabel}{alternative label of the vocab term}
+#'   \item{deprecated}{states if the term is deprecated}
 #'   \item{uri}{uri of the vocab term}
 #'   \item{standardUnitID}{BODC P06 vocabulary term URI associated to the vocab term}
 #'   \item{standardunit}{BODC P06 vocabulary term preferred label associated to the vocab term}

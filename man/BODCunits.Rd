@@ -10,6 +10,7 @@ A data frame with updating number of rows and 4 columns:
   \item{identifier}{ID of the vocab term}
   \item{preflabel}{preferred label of the vocab term}
   \item{altLabel}{alternative label of the vocab term}
+  \item{deprecated}{states if the term is deprecated}
   \item{uri}{uri of the vocab term}
 }
 }

@@ -9,6 +9,7 @@ A data frame with updating number of rows and 3 columns:
 \describe{
   \item{definition}{definition of the vocab term}
   \item{preflabel}{preferred label of the vocab term}
+  \item{deprecated}{states if the term is deprecated}
   \item{uri}{uri of the vocab term}
 }
 }

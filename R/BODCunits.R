@@ -8,6 +8,7 @@
 #'   \item{identifier}{ID of the vocab term}
 #'   \item{preflabel}{preferred label of the vocab term}
 #'   \item{altLabel}{alternative label of the vocab term}
+#'   \item{deprecated}{states if the term is deprecated}
 #'   \item{uri}{uri of the vocab term}
 #' }
 #' @source \url{http://vocab.nerc.ac.uk/collection/}
