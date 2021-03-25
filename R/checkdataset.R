@@ -253,10 +253,10 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   if ( exists("Event")){
     ev_check_id <- check_eventids(Event)  # Checks that all parenteventIDs linked to an eventID in the dataset
-    oc.ev_check_id <- check_extension_eventids(Event,Occurrence) # Checks if all eventIDs in your occurrence extentsion  link to the event Core
+    oc.ev_check_id <- check_extension_eventids(Event,Occurrence) # Checks if all eventIDs in your occurrence extentsion link to the event Core
     
     if (  exists("eMoF")){
-      mof.ev_check_id <- check_extension_eventids(Event,eMoF)  # Checks the all eventIDs in your eMoF extentsion  link to the event Core
+      mof.ev_check_id <- check_extension_eventids(Event,eMoF)  # Checks that all the eventIDs in your eMoF extentsion link to the event Core
       
       
       if ( sum(is.na(eMoF$occurrenceID)) != nrow(eMoF)  ){
@@ -266,7 +266,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                             message = 'This occurrenceID has no corresponding occurrenceID in the occurrence Extension') %>%
                                     filter (!is.na(occurrenceID)) %>%  
                                     anti_join(Occurrence, by = "occurrenceID")  %>%
-                                    select (level, field, row, message) # Checks the all eMoF eventIDs linked to the same event as the related occurrence
+                                    select (level, field, row, message) # Checks that all eMoF occurrenceIDs exist in the Occurrence table
         
         
         mof.oc.ev_check_id <- eMoF %>% mutate (level = 'error', 
@@ -276,7 +276,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                        inner_join(Occurrence, by = "occurrenceID") %>% 
                                        mutate(eventID.y = as.character(eventID.y)) %>%
                                        anti_join(eMoF, by = c(  "eventID.y"=  "eventID", "occurrenceID" = "occurrenceID")) %>%
-                                       select (level, field, row, message) # Checks the all eMoF eventIDs linked to the same event as the related occurrence
+                                       select (level, field, row, message) # Checks that all eMoF eventIDs are linked to the same eventID as the related occurrenceID
       }
       }
   }
@@ -288,22 +288,41 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                         message = 'This occurrenceID has no corresponding occurrenceID in the occurrence Extension') %>%
                                 filter (!is.na(occurrenceID)) %>%  
                                 anti_join(Occurrence, by = "occurrenceID")  %>%
-                                select (level, field, row, message) # Checks the all eMoF eventIDs linked to the same event as the related occurrence
+                                select (level, field, row, message) # Checks that all eMoF occurrenceIDs exist in the Occurrence table
     
-  }    
+  }
+  
+
+  occurrenceIDs <- Occurrence$occurrenceID[!is.na(Occurrence$occurrenceID) & !Occurrence$occurrenceID == ""]
+  dup_rows <- which(duplicated(occurrenceIDs))
+  
+  if (length(dup_rows) > 0) {
+    dup_occID <- data_frame(level = "error",
+                            field = "occurrenceID",
+                            row = dup_rows,
+                            message = paste0("occurrenceID ", Occurrence$occurrenceID[dup_rows], " is duplicated in the Occurrence table")
+                            ) # Checks that occurrenceID is unique in the occurrence table
+  }
+  
   
   
   # Preparing general_issues table: Overview of all issues
   #-------------------------------------------------------- 
+  emoferror <- data.frame()
+  emoferror <- bind_rows(emoferror, 
+                         if(exists("mof.ev_check_id")) mof.ev_check_id, 
+                         if(exists("mof.oc_check_id")) mof.oc_check_id,
+                         if(exists("mof.oc.ev_check_id")) mof.oc.ev_check_id, 
+                         if(exists("mof.oc_check_id")) mof.oc_check_id)
   
-  emoferror <- bind_rows(if(exists("mof.ev_check_id")) mof.ev_check_id, 
-                     if(exists("mof.oc_check_id")) mof.oc_check_id,
-                     if(exists("mof.oc.ev_check_id")) mof.oc.ev_check_id, 
-                     if(exists("mof.oc_check_id")) mof.oc_check_id)
+  occurrenceerror <- data.frame()
+  occurrenceerror <- bind_rows(occurrenceerror,
+                               if(exists("oc.ev_check_id")) oc.ev_check_id,
+                               if(exists("dup_occID")) dup_occID)
   
-  occurrenceerror <- bind_rows(if(exists("oc.ev_check_id")) oc.ev_check_id)
-  
-  eventerror <- bind_rows(if(exists("ev_check_id")) ev_check_id)
+  eventerror <- data.frame()
+  eventerror <- bind_rows(eventerror, 
+                          if(exists("ev_check_id")) ev_check_id)
   
   
   #-----------------------------------------------------------------------#
