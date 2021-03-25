@@ -21,6 +21,11 @@
 
 checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport = list(), tree = FALSE){
 
+  
+  ###### Extracting tables from IPTreport list, which is the output of importiptdata()
+  ######-------------------------------------------------------------------------------
+  
+  
   # if (exists("IPTreport") == FALSE ) {IPTreport <- list()} # To use checkdataset only with tables and no importiptdata()
   
   if (!is.null(IPTreport$Event)) { 
@@ -44,7 +49,10 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   #---------------------------------------------------------------------------#
   ###                   Fix formatting                                        ####
   #---------------------------------------------------------------------------#      
+  
+  
   #### Occurrence fix
+  ####---------------
   
   Occurrence <- Occurrence %>% mutate_all(na_if, 'NA') %>%
                                mutate_all(na_if, '') %>%
@@ -54,6 +62,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   
   #### Event fix
+  ####--------------
   
   if (  exists("Event") == TRUE ) {
     
@@ -77,7 +86,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       }
     }
   
+  
   #### MoF fix
+  ####---------------
   
   if ( exists("eMoF") == TRUE  )    { 
     if(length(eMoF) < 2 ) {rm(eMoF)} else {
@@ -104,6 +115,12 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   #----------------------------------------------------------------------------#
   ####                    Generate summary                                  ####
   #----------------------------------------------------------------------------#
+  
+  
+  
+  ###### Creating the datasummary table: Overview of event and occurrence records
+  ######-------------------------------------------------------------------------
+  
   
   occurrencetemp <- suppressWarnings(if(("occurrenceStatus" %in% names(Occurrence)) == FALSE) {
                                         mutate  (Occurrence, occurrenceStatus = "present")
@@ -148,12 +165,17 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                 summarize(countOccurrence = n())        
   }
   
+  
+  
+  ###### Creating the mofsummary table: Overview of the measurement or fact records
+  ######------------------------------------------------------------------------------
+  
   if (exists("eMoF")) {
       
       parastolookup <- (eMoF %>% select (measurementTypeID) %>% 
                                  distinct() %>% filter(!measurementTypeID %in% BODCparameters$uri))$measurementTypeID
       
-      # Need to add error when params not in vocabs collections P01|Q01. DELETE this comment when error created
+      # Need to add warning when params not in vocabs collections P01|Q01. DELETE this comment when error created
       
       suppressWarnings(
       if(length(parastolookup[!is.na(parastolookup)&parastolookup!=""])>0){
@@ -170,7 +192,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       
       
       
-      # Need to add error when values not in vocabs collections S10|S11|L22|L05|M20|M21|M22|M23|C35|C17. DELETE this comment when error created
+      # Need to add warning when values not in vocabs collections S10|S11|L22|L05|M20|M21|M22|M23|C35|C17. DELETE this comment when error created
       
       suppressWarnings(
       if(length(valuestolookup[!is.na(valuestolookup)&valuestolookup!=""])>0){
@@ -201,8 +223,10 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                      format(round(IPTreport$mofsummary$maxValue, 2), digits = 2, nsmall = 2), 
                                                      sprintf("%.7f", IPTreport$mofsummary$maxValue)), 0)
       
+      
 
-            
+  ###### Creating the mofsummary_values table: Overview of standardised measurement values
+  ######----------------------------------------------------------------------------------   
       
       IPTreport$mofsummary_values <- eMoF %>% filter(!is.na(measurementValueID)) %>% 
                                               mutate(IDlink = if_else(is.na(occurrenceID) , "eventMoF", "occurrenceMoF" )) %>% 
@@ -269,6 +293,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   }    
   
   
+  # Preparing general_issues table: Overview of all issues
+  #-------------------------------------------------------- 
+  
   emoferror <- bind_rows(if(exists("mof.ev_check_id")) mof.ev_check_id, 
                      if(exists("mof.oc_check_id")) mof.oc_check_id,
                      if(exists("mof.oc.ev_check_id")) mof.oc.ev_check_id, 
@@ -303,7 +330,16 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   #-----------------------------------------------------------------------#
   
   if (  exists("eMoF")){
+    
+    
+    #### Quality Checks on eMoF records
+    ####--------------------------------
+    
     mof_noUnit <- c('N', 'NA', 'Dimensionless', 'Dmnless', '', ' ', 'None') # add values to the list if they refer to 'no unit'
+    
+    
+    # Missing BODC terms
+    #-------------------
     
     mof_oc_noTypeID <- eMoF %>% filter (!is.na(occurrenceID), is.na(measurementTypeID) ) %>% 
                                 select (measurementType, measurementUnit) %>% 
@@ -336,6 +372,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                              
     
     # Checking if the BODC terms are deprecated
+    #-------------------------------------------
     
     deprec_typeID <- eMoF %>% select (measurementTypeID) %>% 
                               distinct() %>%
@@ -386,6 +423,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
         }
     
     
+    # Checking if the BODC terms resolve to sampling descriptors and effort
+    #-----------------------------------------------------------------------    
     
     
     if (sum(grepl(BODCinstrument, unique(eMoF$measurementTypeID)))== 0){
@@ -403,6 +442,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     }
     
     
+    # Checking if the measurementIDs (type, value, unit) resolve to BODC terms
+    #--------------------------------------------------------------------------    
+    
       mof_oc_TypeID_NotResolve <- eMoF %>% filter (!is.na(occurrenceID), !is.na(measurementTypeID) ) %>% 
                                            select (measurementType, measurementTypeID, measurementUnit) %>% 
                                            anti_join(parameters, by = c("measurementTypeID"="uri")) %>%
@@ -418,8 +460,10 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                    message = 'measurementValueID does not resolve') %>% 
                                             group_by (IDlink,measurementValue, measurementValueID, message) %>% 
                                             summarize(count = n())
-                                        
-    
+ 
+                                             
+      # Checking eMoF records integrity --> NULL measurementValueIDs, present record with 0 values in occurrence eMoFs, duplicated eMoF records.
+      #-----------------------------------------------------------------------------------------------------------------------------------------
     
     mof_ValueNull <- eMoF %>% mutate (level = 'error', 
                                       field = 'measurementValue', 
@@ -428,6 +472,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                               filter (is.na(measurementValue))  %>% 
                               select (level,field, row ,message)
     
+      
+      
     if ( sum(is.na(eMoF$occurrenceID)) != nrow(eMoF)  ){
       mof_oc_Value0 <- suppressWarnings(eMoF %>% mutate (level = 'error', 
                                                          field = 'measurementValue', 
@@ -454,6 +500,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                     message = 'Duplicate eMoF record linked to occurrence') %>%
                             select (level,field, row ,message)
     
+    
+    # Missing BODC terms for Event related records
+    #----------------------------------------------    
     
     if (  exists("Event") ){
       mof_ev_dubs <- eMoF %>% filter (is.na(occurrenceID), !is.na(measurementTypeID)) %>%
@@ -498,6 +547,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       }
     
     
+    # Creating the mof_issues table: Overview of potential issues with Measurements or Facts records
+    #------------------------------------------------------------------------------------------------
+        
     IPTreport$dtb$mof_issues <- bind_rows(mof_oc_noTypeID, mof_noValueID, mof_noUnitID,
                                                        if(exists("deprec_typeIDs")) deprec_typeIDs,
                                                        if(exists("deprec_valueIDs")) deprec_valueIDs,
@@ -515,6 +567,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
         IPTreport$dtb$mof_issues <- IPTreport$dtb$mof_issues[,colSums(is.na(IPTreport$dtb$mof_issues))<nrow(IPTreport$dtb$mof_issues)] %>% 
                                     arrange(IDlink , message, desc(count))
     }}
+
+    
+    # Preparing general_issues table: Overview of all issues
     
     emoferror <- rbind(emoferror, mof_ValueNull, mof_oc_Value0, mof_oc_dubs,  
                        if(exists("mof_ev_dubs")) mof_ev_dubs,
@@ -528,9 +583,13 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   ####                    QC checks                                    ####
   #-----------------------------------------------------------------------#
   
-  # QC checks - Metadata
+  #### QC checks - Metadata
+  ####----------------------
   
-    # Check if IPT url is too long 
+  
+  # Check if IPT url is too long
+  #------------------------------  
+  
   
   if(is.null(IPTreport$ipt_url) == FALSE){
     if(nchar(IPTreport$ipt_url) > 255){
@@ -540,12 +599,17 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                   count = 1)
     }
   }
-  
-  # QC checks - Check if all required fields are there  ---------------------------------
+
+   
+  #### QC checks - Check if all required fields are there  
+  ####----------------------------------------------------
   
   other_fields <- c("datasetName", "institutionCode")
   
-  if (  exists("Event") ){ 
+  if (  exists("Event") ){
+    
+  # Checks run only when the Event table exists
+  #---------------------------------------------    
     
       for (i in other_fields){
         if (i %in% names(Event) == FALSE){
@@ -583,6 +647,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       
     }} else  {
       
+      # Checks run only when the Event table does not exists
+      #----------------------------------------------------- 
+      
         for (i in other_fields){
           if (i %in% names(Occurrence) == FALSE){
             
@@ -594,6 +661,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       oc_CheckFields <- check_fields(Occurrence, level = "warning")
     }
   
+  
+  # Preparing general_issues table: Overview of all issues
   
   occurrenceerror <- bind_rows(if(exists("occurrenceerror") & nrow(occurrenceerror) > 0) occurrenceerror, 
                                if(exists("oc_CheckFields")) oc_CheckFields,
@@ -608,11 +677,15 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   
   
-  # QC checks - Check coordinates  ---------------------------------
+  #### QC checks - Check coordinates  
+  ####---------------------------------
   
   coords <- c("decimalLatitude", "decimalLongitude")
   
   if (  exists("Event")) {
+    
+    # Checks run only when the Event table exists
+    #--------------------------------------------- 
     
     
   if (sum(coords %in% names(Event)) == 2) {
@@ -666,7 +739,10 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                  filter (decimalLatitude ==0 , 
                                          decimalLongitude == 0) %>% 
                                  select (level, field, row, message)
-    
+        
+
+        ###### Creating the plot_coordinates table: Geographical cover of the dataset & Issues on map
+        ######-----------------------------------------------------------------------------------------              
     
         plot_coordinates <- suppressWarnings(GoodCords %>% mutate (quality = if_else ((eventID %in% OnLand$eventID), 'On Land', 
                                                                                   if_else ((eventID %in% depth$eventID), 'Check Depth',
@@ -723,7 +799,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
         coord_rep <- rbind(coord_rep,depth_rep2_conv)
     }
     
-    
+        
+        # Preparing general_issues table: Overview of all issues
     
     eventerror <- bind_rows(if(exists("eventerror")){
                             if(nrow(eventerror) > 0) {eventerror}}, 
@@ -738,6 +815,10 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                             if(exists("no_numeric_long")) no_numeric_long)
     
     }} else {
+      
+      
+      # Checks run only when the Event table does not exists
+      #------------------------------------------------------ 
     
     if (sum(coords %in% names(Occurrence)) == 2) {
       
@@ -813,7 +894,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                     inner_join(goodcord_rep, 
                                                by=c("occurrenceID")) %>% 
                                     select (-occurrenceID)
-    
+
+        
+        # Preparing general_issues table: Overview of all issues
     
         occurrenceerror <- bind_rows(if(exists("occurrenceerror")){
                                      if(nrow(occurrenceerror) > 0) {occurrenceerror}}, 
@@ -835,9 +918,12 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   }
   
  
-  ### QC checks - Check if the content of the fields is correct  ###
+  #### QC checks - Check if the content of the fields is correct
+  ####-----------------------------------------------------------
   
-  ## QC checks - occurrenceStatus is standardized ---------------------------------
+  
+  # occurrenceStatus is standardized 
+  #-----------------------------------
   
   occStat_valid <- c("present", "absent")
   
@@ -856,6 +942,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                            message = 'None of the occurrence records have occurrenceStatus = "present"')
   }
   
+  
+  # Preparing general_issues table: Overview of all issues
+
   occurrenceerror <- bind_rows(if(exists("occurrenceerror")){
                                if(nrow(occurrenceerror) > 0) {occurrenceerror}}, 
                                if(exists("badOccStat")) badOccStat,
@@ -863,7 +952,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
   }
   
-  ## QC checks - basisOfRecord is standardized ---------------------------------
+  
+  # basisOfRecord is standardized 
+  #---------------------------------
   
   basORec_valid <- c("PreservedSpecimen", "FossilSpecimen", "LivingSpecimen", "HumanObservation",
                      "MachineObservation", "MaterialSample", "Occurrence")
@@ -878,10 +969,14 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                select (level, field, row, message)
   
   
+  # Preparing general_issues table: Overview of all issues
+  
   occurrenceerror <- bind_rows(occurrenceerror, badbasORec)
   }
   
-  ## QC checks - datasetName is standardized ---------------------------------
+  
+  # datasetName is standardized 
+  #------------------------------
   
   if(is.null(IPTreport$title) == FALSE & exists("no_ev_datasetName") == FALSE & exists("no_oc_datasetName") == FALSE) {
       if(exists("Event")){
@@ -896,6 +991,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                           message = 'datasetName is not equal to the title of the IPT resource')
           }
         }
+
+        
+        # Preparing general_issues table: Overview of all issues
         
         eventerror <- bind_rows(if(exists("eventerror")){
                                   if(nrow(eventerror) > 0) {eventerror}}, 
@@ -914,6 +1012,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                           message = 'datasetName is not equal to the title of the IPT resource')
           }
         }
+
+      # Preparing general_issues table: Overview of all issues
       
       occurrenceerror <- bind_rows(if(exists("occurrenceerror")){
                                      if(nrow(occurrenceerror) > 0) {occurrenceerror}},  
@@ -922,11 +1022,11 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       
     }
   }
-  
 
-  
    
-  # QC checks - Check dates against the ISO format  ---------------------------------
+  # Check dates against the ISO format  
+  #-------------------------------------
+  
   if (  exists("Event") ) {
     
         date_rep <- check_eventdate(Event %>% fncols(c("eventDate"))) 
@@ -938,7 +1038,10 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                 select (eventDate) %>% 
                                 filter (!is.na(eventDate)) %>% 
                                 mutate (year = as.numeric((substr(eventDate, 1,4))))
-    
+
+        
+        # Preparing general_issues table: Overview of all issues
+        
         eventerror <- bind_rows(eventerror, date_rep)  
     
     
@@ -954,7 +1057,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                      select (eventDate) %>% 
                                      filter (!is.na(eventDate)) %>% 
                                      mutate (year = as.numeric((substr(eventDate, 1,4))))
-    
+        
+        # Preparing general_issues table: Overview of all issues
+        
         occurrenceerror <- bind_rows(occurrenceerror, date_rep)  
   } 
   
@@ -963,8 +1068,13 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   
   
-  # QC checks potential duplicate occurrences  ---------------------------------
-  #with emof
+  # Checking potential duplicate occurrences  
+  #--------------------------------------------
+  
+  
+  # Including BODCbiometrics into duplicates check when the eMoF table exists
+  #---------------------------------------------------------------------------
+  
   if (exists("eMoF")  ){
     
         mof_biometric <- eMoF %>% filter (!is.na(occurrenceID), 
@@ -976,7 +1086,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     if (exists("Event") ) {
       
         duplicatescheck <- c ('eventID', 'lifeStage', 'sex', 'scientificName',  'scientificNameID', 'identificationRemarks',
-                              'identificationQualifier') # terms to check in case of event Core
+                              'identificationQualifier') # terms to check in case of Event Core
       
       if (nrow(mof_biometric) > 0 ) {
         
@@ -986,8 +1096,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
         biometricterms <- names(mof_biometric %>% select (-occurrenceID))
         duplicatescheck <- c(duplicatescheck, biometricterms)
         
-        occ_dups_rows <- (fncols((Occurrence %>% left_join(mof_biometric, 
-                                                           by = "occurrenceID")), duplicatescheck)  %>% 
+        occ_dups_rows <- (fncols( (Occurrence %>% left_join(mof_biometric, 
+                                                           by = "occurrenceID") ), duplicatescheck)  %>% 
                           select (duplicatescheck) %>% 
                           duplicated () +
                           fncols((Occurrence %>% left_join(mof_biometric, 
@@ -1037,7 +1147,11 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                             duplicated (fromLast=TRUE) )
           
         }}} else {
-          #without emof
+          
+          
+          # Checking potential duplicate occurrences: This check runs if there is no eMoF table
+          #-------------------------------------------------------------------------------------
+          
           
    if (exists("Event")) {
      
@@ -1074,12 +1188,14 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                                                         message = 'Potential duplicate record') %>%
                                                                                 select (level,field, row ,message)
   
+  # Preparing general_issues table: Overview of all issues
   
   occurrenceerror <- rbind(occurrenceerror, occ_dups)  
   
   
   
-  # taxa --------------------------------------
+  # Checking taxa 
+  #-----------------
   
   if (!is.null(Occurrence$scientificNameID)){
     
@@ -1090,12 +1206,20 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       as.integer(gsub("urn:lsid:marinespecies.org:taxname:", "", snidUnique)) # Ruben thinks that this line is useless
       reversedmatch <- reversetaxmatch (as.integer(gsub("urn:lsid:marinespecies.org:taxname:", "", snidUnique)))
     
+      
+      
+      ###### Creating the taxa table: Overview unmatched taxa
+      ######--------------------------------------------------     
+      
       IPTreport$dtb$taxa <- Occurrence %>% group_by (scientificName, scientificNameID) %>% 
                                            summarise(count = n()) %>% 
                                            left_join(reversedmatch, 
                                                      by = c("scientificNameID" = "lsid"))
     
       if (exists ("Event") & exists ("plot_coordinates") ) { 
+        
+        ###### Creating the MarTaxaonLand table: Marine taxa on land
+        ######-------------------------------------------------------  
         
         IPTreport$MarTaxaonLand <- IPTreport$dtb$taxa %>% ungroup() %>% 
                                                           filter (isMarine == 1 & 
@@ -1106,7 +1230,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                                                                                              occurrenceStatus == 'present' ), 
                                                                       by = c("scientificNameID"), suffix = c("", "_orig")) %>% 
                                                           filter (eventID %in% (OnLand$eventID))
-        
+
+       
+                
         #    IPTreport$nonMartaxaonAtSea <- IPTreport$dtb$taxa %>%  ungroup() %>% filter (isMarine == 0 & isBrackish == 0) %>% inner_join (Occurrence, by = c("scientificNameID")) %>% filter (!eventID %in% (OnLand$eventID))
         IPTreport$plot_coordinates <- IPTreport$plot_coordinates %>% mutate (quality = if_else ((eventID %in% IPTreport$MarTaxaonLand$eventID), 'Marine Taxa on Land', quality))
         
@@ -1119,6 +1245,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                      mutate (level = 'warning', 
                                              field ='scientificNameID', 
                                              message = 'Marine taxon located on land' )
+ 
+        # Preparing general_issues table: Overview of all issues
         
         occurrenceerror <- rbind(occurrenceerror, occ_onland)                                     
         
@@ -1148,16 +1276,28 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                      mutate (level = 'warning', 
                                              field ='scientificNameID', 
                                              message = 'Marine taxon located on land' )
+
+        
+        # Preparing general_issues table: Overview of all issues
         
         occurrenceerror <- rbind(occurrenceerror, occ_onland)                                     
       
       
-        }
+      }
+      
         
+      ###### Creating the kingdoms table: Taxonomic cover of the dataset
+      ######--------------------------------------------------------------        
+      
         IPTreport$kingdoms <- IPTreport$dtb$taxa %>% filter(!is.na(kingdom)) %>% 
                                                      group_by (kingdom, class)%>% 
                                                      summarise(counts = sum(count))
-        
+ 
+      
+      # Checking if scientificNameID is standardised
+      #-----------------------------------------------      
+      
+             
         occ_notmatched <- Occurrence %>% mutate (row = row_number()) %>% 
                                          filter (!is.na(scientificNameID)) %>% 
                                          filter (scientificName %in% (IPTreport$dtb$taxa %>% filter(is.na(scientificNameMatch)))$scientificName) %>% 
@@ -1174,6 +1314,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                   message = c('None of the scientificNameIDs are LSID for WoRMS' ))
     
   }
+    
+    # Preparing general_issues table: Overview of all issues
+    
     occurrenceerror <- rbind(occurrenceerror, occ_notmatched)          
   }
   
@@ -1181,7 +1324,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   ####                    Generate report table                                ####
   #-------------------------------------------------------------------------------#
   
-  #Generate error tables
+  
+  ###### Creating the error tables: eventerror_table, occurrenceerror_table & emoferror_table 
+  ######--------------------------------------------------------------------------------------
   
   if (exists("Event")) {
     
@@ -1229,7 +1374,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   
   
-  #Generate all_report_issues
+  ###### Creating the error_report tables: Invalid Event Records, Invalid Occurrence Records & Invalid eMoF Records 
+  ######------------------------------------------------------------------------------------------------------------
   
   if (exists("Event")) {if(is.null(eventerror) ==FALSE) {
     
@@ -1281,6 +1427,10 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     }}}
   
   
+  
+  ###### Creating the general_issues table: Overview of all issues
+  ######----------------------------------------------------------- 
+    
   IPTreport$dtb$general_issues <- bind_rows(if(exists("eventerror_report")) eventerror_report, 
                                             if(exists("occurrenceerror_report")) occurrenceerror_report, 
                                             if(exists("emoferror_report")) emoferror_report,
