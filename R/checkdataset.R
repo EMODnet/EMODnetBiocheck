@@ -105,9 +105,13 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       ) 
       
       if ( exists("Event") == TRUE){
-        eMoF$eventID <- as.character(eMoF$id) #eventID column is required in the measurements table.
+        eMoF$eventID <- ifelse(is.null(eMoF$eventID) == FALSE, 
+                               as.character(eMoF$eventID), 
+                               as.character(eMoF$id)) #eventID column is required in the measurements table.
       } else {
-        eMoF$occurrenceID <- as.character(eMoF$id) #occurrenceID column is required in the measurements table.
+        eMoF$occurrenceID <- ifelse(is.null(eMoF$occurrenceID) == FALSE, 
+                                    as.character(eMoF$occurrenceID), 
+                                    as.character(eMoF$id)) #occurrenceID column is required in the measurements table.
       }
     }}
   
@@ -1360,7 +1364,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                        inner_join (Event %>% mutate (row = row_number()), 
                                                                    by = "row", 
                                                                    suffix = c("_error", "")) %>% 
-                                                       arrange(id, row)
+                                                       arrange(eventID, row)
   } }
   
    if(is.null(occurrenceerror) == FALSE  & nrow (occurrenceerror %>% filter (!is.na(row))) >0 ) {
@@ -1374,7 +1378,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                                 inner_join (Occurrence %>% mutate (row = row_number()), 
                                                                             by = "row", 
                                                                             suffix = c("_error", "")) %>% 
-                                                                arrange(id, scientificName) 
+                                                                arrange(occurrenceID, scientificName) 
   }
   
   if (exists("eMoF")) {if(is.null(emoferror) ==FALSE & nrow(emoferror %>% filter (!is.na(row))) > 0) {
@@ -1388,7 +1392,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                     inner_join (eMoF %>% mutate (row = row_number()), 
                                                                 by = "row", 
                                                                 suffix = c("_error", "")) %>% 
-                                                    arrange(id, row)
+                                                    arrange(eventID, row)
   } }
   
   
