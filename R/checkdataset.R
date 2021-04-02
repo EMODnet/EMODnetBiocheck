@@ -105,15 +105,16 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       ) 
       
       if ( exists("Event") == TRUE){
-        eMoF$eventID <- ifelse(is.null(eMoF$eventID) == FALSE, 
-                               as.character(eMoF$eventID), 
-                               as.character(eMoF$id)) #eventID column is required in the measurements table.
+        if(!is.null(eMoF$eventID) == FALSE){
+          if(is.null(eMoF$id) == FALSE){
+          eMoF$eventID <- as.character(eMoF$id) #eventID column is required in the measurements table.
+        }}
       } else {
-        eMoF$occurrenceID <- ifelse(is.null(eMoF$occurrenceID) == FALSE, 
-                                    as.character(eMoF$occurrenceID), 
-                                    as.character(eMoF$id)) #occurrenceID column is required in the measurements table.
-      }
-    }}
+        if(!is.null(eMoF$occurrenceID) == FALSE){
+          if(is.null(eMoF$id) == FALSE){
+        eMoF$occurrenceID <- as.character(eMoF$id) #occurrenceID column is required in the measurements table.
+      }}
+    }}}
   
   
   #----------------------------------------------------------------------------#
@@ -1353,7 +1354,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   if (exists("Event")) {
     
-    if(is.null(eventerror) == FALSE & nrow(eventerror %>% filter (!is.na(row))) > 0){
+    if(is.null(eventerror) == FALSE & nrow(eventerror) > 0) { 
+        if(nrow(eventerror %>% filter (!is.na(row))) > 0) {
       
       IPTreport$dtb$eventerror_table <- eventerror %>% distinct() %>% 
                                                        filter (!is.na(row)) %>% 
@@ -1365,9 +1367,11 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                                    by = "row", 
                                                                    suffix = c("_error", "")) %>% 
                                                        arrange(eventID, row)
-  } }
+        } } }
   
-   if(is.null(occurrenceerror) == FALSE  & nrow (occurrenceerror %>% filter (!is.na(row))) >0 ) {
+  
+     if(is.null(occurrenceerror) == FALSE & nrow(occurrenceerror) > 0) {
+       if(nrow (occurrenceerror %>% filter (!is.na(row))) >0 ) {
      
      IPTreport$dtb$occurrenceerror_table <- occurrenceerror %>% distinct() %>% 
                                                                 filter (!is.na(row)) %>% 
@@ -1379,9 +1383,12 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                                             by = "row", 
                                                                             suffix = c("_error", "")) %>% 
                                                                 arrange(occurrenceID, scientificName) 
-  }
+  }}
   
-  if (exists("eMoF")) {if(is.null(emoferror) ==FALSE & nrow(emoferror %>% filter (!is.na(row))) > 0) {
+  if (exists("eMoF")) {
+    
+    if(is.null(emoferror) ==FALSE & nrow(occurrenceerror) > 0) {
+      if(nrow(emoferror %>% filter (!is.na(row))) > 0) {
     
      IPTreport$dtb$emoferror_table <- emoferror %>% distinct() %>% 
                                                     filter (!is.na(row)) %>% 
@@ -1393,14 +1400,15 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                                 by = "row", 
                                                                 suffix = c("_error", "")) %>% 
                                                     arrange(eventID, row)
-  } }
+  } } }
   
   
   
   ###### Creating the error_report tables: Invalid Event Records, Invalid Occurrence Records & Invalid eMoF Records 
   ######------------------------------------------------------------------------------------------------------------
   
-  if (exists("Event")) {if(is.null(eventerror) ==FALSE) {
+  if (exists("Event")) {
+      if(is.null(eventerror) == FALSE & nrow(eventerror) > 0) {
     
     eventerror_report <- eventerror  %>% distinct() %>% 
                                          mutate (message = (if_else(grepl("is greater than the value found in the bathymetry raster", message, fixed = TRUE),
@@ -1417,7 +1425,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   }} 
   
   if(is.null(occurrenceerror) == FALSE & nrow (occurrenceerror) >0) {
-    
+
     occurrenceerror_report <- occurrenceerror  %>% distinct() %>%
                                                    mutate (message = (if_else(grepl("is greater than the value found in the bathymetry raster", message, fixed = TRUE),
                                                                               "Depth value is greater than the value found in the bathymetry raster" , as.character(message)))) %>%                         
@@ -1430,7 +1438,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                    mutate (table = "occurrence")
   }
   
-  if (exists("eMoF")) {if(is.null(emoferror) == FALSE) {
+  if (exists("eMoF")) {
+      if(is.null(emoferror) == FALSE & nrow(emoferror) > 0) {
     
     emoferror_report <- emoferror  %>% distinct() %>% 
                                        mutate(field = as.character(field), 
