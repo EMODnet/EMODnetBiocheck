@@ -1354,7 +1354,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   if (exists("Event")) {
     
-    if(is.null(eventerror) == FALSE & nrow(eventerror) > 0) { 
+    if(is.null(eventerror) == FALSE & nrow(eventerror) > 0) {
+      if(is.null(eventerror$row) == FALSE) {
         if(nrow(eventerror %>% filter (!is.na(row))) > 0) {
       
       IPTreport$dtb$eventerror_table <- eventerror %>% distinct() %>% 
@@ -1367,11 +1368,12 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                                    by = "row", 
                                                                    suffix = c("_error", "")) %>% 
                                                        arrange(eventID, row)
-        } } }
+        } } } }
   
   
      if(is.null(occurrenceerror) == FALSE & nrow(occurrenceerror) > 0) {
-       if(nrow (occurrenceerror %>% filter (!is.na(row))) >0 ) {
+       if(is.null(occurrenceerror$row) == FALSE) {
+        if(nrow (occurrenceerror %>% filter (!is.na(row))) >0 ) {
      
      IPTreport$dtb$occurrenceerror_table <- occurrenceerror %>% distinct() %>% 
                                                                 filter (!is.na(row)) %>% 
@@ -1383,12 +1385,13 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                                             by = "row", 
                                                                             suffix = c("_error", "")) %>% 
                                                                 arrange(occurrenceID, scientificName) 
-  }}
+  }}}
   
   if (exists("eMoF")) {
     
     if(is.null(emoferror) ==FALSE & nrow(occurrenceerror) > 0) {
-      if(nrow(emoferror %>% filter (!is.na(row))) > 0) {
+      if(is.null(emoferror$row) == FALSE) {
+        if(nrow(emoferror %>% filter (!is.na(row))) > 0) {
     
      IPTreport$dtb$emoferror_table <- emoferror %>% distinct() %>% 
                                                     filter (!is.na(row)) %>% 
@@ -1400,7 +1403,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                                 by = "row", 
                                                                 suffix = c("_error", "")) %>% 
                                                     arrange(eventID, row)
-  } } }
+  } } } }
   
   
   
