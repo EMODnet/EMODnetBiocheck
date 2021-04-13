@@ -1474,14 +1474,18 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   
   if (is.null(IPTreport$dtb$general_issues) == TRUE ){
+
     
     IPTreport$dtb$general_issues <- c ("There don't seem to be any issues")
     
   } else {
-    
-    IPTreport$dtb$general_issues  <- IPTreport$dtb$general_issues %>% mutate (count = as.integer(count)) %>% 
+      if(nrow(IPTreport$dtb$general_issues) > 0){
+       IPTreport$dtb$general_issues  <- IPTreport$dtb$general_issues %>% mutate (count = as.integer(count)) %>% 
                                                                       arrange(table, level, field, desc(count))
       
+      } else {
+        IPTreport$dtb$general_issues <- c ("There don't seem to be any issues")
+      }
     }
   
   
