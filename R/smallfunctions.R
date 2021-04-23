@@ -81,6 +81,12 @@ cleandataframe <- function (x, vector = TRUE) {
     }	
   } # format to ISO 8601 if class POSIXct
   
+  if("verbatimEventDate" %in% colnames(x)){	
+    if(TRUE %in% (class(x$verbatimEventDate) == "POSIXct")){	
+      x$verbatimEventDate <- format_iso_8601(x$verbatimEventDate)	
+    }	
+  } # format to ISO 8601 if class POSIXct
+  
   x <- x %>% mutate_all(na_if, 'NA') %>%
              mutate_all(na_if, '') %>%
              mutate_all(na_if, ' ')
