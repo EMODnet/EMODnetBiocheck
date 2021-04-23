@@ -360,7 +360,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     #### Quality Checks on eMoF records
     ####--------------------------------
     
-    mof_noUnit <- c('N', 'NA', 'Dimensionless', 'Dmnless', '', ' ', 'None') # add values to the list if they refer to 'no unit'
+    mof_noUnit <- c('N', 'NA', '', ' ', 'None') # add values to the list if they refer to 'no unit'. Ruben removed 'Dimensionless', 'Dmnless' because they are units
     
     
     # Missing BODC terms
@@ -374,7 +374,6 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     mof_noValueID <- eMoF %>% filter ( (is.na(measurementUnit) | 
                                           (measurementUnit %in% mof_noUnit)  | 
-                                          measurementUnitID == "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/" | 
                                           measurementUnitID == "http://vocab.nerc.ac.uk/collection/P06/current/XXXX/") &
                                        is.na(measurementValueID) & 
                                        (!measurementType %in% c("count") & 
