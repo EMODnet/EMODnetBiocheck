@@ -1389,7 +1389,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   if (exists("eMoF")) {
     
-    if(is.null(emoferror) ==FALSE & nrow(occurrenceerror) > 0) {
+    if(is.null(emoferror) == FALSE & nrow(emoferror) > 0) {
       if(is.null(emoferror$row) == FALSE) {
         if(nrow(emoferror %>% filter (!is.na(row))) > 0) {
     
