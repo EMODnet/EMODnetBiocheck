@@ -374,7 +374,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     mof_noValueID <- eMoF %>% filter ( (is.na(measurementUnit) | 
                                           (measurementUnit %in% mof_noUnit)  | 
-                                          measurementUnitID == "http://vocab.nerc.ac.uk/collection/P06/current/XXXX/") &
+                                          measurementUnitID == "http://vocab.nerc.ac.uk/collection/P06/current/XXXX/" &
+                                          is.na(measurementUnit)) &
                                        is.na(measurementValueID) & 
                                        (!measurementType %in% c("count") & 
                                           !measurementTypeID %in% BODCnomofvalues)) %>%
