@@ -53,11 +53,55 @@ l <- lapply(terms, function(term) {
 })
 Q01s <- bind_rows(l)
 
+
+#x <- read_xml("http://vocab.nerc.ac.uk/collection/P02/current/") # DEPRECATED
+x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/P02/current/") %$% 
+  content %>% 
+  rawToChar %>% 
+  read_xml()
+terms <- xml_find_all(x, ".//skos:Concept")
+l <- lapply(terms, function(term) {
+  element <- as_list(term)
+  altLabel <- if (length(element$altLabel) > 0) unlist(element$altLabel) else NA
+  definition <- if (length(element$definition) > 0) unlist(element$definition) else NA
+  return(list(
+    identifier = unlist(element$identifier),
+    definition = definition,
+    preflabel = unlist(element$prefLabel),
+    altLabel = altLabel,
+    deprecated = unlist(element$deprecated),
+    uri = xml_attr(term, "about"))
+  )
+})
+P02s <- bind_rows(l)
+
+
+#x <- read_xml("http://vocab.nerc.ac.uk/collection/P35/current/") # DEPRECATED
+x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/P35/current/") %$% 
+  content %>% 
+  rawToChar %>% 
+  read_xml()
+terms <- xml_find_all(x, ".//skos:Concept")
+l <- lapply(terms, function(term) {
+  element <- as_list(term)
+  altLabel <- if (length(element$altLabel) > 0) unlist(element$altLabel) else NA
+  return(list(
+    identifier = unlist(element$identifier),
+    definition = unlist(element$definition),
+    preflabel = unlist(element$prefLabel),
+    altLabel = altLabel,
+    deprecated = unlist(element$deprecated),
+    uri = xml_attr(term, "about"))
+  )
+})
+P35s <- bind_rows(l)
+
+
 # Manually adding the eunis habitat collection as a vocab term <- requested by MBA and approved by OBIS-VLIZ
 eunis_col <- data.frame("eunishabitats","EUNIS habitats","Classification of habitat types according to the EUNIS Biodiversity database", "false", "http://dd.eionet.europa.eu/vocabulary/biodiversity/eunishabitats/")
 names(eunis_col)<-c("identifier", "preflabel","definition", "deprecated", "uri")
 
-parameters <- rbind(Q01s,P01s) %>% 
+parameters <- rbind(Q01s,P01s, P02s, P35s) %>% 
               bind_rows(eunis_col)
 
 
@@ -239,6 +283,45 @@ l <- lapply(terms, function(term) {
 })
 M20s <- bind_rows(l)
 
+
+# x <- read_xml("http://vocab.nerc.ac.uk/collection/M21/current/") DEPRECATED
+x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/M21/current/") %$% 
+  content %>% 
+  rawToChar %>% 
+  read_xml()
+terms <- xml_find_all(x, ".//skos:Concept")
+l <- lapply(terms, function(term) {
+  element <- as_list(term)
+  definition <- if (length(element$definition) > 0) unlist(element$definition) else NA
+  return(list(
+    preflabel = unlist(element$prefLabel),
+    definition = definition,
+    deprecated = unlist(element$deprecated),
+    uri = xml_attr(term, "about"))
+  )
+})
+M21s <- bind_rows(l)
+
+
+# x <- read_xml("http://vocab.nerc.ac.uk/collection/L06/current/") DEPRECATED
+x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/L06/current/") %$% 
+  content %>% 
+  rawToChar %>% 
+  read_xml()
+terms <- xml_find_all(x, ".//skos:Concept")
+l <- lapply(terms, function(term) {
+  element <- as_list(term)
+  definition <- if (length(element$definition) > 0) unlist(element$definition) else NA
+  return(list(
+    preflabel = unlist(element$prefLabel),
+    definition = definition,
+    deprecated = unlist(element$deprecated),
+    uri = xml_attr(term, "about"))
+  )
+})
+L06s <- bind_rows(l)
+
+
 x <- read_xml("http://dd.eionet.europa.eu/vocabulary/biodiversity/eunishabitats/rdf")
 terms <- xml_find_all(x, ".//skos:Concept")
 l <- lapply(terms, function(term) {
@@ -254,7 +337,7 @@ l <- lapply(terms, function(term) {
 })
 EUNIS <- bind_rows(l) %>% mutate (uri = paste(uri,"/", sep ="")) 
 
-values <- rbind(L22s, L05s, F02s, C17s, S11s, S10s, M20s, EUNIS)
+values <- rbind(L22s, L05s, F02s, C17s, S11s, S10s, M20s, M21s, L06s, EUNIS)
 
 
 ### USE IF: pulling data from EMODnetBiocheck R package and not from BODC web services (mainly for P01 collection)
