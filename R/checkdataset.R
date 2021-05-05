@@ -11,6 +11,7 @@
 #' @import stringr
 #' @import obistools
 #' @importFrom tidyr pivot_wider
+#' @importFrom stringdist stringsim
 #' 
 #' @export
 #' @examples
@@ -1010,10 +1011,12 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                     field = 'datasetName',
                                     message = 'datasetName contains more than one unique values, excluding NA values')
         } else{
-          if (as.character(Event %>% select (datasetName) %>% filter (!is.na(datasetName)) %>% distinct()) != as.character(IPTreport$title)){
+          if (stringsim(as.character(Event %>% select (datasetName) %>% filter (!is.na(datasetName)) %>% distinct()),
+                        as.character(IPTreport$title)
+                        ) < 1 ){ # 100% as percentage of similarity, ideally the datasetName must be identical to the title of the dataset although due to encoding issues they may differ
             datnameNotTitle <- data.frame(level = 'warning',
                                           field = 'datasetName',
-                                          message = 'datasetName is not equal to the title of the IPT resource')
+                                          message = 'datasetName is slightly different from the title of the IPT resource')
           }
         }
 
@@ -1031,10 +1034,12 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                     field = 'datasetName',
                                     message = 'datasetName contains more than one unique values, excluding NA values')
         } else{
-          if (as.character(Occurrence %>% select (datasetName) %>% filter (!is.na(datasetName)) %>% distinct()) != as.character(IPTreport$title)){
+          if (stringsim(as.character(Occurrence %>% select (datasetName) %>% filter (!is.na(datasetName)) %>% distinct()),
+                        as.character(IPTreport$title)
+                        ) < 1 ){
             datnameNotTitle <- data.frame(level = 'warning',
                                           field = 'datasetName',
-                                          message = 'datasetName is not equal to the title of the IPT resource')
+                                          message = 'datasetName is slightly different from the title of the IPT resource')
           }
         }
 

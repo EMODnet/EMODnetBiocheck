@@ -33,7 +33,8 @@ Imports:
 	parsedate,
 	plyr,
 	obistools,
-	tidyr
+	tidyr,
+	stringdist
 Remotes:
   github::EMODnet/skosxml,
   github::iobis/obistools
