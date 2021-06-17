@@ -41,8 +41,7 @@ Additional checks which are planned to be implemented are:
  -  Are there non-marine / non-brackisch taxa found at sea? 
 
  
-The tool is was created using the OBIS tools package (https://github.com/iobis/obistools) and is avaiable from the LifeWatch services at http://rshiny.lifewatch.be/BioCheck/
-The R functions are available from the EMODnet github repository at https://github.com/EMODnet/LifeWatch-EMODnet-Biology-QC-tool
+The tool is created using the OBIS tools package (https://github.com/iobis/obistools) and is avaiable from the LifeWatch services at http://rshiny.lifewatch.be/BioCheck/
 
 
 ## Installation
@@ -59,7 +58,7 @@ devtools::install_github("EMODnet/EMODnetBiocheck")
 ```R
 # For IPT resources (recommended)
 loopcheckIPTdataset ("http://ipt.iobis.org/training/archive?r=biofun_2009", tree="yes")
-loopcheckIPTdataset (c("http://ipt.iobis.org/training/archive?r=biofun_2009", "http://ipt.vliz.be/eurobis/resource?r=benthic-fauna-arrabida-2007-2009", tree="yes"))
+loopcheckIPTdataset (c("http://ipt.iobis.org/training/archive?r=biofun_2009", "http://ipt.vliz.be/eurobis/resource?r=benthic-fauna-arrabida-2007-2009"), tree="yes")
 
 # For data tables (if no IPT resource available)
 IPTreport <- checkdataset(Event = youreventtablename, Occurrence = youroccurrencetablename, eMoF = youremoftablename)
