@@ -288,7 +288,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       }
   }
   
-  if ( exists("Event") == FALSE &  exists("eMoF") == TRUE  ){
+  if ( exists("Event") == FALSE & exists("eMoF") == TRUE  ){
     mof.oc_check_id <- eMoF %>% mutate (level = 'error', 
                                         field = 'occurrenceID', 
                                         row = row_number(),
@@ -319,8 +319,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   emoferror <- bind_rows(emoferror, 
                          if(exists("mof.ev_check_id")) mof.ev_check_id, 
                          if(exists("mof.oc_check_id")) mof.oc_check_id,
-                         if(exists("mof.oc.ev_check_id")) mof.oc.ev_check_id, 
-                         if(exists("mof.oc_check_id")) mof.oc_check_id)
+                         if(exists("mof.oc.ev_check_id")) mof.oc.ev_check_id)
   
   occurrenceerror <- data.frame()
   occurrenceerror <- bind_rows(occurrenceerror,
@@ -369,7 +368,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     mof_oc_noTypeID <- eMoF %>% filter (!is.na(occurrenceID), is.na(measurementTypeID) ) %>% 
                                 select (measurementType, measurementUnit) %>% 
-                                mutate(IDlink = 'occurrenceMoF', message = 'measurementtypeID is missing') %>% 
+                                mutate(IDlink = 'occurrenceMoF', message = 'measurementTypeID is missing') %>% 
                                 group_by (IDlink,measurementType, measurementUnit, message) %>% 
                                 summarize(count = n())
     
@@ -454,17 +453,17 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     
     if (sum(grepl(BODCinstrument, unique(eMoF$measurementTypeID)))== 0){
-      mof_noInstrument <- data.frame(level = c('warning'),
-                                     field = c('measurementType'), 
+      mof_noInstrument <- data_frame(level = "warning",
+                                     field = "measurementType", 
                                      row = NA, 
-                                     message = c('No sampling instrument present'))
+                                     message = "No sampling instrument present")
     }
     
     if (sum(grepl(paste(BODCeffort, collapse="|"), unique(eMoF$measurementTypeID)))== 0){
-      mof_noSamplingdescriptor <- data.frame(level = c('warning'),
-                                             field = c('measurementType'), 
+      mof_noSamplingdescriptor <- data.frame(level = "warning",
+                                             field = "measurementType", 
                                              row = NA, 
-                                             message = c('No sampling descriptors present: see http://vocab.nerc.ac.uk/collection/Q01/current/'))
+                                             message = "No sampling descriptors present: see http://vocab.nerc.ac.uk/collection/Q01/current/")
     }
     
     
@@ -548,7 +547,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       mof_ev_noTypeID <- eMoF %>% filter (!is.na(eventID), is.na(occurrenceID), is.na(measurementTypeID) ) %>% 
                                   select (measurementType, measurementUnit) %>% 
                                   mutate(IDlink = 'eventMoF', 
-                                         message = 'measurementtypeID is missing') %>% 
+                                         message = 'measurementTypeID is missing') %>% 
                                   group_by (IDlink,measurementType, measurementUnit, message) %>% 
                                   summarize(count = n())
       
@@ -828,15 +827,13 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
         
         # Preparing general_issues table: Overview of all issues
     
-    eventerror <- bind_rows(if(exists("eventerror")){
-                            if(nrow(eventerror) > 0) {eventerror}}, 
+    eventerror <- bind_rows(if(exists("eventerror")){eventerror},
                             if(exists("coord_rep")) coord_rep,
                             if(exists("Cords00_rep")) Cords00_rep)
                             
   }  
     
-    eventerror <- bind_rows(if(exists("eventerror")){
-                            if(nrow(eventerror) > 0) {eventerror}},
+    eventerror <- bind_rows(if(exists("eventerror")){eventerror},
                             if(exists("no_numeric_lat")) no_numeric_lat,
                             if(exists("no_numeric_long")) no_numeric_long)
     
@@ -930,8 +927,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                      if(exists("Cords00_rep")) Cords00_rep)
     }
     
-    occurrenceerror <- bind_rows(if(exists("occurrenceerror")){
-                                 if(nrow(occurrenceerror) > 0) {occurrenceerror}},
+    occurrenceerror <- bind_rows(if(exists("occurrenceerror")){occurrenceerror},
                                  if(exists("no_numeric_lat")) no_numeric_lat,
                                  if(exists("no_numeric_long")) no_numeric_long)
     
@@ -971,8 +967,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   # Preparing general_issues table: Overview of all issues
 
-  occurrenceerror <- bind_rows(if(exists("occurrenceerror")){
-                               if(nrow(occurrenceerror) > 0) {occurrenceerror}}, 
+  occurrenceerror <- bind_rows(if(exists("occurrenceerror")){occurrenceerror},
                                if(exists("badOccStat")) badOccStat,
                                if(exists("no_present")) no_present)
     
@@ -1023,8 +1018,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
         
         # Preparing general_issues table: Overview of all issues
         
-        eventerror <- bind_rows(if(exists("eventerror")){
-                                  if(nrow(eventerror) > 0) {eventerror}}, 
+        eventerror <- bind_rows(if(exists("eventerror")){eventerror},
                                 if(exists("manyDatname")) manyDatname,
                                 if(exists("datnameNotTitle")) datnameNotTitle) 
         
@@ -1045,8 +1039,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
 
       # Preparing general_issues table: Overview of all issues
       
-      occurrenceerror <- bind_rows(if(exists("occurrenceerror")){
-                                     if(nrow(occurrenceerror) > 0) {occurrenceerror}},  
+      occurrenceerror <- bind_rows(if(exists("occurrenceerror")){occurrenceerror},
                                    if(exists("manyDatname")) manyDatname,
                                    if(exists("datnameNotTitle")) datnameNotTitle)
       
@@ -1421,13 +1414,13 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     eventerror_report <- eventerror  %>% distinct() %>% 
                                          mutate (message = (if_else(grepl("is greater than the value found in the bathymetry raster", message, fixed = TRUE),
-                                                                    "Depth value is greater than the value found in the bathymetry raster" , message))) %>%                         
+                                                                    "Depth value is greater than the value found in the bathymetry raster" , as.character(message)))) %>%                         
                                          mutate (message = (if_else(grepl("does not seem to be a valid date", message, fixed = TRUE),
-                                                                    "eventDate does not seem to be a valid date" , message))) %>%
+                                                                    "eventDate does not seem to be a valid date" , as.character(message)))) %>%
                                          mutate (message = (if_else(grepl("is greater than maximum", message, fixed = TRUE),
-                                                                    "Minimum depth is greater than maximum depth" , message))) %>% 
+                                                                    "Minimum depth is greater than maximum depth" , as.character(message)))) %>% 
                                          mutate (message = (if_else(grepl("has no corresponding eventID", message, fixed = TRUE),
-                                                                    "This parentEventID has no corresponding eventID" , message))) %>% 
+                                                                    "This parentEventID has no corresponding eventID" , as.character(message)))) %>% 
                                          group_by (level, field, message) %>% 
                                          summarize(count = n()) %>% 
                                          mutate (table = "event")
