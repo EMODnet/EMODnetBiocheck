@@ -485,6 +485,14 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                    message = 'measurementValueID does not resolve') %>% 
                                             group_by (IDlink,measurementValue, measurementValueID, message) %>% 
                                             summarize(count = n())
+      
+      mof_oc_UnitID_NotResolve <- eMoF %>% filter (!is.na(occurrenceID), !is.na(measurementUnitID) ) %>% 
+                                            select (measurementUnit, measurementUnitID) %>% 
+                                            anti_join(BODCunits, by = c("measurementUnitID"="uri")) %>%
+                                            mutate(IDlink = 'occurrenceMoF', 
+                                                   message = 'measurementUnitID does not resolve') %>% 
+                                            group_by (IDlink,measurementUnit, measurementUnitID, message) %>% 
+                                            summarize(count = n())
  
                                              
       # Checking eMoF records integrity --> NULL measurementValueIDs, present record with 0 values in occurrence eMoFs, duplicated eMoF records.
@@ -569,6 +577,15 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                     message = 'measurementValueID does not resolve') %>% 
                                              group_by (IDlink,measurementValue, measurementValueID, message) %>% 
                                              summarize(count = n())
+       
+       mof_ev_UnitID_NotResolve <- eMoF %>% filter (!is.na(eventID), is.na(occurrenceID), !is.na(measurementUnitID) ) %>% 
+                                             select (measurementUnit, measurementUnitID) %>% 
+                                             anti_join(BODCunits, 
+                                                       by = c("measurementUnitID"="uri")) %>%
+                                             mutate(IDlink = 'eventMoF', 
+                                                    message = 'measurementUnitID does not resolve') %>% 
+                                             group_by (IDlink,measurementUnit, measurementUnitID, message) %>% 
+                                             summarize(count = n())
       }
     
     
@@ -581,9 +598,11 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                        if(exists("deprec_unitIDs")) deprec_unitIDs,
                                                        if(exists("mof_oc_TypeID_NotResolve")) mof_oc_TypeID_NotResolve, 
                                                        if(exists("mof_oc_ValueID_NotResolve")) mof_oc_ValueID_NotResolve,
+                                                       if(exists("mof_oc_UnitID_NotResolve")) mof_oc_UnitID_NotResolve,
                                                        if(exists("mof_ev_noTypeID")) mof_ev_noTypeID, 
                                                        if(exists("mof_ev_TypeID_NotResolve"))  mof_ev_TypeID_NotResolve,
-                                                       if(exists("mof_ev_ValueID_NotResolve"))  mof_ev_ValueID_NotResolve ) %>%
+                                                       if(exists("mof_ev_ValueID_NotResolve"))  mof_ev_ValueID_NotResolve,
+                                                       if(exists("mof_ev_UnitID_NotResolve"))  mof_ev_UnitID_NotResolve) %>%
                                                  select (one_of(c("IDlink" , "measurementType", "measurementTypeID", "measurementValue", 
                                                                     "measurementValueID",  "measurementUnit", "measurementUnitID", "message", "count")))
     
