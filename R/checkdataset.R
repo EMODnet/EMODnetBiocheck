@@ -729,6 +729,14 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                      message = 'Some decimalLongitude values are not numeric')
     }
     
+    if ("coordinateUncertaintyInMeters" %in% names(Event)) {
+      if (is.numeric(Event$coordinateUncertaintyInMeters) == FALSE) {
+        no_numeric_coord_uncer <- data.frame(level = 'error', 
+                                             field = 'coordinateUncertaintyInMeters',
+                                             message = 'Some coordinateUncertaintyInMeters values are not numeric')
+      }
+    }
+    
     
     suppressWarnings(ev_flat$decimalLongitude <- as.numeric(ev_flat$decimalLongitude))
     suppressWarnings(ev_flat$decimalLatitude <- as.numeric(ev_flat$decimalLatitude))
@@ -835,7 +843,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     eventerror <- bind_rows(if(exists("eventerror")){eventerror},
                             if(exists("no_numeric_lat")) no_numeric_lat,
-                            if(exists("no_numeric_long")) no_numeric_long)
+                            if(exists("no_numeric_long")) no_numeric_long,
+                            if(exists("no_numeric_coord_uncer")) no_numeric_coord_uncer)
     
     }} else {
       
@@ -858,6 +867,14 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
         no_numeric_long <- data.frame (level = 'error', 
                                        field = 'decimalLongitude',
                                        message = 'Some decimalLongitude values are not numeric')
+      }
+      
+      if ("coordinateUncertaintyInMeters" %in% names(Occurrence)) {
+        if (is.numeric(Occurrence$coordinateUncertaintyInMeters) == FALSE) {
+          no_numeric_coord_uncer <- data.frame(level = 'error', 
+                                               field = 'coordinateUncertaintyInMeters',
+                                               message = 'Some coordinateUncertaintyInMeters values are not numeric')
+        }
       }
       
       
@@ -929,7 +946,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     occurrenceerror <- bind_rows(if(exists("occurrenceerror")){occurrenceerror},
                                  if(exists("no_numeric_lat")) no_numeric_lat,
-                                 if(exists("no_numeric_long")) no_numeric_long)
+                                 if(exists("no_numeric_long")) no_numeric_long,
+                                 if(exists("no_numeric_coord_uncer")) no_numeric_coord_uncer)
     
     }}  
   
@@ -1472,19 +1490,15 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   
   
-  if (is.null(IPTreport$dtb$general_issues) == TRUE ){
-
-    
-    IPTreport$dtb$general_issues <- c ("There don't seem to be any issues")
-    
-  } else {
-      if(nrow(IPTreport$dtb$general_issues) > 0){
-       IPTreport$dtb$general_issues  <- IPTreport$dtb$general_issues %>% mutate (count = as.integer(count)) %>% 
-                                                                      arrange(table, level, field, desc(count))
+  if (is.null(IPTreport$dtb$general_issues) == FALSE){
+    if(nrow(IPTreport$dtb$general_issues) > 0){
       
-      } else {
-        IPTreport$dtb$general_issues <- c ("There don't seem to be any issues")
-      }
+      IPTreport$dtb$general_issues  <- IPTreport$dtb$general_issues %>% mutate (count = as.integer(count)) %>% 
+                                                                        arrange(table, level, field, desc(count))
+    } else {
+      IPTreport$dtb$general_issues <- c ("There don't seem to be any issues")
+    }} else {
+      IPTreport$dtb$general_issues <- c ("There don't seem to be any issues")
     }
   
   
