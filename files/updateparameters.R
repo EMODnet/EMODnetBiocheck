@@ -116,7 +116,7 @@ for (i in 1:nrow(P01s)){
   if (nrow(related)>0){
     links <- related %>% mutate(p01s = P01$about)
     P01sunits <- rbind(P01sunits, links)
-    print(paste0("Iteration number ", i, ". Be patient buddy, there are a bunch of records"))
+    print(paste0("Iteration number ", i, " out of ", nrow(P01s), ". Be patient buddy, there are a bunch of records"))
   }
   rm(P01,related, links)
 }
@@ -346,7 +346,7 @@ values <- rbind(L22s, L05s, F02s, C17s, S11s, S10s, M20s, M21s, L06s, EUNIS)
 # parameters <- rbind(parameters, missingparams) %>% distinct()
 
 
-# Update the data files # Make sure that the tables look  
+# Update the data files 
 BODCparameters <- parameters
 BODCunits <- units
 BODCvalues <- values
