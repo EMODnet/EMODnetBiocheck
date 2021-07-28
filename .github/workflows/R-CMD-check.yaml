@@ -63,6 +63,13 @@ jobs:
             eval sudo $cmd
           done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
           sudo apt-get install -y libudunits2-dev
+          
+      - name: Install sf libraries on macOs
+        if: runner.os == 'macOS'
+        run: | 
+          brew install proj
+          brew install geos
+          brew install gdal
 
       - name: Install dependencies
         run: |
