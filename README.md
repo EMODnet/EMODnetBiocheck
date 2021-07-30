@@ -12,6 +12,7 @@
 - [Rationale](#rationale)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Understanding the output](#understanding-the-output)
 - [Integrity Checks](#integrity-checks)
 - [Format Checks](#format-checks)
 - [Visual Checks](#visual-checks)
@@ -20,7 +21,7 @@
 ***
 
 ## Rationale
-Quality controlling a dataset is fundamental in order to ensure its appropriate usage. The EMODnetBiocheck R package, developed and managed by the <a href="http://www.eurobis.org/" target="_blank">EurOBIS</a> data management team at the Flanders Marine Institute (<a href="https://www.vliz.be/" target="_blank">VLIZ</a>), helps users to Quality Control their datasets by performing a varied number of quality checks on both published and unpublished datasets. This R package allows as well for a thorough visual exploration of the dataset while highlighting potential issues within the dataset. The R package can be used on: i) public IPT resources; ii) loaded data tables. The only requirement to use the R package is the existence of an Occurrence table in the dataset, although the analysis reaches its full potential using an IPT resource with <a href="https://obis.org/manual/dataformat/" target="_blank">OBIS-ENV data format</a> (Core: "Event"; Extensions: "Occurrence" and "Extended Measurements or Facts").
+Quality controlling a dataset is fundamental in order to ensure its appropriate usage. The EMODnetBiocheck R package is developed in the framework of the LifeWatch and EMODnet Biology projects, and managed by the <a href="http://www.eurobis.org/" target="_blank">EurOBIS</a> (European Ocean Biodiversity Information System) Data Management Team at the Flanders Marine Institute (<a href="https://www.vliz.be/" target="_blank">VLIZ</a>). It helps users to Quality Control their (marine) biological datasets by performing a varied number of quality checks on both published and unpublished datasets. This R package also allows a thorough visual exploration of the dataset, while highlighting potential issues within the dataset. The R package can be used on: i) public IPT resources; ii) loaded data tables. The only requirement to use the R package is the existence of an Occurrence table in the dataset, although the analysis reaches its full potential using an IPT resource with <a href="https://obis.org/manual/dataformat/" target="_blank">OBIS-ENV data format</a> (Core: "Event"; Extensions: "Occurrence" and "Extended Measurements or Facts").
 
 
 ## Installation
@@ -30,6 +31,7 @@ Installing `EMODnetBiocheck` requires the `devtools` package:
 ```R
 install.packages("devtools")
 devtools::install_github("EMODnet/EMODnetBiocheck")
+library(EMODnetBiocheck)
 ```
 
 
@@ -41,19 +43,21 @@ For IPT resources (recommended)
 loopcheckIPTdataset ("http://ipt.iobis.org/training/archive?r=biofun_2009", tree="yes")
 loopcheckIPTdataset (c("http://ipt.iobis.org/training/archive?r=biofun_2009", "http://ipt.vliz.be/eurobis/resource?r=benthic-fauna-arrabida-2007-2009"), tree="yes")
 ```
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Tutorial: Link to video (coming soon)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Tutorial: <a href="https://drive.google.com/file/d/1ItFD_qkg9le8MOOaELqLMMq0FefeAB3G/view?usp=sharing" target="_blank">loopcheckIPTdataset function usage</a>
 
 For loaded data tables (to use on unpublished datasets or if no IPT resource is available)
 ```R
 IPTreport <- checkdataset(Event = youreventtablename, Occurrence = youroccurrencetablename, eMoF = youremoftablename)
 ```
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Tutorial: Link to video (coming soon)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Tutorial: <a href="https://drive.google.com/file/d/1NMGbbeRvIV67QaQQuvpcJXb3i85bElJz/view?usp=sharing" target="_blank">checkdataset function usage</a>
+
+***
+
+## Understanding the output
+
+The tool is based on and builds on top of the <a href="https://github.com/iobis/obistools" target="_blank">obistools R package</a> to provide a visual exploration of the dataset and highlight potential issues running the following checks:
 
 <br/><br/>
-
-### Understanding the output
-
-The tool is based on and builds on top of the <a href="https://github.com/iobis/obistools" target="_blank">obistools R package</a> to provide a visual exploration of the dataset and highlight potential issues running the following checks. 
 
 #### ***Integrity Checks***
 

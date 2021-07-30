@@ -29,7 +29,7 @@ if("mofsummary" %in% names(IPTreport))
 
 if("mofsummary_values" %in% names(IPTreport)) 
   if(nrow(IPTreport$mofsummary_values) > 0 ) 
-  { cat("<h2>Overview of standerdised measurement values</h2>")
+  { cat("<h2>Overview of standardised measurement values</h2>")
   kable(IPTreport$mofsummary_values)
 }  
 
