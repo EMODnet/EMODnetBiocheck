@@ -775,7 +775,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     if (nrow(GoodCords)>0){
       
-        OnLand <- suppressWarnings(check_onland(GoodCords, buffer = 3000))
+        OnLand <- tryCatch({suppressWarnings(check_onland(GoodCords, buffer = 3000))},
+                           error=function(x) { occurrenceID <- c(NA)       
+                           data.frame(occurrenceID) }) 
     
         depth <- tryCatch({suppressWarnings(check_depth(GoodCords %>% filter (!is.na(minimumDepthInMeters) | 
                                                                               !is.na(!maximumDepthInMeters)), 
@@ -805,11 +807,11 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     
     
-        depth_rep <- check_depth(GoodCords, report=T, depthmargin = 150)
+        depth_rep <- check_depth(GoodCords, report=T, depthmargin = 150) # fails when obis api is down
     
     
     
-        OnLand_rep <- check_onland(GoodCords,report=T, buffer = 3000) %>% mutate (field = 'coordinates_error')
+        OnLand_rep <- check_onland(GoodCords,report=T, buffer = 3000) %>% mutate (field = 'coordinates_error') # fails when obis api is down
     
         goodcord_rep <- GoodCords %>% select(eventID) %>% 
                                       mutate (row = row_number()) %>% 
