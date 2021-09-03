@@ -1263,7 +1263,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     snidUnique <- unique(na.omit(Occurrence$scientificNameID[nchar(Occurrence$scientificNameID)>35]))
     
-    if ( length(snidUnique)!=0){
+    if ( length(snidUnique)!=0 & sum(grepl("urn:lsid:marinespecies.org:taxname:", snidUnique)) > 0) {
     
       as.integer(gsub("urn:lsid:marinespecies.org:taxname:", "", snidUnique)) # Ruben thinks that this line is useless
       reversedmatch <- reversetaxmatch (as.integer(gsub("urn:lsid:marinespecies.org:taxname:", "", snidUnique)))
