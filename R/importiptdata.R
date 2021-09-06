@@ -13,8 +13,16 @@
 importiptdata <- function (file){ 
   output<-list()
   
+  #trims whitespaces
+  file <- trimws(file)
+  
+  # replaces resource by archive to donwload the dwca
   if (grepl("resource?", file)==TRUE) {
     file <- gsub("resource?", "archive", file) }
+  
+  # accounts for URLs in edit mode
+   if (grepl("manage/", file)==TRUE) {
+     file <- gsub("manage/", "", file) }
   
   
   if ( ((grepl("archive?", file)==FALSE | url.exists(file) == FALSE & valid_url(file) == FALSE)) & grepl(".zip", file) == FALSE){
