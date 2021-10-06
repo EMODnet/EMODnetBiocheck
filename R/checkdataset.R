@@ -185,8 +185,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       
       suppressWarnings(
       if(length(parastolookup[!is.na(parastolookup)&parastolookup!=""])>0){
-      parastolookedup <- suppressWarnings(getunitsandparams(vocids = parastolookup, vocabs ="P01|Q01")) 
-      parameters <- bind_rows(BODCparameters, parastolookedup)
+      parastolookedup <- suppressWarnings(getunitsandparams(vocids = parastolookup, vocabs ="P01|Q01"))
+      parameters <- bind_rows(BODCparameters, if(exists("parastolookedup")) parastolookedup)
       } else { parameters <- BODCparameters}
       )
       
@@ -867,7 +867,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                             if(exists("no_numeric_long")) no_numeric_long,
                             if(exists("no_numeric_coord_uncer")) no_numeric_coord_uncer)
     
-    }} else {
+    } } else {
       
       
       # Checks run only when the Event table does not exists
@@ -970,7 +970,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                  if(exists("no_numeric_long")) no_numeric_long,
                                  if(exists("no_numeric_coord_uncer")) no_numeric_coord_uncer)
     
-    }}  
+    }}
   
   if (exists("plot_coordinates")){
     

@@ -265,6 +265,28 @@ l <- lapply(terms, function(term) {
 })
 S11s <- bind_rows(l)
 
+
+
+# x <- read_xml("http://vocab.nerc.ac.uk/collection/S09/current/") DEPRECATED
+x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/S09/current/") %$% 
+  content %>% 
+  rawToChar %>% 
+  read_xml()
+terms <- xml_find_all(x, ".//skos:Concept")
+l <- lapply(terms, function(term) {
+  element <- as_list(term)
+  definition <- if (length(element$definition) > 0) unlist(element$definition) else NA
+  return(list(
+    preflabel = unlist(element$prefLabel),
+    definition = definition,
+    deprecated = unlist(element$deprecated),
+    uri = xml_attr(term, "about"))
+  )
+})
+S09s <- bind_rows(l)
+
+
+
 # x <- read_xml("http://vocab.nerc.ac.uk/collection/M20/current/") DEPRECATED
 x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/M20/current/") %$% 
   content %>% 
@@ -337,7 +359,7 @@ l <- lapply(terms, function(term) {
 })
 EUNIS <- bind_rows(l) %>% mutate (uri = paste(uri,"/", sep ="")) 
 
-values <- rbind(L22s, L05s, F02s, C17s, S11s, S10s, M20s, M21s, L06s, EUNIS)
+values <- rbind(L22s, L05s, F02s, C17s, S11s, S10s, S09s, M20s, M21s, L06s, EUNIS)
 
 
 ### USE IF: pulling data from EMODnetBiocheck R package and not from BODC web services (mainly for P01 collection)
