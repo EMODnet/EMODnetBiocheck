@@ -186,7 +186,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       suppressWarnings(
       if(length(parastolookup[!is.na(parastolookup)&parastolookup!=""])>0){
       parastolookedup <- suppressWarnings(getunitsandparams(vocids = parastolookup, vocabs ="P01|Q01"))
-      parameters <- bind_rows(BODCparameters, if(exists("parastolookedup") & !is.null(parastolookedup)) parastolookedup)
+      parameters <- bind_rows(BODCparameters, if(exists("parastolookedup") & length(parastolookedup) > 0 & !is.null(parastolookedup)) parastolookedup)
       } else { parameters <- BODCparameters}
       )
       
