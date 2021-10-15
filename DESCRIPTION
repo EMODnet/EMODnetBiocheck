@@ -34,8 +34,7 @@ Imports:
 	plyr,
 	obistools,
 	tidyr,
-	stringdist,
-  raster (<= 3.4-13)
+	stringdist
 Remotes:
   github::EMODnet/skosxml,
   github::iobis/obistools
