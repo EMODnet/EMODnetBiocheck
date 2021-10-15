@@ -12,8 +12,7 @@ Authors@R: c(
          role = "cre") 
          )
 Description: This tool allows you to assess to what extend a dataset published on an IPT or a DwC-A file meets the EMODnet Biology Data Quality Criteria.
-Depends: R (>= 3.4), 
-  raster (<= 3.4-13)
+Depends: R (>= 3.4)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -35,7 +34,8 @@ Imports:
 	plyr,
 	obistools,
 	tidyr,
-	stringdist
+	stringdist,
+  raster (<= 3.4-13)
 Remotes:
   github::EMODnet/skosxml,
   github::iobis/obistools
