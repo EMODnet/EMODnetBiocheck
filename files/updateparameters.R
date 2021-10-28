@@ -147,7 +147,9 @@ units <- bind_rows(l)
 
 parameters <- parameters %>% left_join(P01sunits, by=c("uri" = "p01s")) %>%
   left_join(units %>% select (uri, standardunit = altLabel), 
-            by=c("resource" = "uri")) %>% rename (standardUnitID = resource)
+            by=c("resource" = "uri")) %>% 
+  rename (standardUnitID = resource) %>%
+  distinct()
 
 
 #### Values
