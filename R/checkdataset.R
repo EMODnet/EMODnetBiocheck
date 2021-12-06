@@ -734,6 +734,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
   if (sum(coords %in% names(Event)) == 2) {
     
+    Event$decimalLongitude <- as.numeric(Event$decimalLongitude)
+    Event$decimalLatitude <- as.numeric(Event$decimalLatitude)
+    
     if (is.numeric(Event$decimalLatitude) == FALSE) {
       
       no_numeric_lat <- data.frame (level = 'error', 
@@ -749,6 +752,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     }
     
     if ("coordinateUncertaintyInMeters" %in% names(Event)) {
+      Event$coordinateUncertaintyInMeters <- as.numeric(Event$coordinateUncertaintyInMeters)
       if (is.numeric(Event$coordinateUncertaintyInMeters) == FALSE) {
         no_numeric_coord_uncer <- data.frame(level = 'error', 
                                              field = 'coordinateUncertaintyInMeters',
@@ -875,6 +879,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     if (sum(coords %in% names(Occurrence)) == 2) {
       
+      Occurrence$decimalLongitude <- as.numeric(Occurrence$decimalLongitude)
+      Occurrence$decimalLatitude <- as.numeric(Occurrence$decimalLatitude)
+      
       
       if (is.numeric(Occurrence$decimalLatitude) == FALSE) {
         
@@ -891,6 +898,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       }
       
       if ("coordinateUncertaintyInMeters" %in% names(Occurrence)) {
+        Occurrence$coordinateUncertaintyInMeters <- as.numeric(Occurrence$coordinateUncertaintyInMeters)
         if (is.numeric(Occurrence$coordinateUncertaintyInMeters) == FALSE) {
           no_numeric_coord_uncer <- data.frame(level = 'error', 
                                                field = 'coordinateUncertaintyInMeters',
@@ -898,9 +906,6 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
         }
       }
       
-      
-        suppressWarnings(Occurrence$decimalLongitude <- as.numeric(Occurrence$decimalLongitude))
-        suppressWarnings(Occurrence$decimalLatitude <- as.numeric(Occurrence$decimalLatitude))
     
     
     
