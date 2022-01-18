@@ -13,13 +13,14 @@ h <- new_handle() %>%
 
 ##### Parameters
 # x <- read_xml("https://raw.githubusercontent.com/EMODnet/EMODnetBiocheck/master/files/P01_old.rdf")
-# x <- read_xml("files/P01_old_fix.rdf") # This is an old version of the P01 RDF to be used while BODC fixes their webservices and we can access BODC from the URL (to use in case githubusercontent doesn't work)
+# y <- read_xml("files/P01_old.rdf") # This is an old version of the P01 RDF to be used while BODC fixes their webservices and we can access BODC from the URL (to use in case githubusercontent doesn't work)
 # x <- read_xml("http://vocab.nerc.ac.uk/collection/P01/current/") # To be used after BODC has repared their web services
 x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/P01/current/") %$% 
   content %>% 
   rawToChar %>% 
   read_xml()
-termsp01 <- xml_find_all(x, ".//skos:Concept")
+#termsp01 <- xml_find_all(x, ".//skos:Concept")
+termsp01 <- xml_find_all(x, ".//rdf:Description")
 l <- lapply(termsp01, function(term) {
   element <- as_list(term)
   return(list(
@@ -31,14 +32,15 @@ l <- lapply(termsp01, function(term) {
     uri = xml_attr(term, "about"))
   )
 })
-P01s <- bind_rows(l)
+P01s <- bind_rows(l) %>% filter(!is.na(identifier)) 
 
 #x <- read_xml("http://vocab.nerc.ac.uk/collection/Q01/current/") # DEPRECATED
 x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/Q01/current/") %$% 
   content %>% 
   rawToChar %>% 
   read_xml()
-terms <- xml_find_all(x, ".//skos:Concept")
+#terms <- xml_find_all(x, ".//skos:Concept")
+terms <- xml_find_all(x, ".//rdf:Description")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
   altLabel <- if (length(element$altLabel) > 0) unlist(element$altLabel) else NA
@@ -51,7 +53,7 @@ l <- lapply(terms, function(term) {
     uri = xml_attr(term, "about"))
   )
 })
-Q01s <- bind_rows(l)
+Q01s <- bind_rows(l) %>% filter(!is.na(identifier)) 
 
 
 #x <- read_xml("http://vocab.nerc.ac.uk/collection/P02/current/") # DEPRECATED
@@ -59,7 +61,8 @@ x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/P02/curre
   content %>% 
   rawToChar %>% 
   read_xml()
-terms <- xml_find_all(x, ".//skos:Concept")
+# terms <- xml_find_all(x, ".//skos:Concept")
+terms <- xml_find_all(x, ".//rdf:Description")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
   altLabel <- if (length(element$altLabel) > 0) unlist(element$altLabel) else NA
@@ -73,7 +76,7 @@ l <- lapply(terms, function(term) {
     uri = xml_attr(term, "about"))
   )
 })
-P02s <- bind_rows(l)
+P02s <- bind_rows(l) %>% filter(!is.na(identifier)) 
 
 
 #x <- read_xml("http://vocab.nerc.ac.uk/collection/P35/current/") # DEPRECATED
@@ -81,7 +84,8 @@ x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/P35/curre
   content %>% 
   rawToChar %>% 
   read_xml()
-terms <- xml_find_all(x, ".//skos:Concept")
+# terms <- xml_find_all(x, ".//skos:Concept")
+terms <- xml_find_all(x, ".//rdf:Description")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
   altLabel <- if (length(element$altLabel) > 0) unlist(element$altLabel) else NA
@@ -94,7 +98,7 @@ l <- lapply(terms, function(term) {
     uri = xml_attr(term, "about"))
   )
 })
-P35s <- bind_rows(l)
+P35s <- bind_rows(l) %>% filter(!is.na(identifier)) 
 
 
 # Manually adding the eunis habitat collection as a vocab term <- requested by MBA and approved by OBIS-VLIZ
@@ -102,7 +106,8 @@ eunis_col <- data.frame("eunishabitats","EUNIS habitats","Classification of habi
 names(eunis_col)<-c("identifier", "preflabel","definition", "deprecated", "uri")
 
 parameters <- rbind(Q01s,P01s, P02s, P35s) %>% 
-              bind_rows(eunis_col)
+              bind_rows(eunis_col) %>%
+              filter(!is.na(identifier)) 
 
 
 
@@ -130,7 +135,8 @@ x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/P06/curre
   content %>% 
   rawToChar %>% 
   read_xml()
-terms <- xml_find_all(x, ".//skos:Concept")
+# terms <- xml_find_all(x, ".//skos:Concept")
+terms <- xml_find_all(x, ".//rdf:Description")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
   return(list(
@@ -141,7 +147,7 @@ l <- lapply(terms, function(term) {
     uri = xml_attr(term, "about"))
   )
 })
-units <- bind_rows(l)
+units <- bind_rows(l) %>% filter(!is.na(identifier)) 
 
 ##### Link parameters and units
 
@@ -159,7 +165,8 @@ x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/L22/curre
   content %>% 
   rawToChar %>% 
   read_xml()
-terms <- xml_find_all(x, ".//skos:Concept")
+# terms <- xml_find_all(x, ".//skos:Concept")
+terms <- xml_find_all(x, ".//rdf:Description")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
   definition <- if (length(element$definition) > 0) unlist(element$definition) else NA
@@ -170,14 +177,15 @@ l <- lapply(terms, function(term) {
     uri = xml_attr(term, "about"))
   )
 })
-L22s <- bind_rows(l)
+L22s <- bind_rows(l) #%>% filter(!is.na(identifier)) 
 
 #x <- read_xml("http://vocab.nerc.ac.uk/collection/L05/current/") DEPRECATED
 x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/L05/current/") %$% 
   content %>% 
   rawToChar %>% 
   read_xml()
-terms <- xml_find_all(x, ".//skos:Concept")
+# terms <- xml_find_all(x, ".//skos:Concept")
+terms <- xml_find_all(x, ".//rdf:Description")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
   definition <- if (length(element$definition) > 0) unlist(element$definition) else NA
@@ -188,7 +196,7 @@ l <- lapply(terms, function(term) {
     uri = xml_attr(term, "about"))
   )
 })
-L05s <- bind_rows(l)
+L05s <- bind_rows(l) #%>% filter(!is.na(identifier)) 
 
 
 # x <- read_xml("http://vocab.nerc.ac.uk/collection/S10/current/") DEPRECATED
@@ -196,7 +204,8 @@ x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/S10/curre
   content %>% 
   rawToChar %>% 
   read_xml()
-terms <- xml_find_all(x, ".//skos:Concept")
+# terms <- xml_find_all(x, ".//skos:Concept")
+terms <- xml_find_all(x, ".//rdf:Description")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
   definition <- if (length(element$definition) > 0) unlist(element$definition) else NA
@@ -207,7 +216,7 @@ l <- lapply(terms, function(term) {
     uri = xml_attr(term, "about"))
   )
 })
-S10s <- bind_rows(l)
+S10s <- bind_rows(l) #%>% filter(!is.na(identifier)) 
 
 
 # x <- read_xml("http://vocab.nerc.ac.uk/collection/C17/current/") DEPRECATED
@@ -215,7 +224,8 @@ x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/C17/curre
   content %>% 
   rawToChar %>% 
   read_xml()
-terms <- xml_find_all(x, ".//skos:Concept")
+# terms <- xml_find_all(x, ".//skos:Concept")
+terms <- xml_find_all(x, ".//rdf:Description")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
   definition <- if (length(element$definition) > 0) unlist(element$definition) else NA
@@ -226,7 +236,7 @@ l <- lapply(terms, function(term) {
     uri = xml_attr(term, "about"))
   )
 })
-C17s <- bind_rows(l)
+C17s <- bind_rows(l) #%>% filter(!is.na(identifier)) 
 
 
 # x <- read_xml("http://vocab.nerc.ac.uk/collection/F02/current/") DEPRECATED
@@ -234,7 +244,8 @@ x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/F02/curre
   content %>% 
   rawToChar %>% 
   read_xml()
-terms <- xml_find_all(x, ".//skos:Concept")
+# terms <- xml_find_all(x, ".//skos:Concept")
+terms <- xml_find_all(x, ".//rdf:Description")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
   definition <- if (length(element$definition) > 0) unlist(element$definition) else NA
@@ -245,7 +256,7 @@ l <- lapply(terms, function(term) {
     uri = xml_attr(term, "about"))
   )
 })
-F02s <- bind_rows(l)
+F02s <- bind_rows(l)# %>% filter(!is.na(identifier)) 
 
 
 
@@ -254,7 +265,8 @@ x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/S11/curre
   content %>% 
   rawToChar %>% 
   read_xml()
-terms <- xml_find_all(x, ".//skos:Concept")
+# terms <- xml_find_all(x, ".//skos:Concept")
+terms <- xml_find_all(x, ".//rdf:Description")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
   definition <- if (length(element$definition) > 0) unlist(element$definition) else NA
@@ -265,7 +277,7 @@ l <- lapply(terms, function(term) {
     uri = xml_attr(term, "about"))
   )
 })
-S11s <- bind_rows(l)
+S11s <- bind_rows(l)# %>% filter(!is.na(identifier)) 
 
 
 
@@ -274,7 +286,8 @@ x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/S09/curre
   content %>% 
   rawToChar %>% 
   read_xml()
-terms <- xml_find_all(x, ".//skos:Concept")
+# terms <- xml_find_all(x, ".//skos:Concept")
+terms <- xml_find_all(x, ".//rdf:Description")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
   definition <- if (length(element$definition) > 0) unlist(element$definition) else NA
@@ -285,7 +298,7 @@ l <- lapply(terms, function(term) {
     uri = xml_attr(term, "about"))
   )
 })
-S09s <- bind_rows(l)
+S09s <- bind_rows(l)# %>% filter(!is.na(identifier)) 
 
 
 
@@ -294,7 +307,8 @@ x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/M20/curre
   content %>% 
   rawToChar %>% 
   read_xml()
-terms <- xml_find_all(x, ".//skos:Concept")
+# terms <- xml_find_all(x, ".//skos:Concept")
+terms <- xml_find_all(x, ".//rdf:Description")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
   definition <- if (length(element$definition) > 0) unlist(element$definition) else NA
@@ -305,7 +319,7 @@ l <- lapply(terms, function(term) {
     uri = xml_attr(term, "about"))
   )
 })
-M20s <- bind_rows(l)
+M20s <- bind_rows(l) #%>% filter(!is.na(identifier)) 
 
 
 # x <- read_xml("http://vocab.nerc.ac.uk/collection/M21/current/") DEPRECATED
@@ -313,7 +327,8 @@ x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/M21/curre
   content %>% 
   rawToChar %>% 
   read_xml()
-terms <- xml_find_all(x, ".//skos:Concept")
+# terms <- xml_find_all(x, ".//skos:Concept")
+terms <- xml_find_all(x, ".//rdf:Description")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
   definition <- if (length(element$definition) > 0) unlist(element$definition) else NA
@@ -324,7 +339,7 @@ l <- lapply(terms, function(term) {
     uri = xml_attr(term, "about"))
   )
 })
-M21s <- bind_rows(l)
+M21s <- bind_rows(l) #%>% filter(!is.na(identifier)) 
 
 
 # x <- read_xml("http://vocab.nerc.ac.uk/collection/L06/current/") DEPRECATED
@@ -332,7 +347,8 @@ x <- h %>% curl_fetch_memory(url = "http://vocab.nerc.ac.uk/collection/L06/curre
   content %>% 
   rawToChar %>% 
   read_xml()
-terms <- xml_find_all(x, ".//skos:Concept")
+# terms <- xml_find_all(x, ".//skos:Concept")
+terms <- xml_find_all(x, ".//rdf:Description")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
   definition <- if (length(element$definition) > 0) unlist(element$definition) else NA
@@ -343,11 +359,12 @@ l <- lapply(terms, function(term) {
     uri = xml_attr(term, "about"))
   )
 })
-L06s <- bind_rows(l)
+L06s <- bind_rows(l) #%>% filter(!is.na(identifier)) 
 
 
 x <- read_xml("http://dd.eionet.europa.eu/vocabulary/biodiversity/eunishabitats/rdf")
 terms <- xml_find_all(x, ".//skos:Concept")
+#terms <- xml_find_all(x, ".//rdf:Description")
 l <- lapply(terms, function(term) {
   element <- as_list(term)
   definition <- if (length(element$definition) > 0) unlist(element$definition) else NA
