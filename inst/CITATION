@@ -1,0 +1,14 @@
+year <- 2019
+url <- "https://github.com/EMODnet/EMODnetBiocheck"
+
+bibentry(bibtype = "Manual",
+         title = "{EMODnetBiocheck}: LifeWatch & EMODnet Biology QC Tool",
+         author = c(person("Daphnis", "De Pooter"),
+                    person("Ruben", "Perez Perez")),
+         year = year,
+         url = url,
+         textVersion = paste0("De Pooter, D.; Perez-Perez, R. (",
+                              year,
+                              "). EMODnetBiocheck: LifeWatch & EMODnet Biology QC Tool. ", 
+                              url, 
+                              "."))
