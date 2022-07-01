@@ -111,8 +111,9 @@ df2 <- df2 %>% fncols(unique(c(names(convertnames), p01todwc$dwc))) %>%
                                         datasetName = if_else(is.na(datasetName), substr(datasetName2, 1, 245)  , substr(datasetName, 1, 245)),
                                         basisOfRecord = basisOfRecord,
                                         eventDate = case_when(
-                                          grepl("T00:00:00.000", eventDate)   ~ leftfrom(eventDate, ":00.000", 7),  #### no Idea why leftfrom(eventDate, "T00:00:00.000", 1) doesn't work :(
-                                          grepl(":00.000", eventDate) ~ leftfrom(eventDate, ":00.000", 1)
+                                          grepl("T00:00:00.000", eventDate)   ~ leftfrom(eventDate, ":00.000", 7),  
+                                          grepl(":00.000", eventDate) ~ leftfrom(eventDate, ":00.000", 1),
+                                          TRUE ~ eventDate
                                         ),  eventID = if_else (is.na(eventID) & !is.na(eventID2),eventID2,
                                                         if_else (!is.na(parentEventID), parentEventID,
                                                                  if_else(!is.na(LOCAL_CDI_ID), LOCAL_CDI_ID,
