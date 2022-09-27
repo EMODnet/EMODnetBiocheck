@@ -55,10 +55,13 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   #### Occurrence fix
   ####---------------
   
-  Occurrence <- Occurrence %>% mutate_all(na_if, 'NA') %>%
-                               mutate_all(na_if, '') %>%
-                               mutate_all(na_if, ' ')
-  Occurrence <- Occurrence[,colSums(is.na(Occurrence))<nrow(Occurrence)]
+  Occurrence <- Occurrence %>% cleandataframe()
+  
+  # Occurrence <- Occurrence %>% mutate_all(na_if, 'NA') %>%
+  #                              mutate_all(na_if, '') %>%
+  #                              mutate_all(na_if, ' ')
+  # Occurrence <- Occurrence[,colSums(is.na(Occurrence))<nrow(Occurrence)]
+  
   #     Occurrence <- fncols(Occurrence, c("eventDate"))
   
   
@@ -75,11 +78,13 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     if(length(Event) < 2 ) {
       rm(Event)
       } else {
-      
-        Event <- Event %>% mutate_all(na_if, 'NA') %>%
-                           mutate_all(na_if, '') %>%
-                           mutate_all(na_if, ' ')
-        Event <- Event[,colSums(is.na(Event))<nrow(Event)]
+        
+        Event <- Event %>% cleandataframe()
+        
+        # Event <- Event %>% mutate_all(na_if, 'NA') %>%
+        #                    mutate_all(na_if, '') %>%
+        #                    mutate_all(na_if, ' ')
+        # Event <- Event[,colSums(is.na(Event))<nrow(Event)]
         Event <- fncols(Event, c("parentEventID"))
         #        Event[Event =='NA' | Event =='' | Event ==' '] <- NA
         
@@ -94,10 +99,12 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   if ( exists("eMoF") == TRUE  )    { 
     if(length(eMoF) < 2 ) {rm(eMoF)} else {
       
-      eMoF <- eMoF %>% mutate_all(na_if, 'NA') %>%
-                       mutate_all(na_if, '') %>%
-                       mutate_all(na_if, ' ')
-      eMoF <- eMoF[,colSums(is.na(eMoF))<nrow(eMoF)]
+      eMoF <- eMoF %>% cleandataframe()
+      
+      # eMoF <- eMoF %>% mutate_all(na_if, 'NA') %>%
+      #                  mutate_all(na_if, '') %>%
+      #                  mutate_all(na_if, ' ')
+      # eMoF <- eMoF[,colSums(is.na(eMoF))<nrow(eMoF)]
       eMoF <- fncols(eMoF, c("occurrenceID", "measurementType", "measurementTypeID","measurementValueID", "measurementValue", "measurementUnitID", "eventID", "measurementUnit"))
       #       eMoF[eMoF =='NA' | eMoF =='' | eMoF ==' '] <- NA
       
