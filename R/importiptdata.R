@@ -57,23 +57,33 @@ if (exists("out") == FALSE) {
   if (is.null(out$data[["event.txt"]]) == FALSE){
     Event <-out$data[["event.txt"]]
     
+    if (length(Event) == 1 & nrow(Event) != 0){
+      Event <- txt_to_cols(Event)
+    }
+    
     if (length(Event) >1 ) {
-      
       
       Event<-cleandataframe(Event, vector = FALSE)
       output$Event <- fncols(Event, c("parentEventID", "eventDate"))
     }
+    
     
     }
   
   if (is.null(out$data[["occurrence.txt"]]) == FALSE){
     Occurrence <-out$data[["occurrence.txt"]] 
     
+    if (length(Occurrence) == 1 & nrow(Occurrence) != 0){
+      Occurrence <- txt_to_cols(Occurrence)
+     }
+    
     if (length(Occurrence) >1 ) {
       
+      if (length(Occurrence) < 2 ){ rm(Occurrence)
+        } else {
+          output$Occurrence<-cleandataframe(Occurrence,  vector = FALSE)}}
     
-    if (length(Occurrence) < 2 ){ rm(Occurrence)} else {
-    output$Occurrence<-cleandataframe(Occurrence,  vector = FALSE)}}}
+    }
   
     if (  exists("Occurrence") == FALSE  ) {   
     output$error <- ("The dataset does not have an occurrence file")
@@ -86,21 +96,31 @@ if (exists("out") == FALSE) {
   if(exists("eMoF") == FALSE & is.null(out$data[["measurementorfact.txt"]]) == FALSE) { 
     eMoF <- out$data[["measurementorfact.txt"]] }
   
-  if(exists("eMoF") ) { 
+  if(exists("eMoF") ) {
+    
+    if (length(eMoF) == 1 & nrow(eMoF) != 0){
+      eMoF <- txt_to_cols(eMoF)
+    }
+    
     if (length(eMoF) > 2 ){
     
-     
       eMoF<-cleandataframe(eMoF,  vector = FALSE)
       eMoF <- cleanemof(eMoF) 
   
       if ( exists("Event") == TRUE){
+        if ("id" %in% names(Event)){
+          
         eMoF$eventID <- eMoF$id #eventID column is required in the measurements table.
-      } else {
+      }} else {
+        if ("id" %in% names(Occurrence)){
         eMoF$occurrenceID <- eMoF$id #occurrenceID column is required in the measurements table.
-    
+        }
   }
       output$eMoF <- eMoF
-  }}
+    }
+    
+    
+    }
   
   
 } }
