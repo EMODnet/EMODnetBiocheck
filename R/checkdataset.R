@@ -54,8 +54,17 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   #### Occurrence fix
   ####---------------
-  
+ 
+  if (  exists("Occurrence") == TRUE ) {
+    
+    if(!"occurrenceID" %in% names(Occurrence) & "id" %in% names(Occurrence)) {
+      warning("There is no occurrenceID field in the Occurrence table; occurrenceID created from id field")
+      Occurrence <- Occurrence %>% mutate(occurrenceID = id)
+    }
+    
   Occurrence <- Occurrence %>% cleandataframe()
+  
+  }
   
   # Occurrence <- Occurrence %>% mutate_all(na_if, 'NA') %>%
   #                              mutate_all(na_if, '') %>%
