@@ -69,23 +69,12 @@ leftfrom <- function(x, y, n = 0) {
 
 cleandataframe <- function (x, vector = TRUE) {
   
-  if("eventDate" %in% colnames(x)){	
-    if(TRUE %in% (class(x$eventDate) == "POSIXct")){	
-      x$eventDate <- format_iso_8601(x$eventDate)	
-    }	
-  } # format to ISO 8601 if class POSIXct
-  
-  if("modified" %in% colnames(x)){	
-    if(TRUE %in% (class(x$modified) == "POSIXct")){	
-      x$modified <- format_iso_8601(x$modified)	
-    }	
-  } # format to ISO 8601 if class POSIXct
-  
-  if("verbatimEventDate" %in% colnames(x)){	
-    if(TRUE %in% (class(x$verbatimEventDate) == "POSIXct")){	
-      x$verbatimEventDate <- format_iso_8601(x$verbatimEventDate)	
-    }	
-  } # format to ISO 8601 if class POSIXct
+  for (field in colnames(x)){
+    if(TRUE %in% (class(x[[field]]) == "POSIXct")){
+      x[[field]] <- format_iso_8601(x[[field]])
+    }
+   # format to ISO 8601 if class POSIXct
+  }
   
   x <- x %>% mutate_all(na_if, 'NA') %>%
              mutate_all(na_if, '') %>%
@@ -96,6 +85,7 @@ cleandataframe <- function (x, vector = TRUE) {
   if (vector == TRUE ){
     x <- data.frame(lapply(x, as.character), stringsAsFactors=FALSE)
   }
+
   return (x)
 }
 
