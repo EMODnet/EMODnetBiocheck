@@ -76,9 +76,10 @@ cleandataframe <- function (x, vector = TRUE) {
    # format to ISO 8601 if class POSIXct
   }
   
-  x <- x %>% mutate_all(na_if, 'NA') %>%
-             mutate_all(na_if, '') %>%
-             mutate_all(na_if, ' ')
+  x <- x %>% mutate(across(where(is.character), ~na_if(., "NA"))) %>%
+             mutate(across(where(is.character), ~na_if(., ""))) %>%
+             mutate(across(where(is.character), ~na_if(., " ")))
+  
   
   x <- x[,colSums(is.na(x))<nrow(x)]
   
@@ -96,7 +97,7 @@ cleandataframe <- function (x, vector = TRUE) {
 cleanemof <- function (x) {
   
   x <- x %>% fncols(c("occurrenceID", "measurementTypeID","measurementValueID", "measurementValue", "measurementUnitID", "eventID", "measurementUnit")) %>%
-      mutate (
+      mutate ( # This must only happen to BODC vocabs, Add condition
       measurementTypeID = if_else (!is.na(measurementTypeID) & measurementTypeID != "" ,
                if_else(str_sub(measurementTypeID, -1, -1)=='/',measurementTypeID, paste(measurementTypeID, "/",  sep = '')),
                measurementTypeID) ,
@@ -107,9 +108,9 @@ cleanemof <- function (x) {
                 if_else(str_sub(measurementUnitID, -1, -1)=='/',measurementUnitID, paste(measurementUnitID, "/",  sep = '')),
                measurementUnitID)
       )
-  x <- x %>% mutate_all(na_if, 'NA') %>%
-             mutate_all(na_if, '') %>%
-             mutate_all(na_if, ' ')
+  x <- x %>% mutate(across(where(is.character), ~na_if(., "NA"))) %>%
+             mutate(across(where(is.character), ~na_if(., ""))) %>%
+             mutate(across(where(is.character), ~na_if(., " ")))
   
   return(x)
 }
