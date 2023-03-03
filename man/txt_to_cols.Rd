@@ -4,7 +4,7 @@
 \alias{txt_to_cols}
 \title{txt_to_cols separates a one-column dataframe into a multiple column dataframe based on a separator}
 \usage{
-txt_to_cols(x, sep = ",")
+txt_to_cols(x, sep = "(,)(?=(?:[^\\"]|\\"[^\\"]*\\")*$)")
 }
 \arguments{
 \item{x}{dataframe to transform}

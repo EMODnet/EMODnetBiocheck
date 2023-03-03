@@ -200,7 +200,7 @@ valid_url <- function(url_in,t=2){
 
 
 
-txt_to_cols <- function(x, sep = ","){
+txt_to_cols <- function(x, sep = "(,)(?=(?:[^\"]|\"[^\"]*\")*$)"){
 
   if (!class(x) %in% "data.frame"){
   warning("The argument x must be a dataframe")}
@@ -208,7 +208,7 @@ txt_to_cols <- function(x, sep = ","){
 #get header of dataframe x
 x_header <- colnames(x)
 #split header into vector
-x_header <- strsplit(x_header, sep)
+x_header <- strsplit(x_header, sep, perl = T)
 #make vector into list
 x_header <- unlist(x_header)
 
@@ -217,9 +217,9 @@ x_header <- unlist(x_header)
 #make new dataframe that has x_header as column names
 new_data_frame <- data.frame(matrix(NA, nrow = nrow(x), ncol = length(x_header)))
 
-#go over each row in x and split the value by ; and put it in new_data_frame
+#go over each row in x and split the value by "sep" and put it in new_data_frame
 for (i in 1:nrow(x)) {
-  all_parts_row <- strsplit(as.character(x[i,]), sep)
+  all_parts_row <- strsplit(as.character(x[i,]), sep, perl = T)
   
   for(y in 1:length(all_parts_row[[1]])){
     new_data_frame[i, y] <- all_parts_row[[1]][y]
