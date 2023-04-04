@@ -25,7 +25,7 @@ importiptdata <- function (file){
      file <- gsub("manage/", "", file) }
   
   
-  if ( ((grepl("archive?", file)==FALSE | url.exists(file) == FALSE & valid_url(file) == FALSE)) & grepl(".zip", file) == FALSE){
+  if (grepl(".zip", file) == FALSE && ((grepl("archive?", file)==FALSE | url.exists(file) == FALSE & valid_url(file) == FALSE))){
     output$error <- ("Link does not resolve to a public IPT resource")
   }  else   {
   
