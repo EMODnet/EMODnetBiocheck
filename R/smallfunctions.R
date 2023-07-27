@@ -69,18 +69,19 @@ leftfrom <- function(x, y, n = 0) {
 
 cleandataframe <- function (x, vector = TRUE) {
   
+  # format to ISO 8601 if class POSIXct
   for (field in colnames(x)){
     if(TRUE %in% (class(x[[field]]) == "POSIXct")){
       x[[field]] <- format_iso_8601(x[[field]])
     }
-   # format to ISO 8601 if class POSIXct
   }
   
+  # turn character NAs and spaces into an actual empty cell
   x <- x %>% mutate(across(where(is.character), ~na_if(., "NA"))) %>%
              mutate(across(where(is.character), ~na_if(., ""))) %>%
              mutate(across(where(is.character), ~na_if(., " ")))
   
-  
+  # remove empty columns
   x <- x[,colSums(is.na(x))<nrow(x)]
   
   if (vector == TRUE ){

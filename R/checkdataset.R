@@ -57,6 +57,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
  
   if (  exists("Occurrence") == TRUE ) {
     
+   if (!is.null(Occurrence)){
+    
     if(!"occurrenceID" %in% names(Occurrence) & "id" %in% names(Occurrence)) {
       warning("There is no occurrenceID field in the Occurrence table; occurrenceID created from id field")
       Occurrence <- Occurrence %>% mutate(occurrenceID = id)
@@ -64,7 +66,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
   Occurrence <- Occurrence %>% cleandataframe()
   
-  }
+  }}
   
   # Occurrence <- Occurrence %>% mutate_all(na_if, 'NA') %>%
   #                              mutate_all(na_if, '') %>%
@@ -110,16 +112,19 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       
       eMoF <- eMoF %>% cleandataframe()
       
-      # eMoF <- eMoF %>% mutate_all(na_if, 'NA') %>%
-      #                  mutate_all(na_if, '') %>%
-      #                  mutate_all(na_if, ' ')
-      # eMoF <- eMoF[,colSums(is.na(eMoF))<nrow(eMoF)]
+     
       eMoF <- fncols(eMoF, c("occurrenceID", "measurementType", "measurementTypeID","measurementValueID", "measurementValue", "measurementUnitID", "eventID", "measurementUnit"))
-      #       eMoF[eMoF =='NA' | eMoF =='' | eMoF ==' '] <- NA
+
       
-      eMoF <- eMoF %>% mutate (measurementTypeID = if_else(str_sub(measurementTypeID, -1, -1)=='/',measurementTypeID, paste(measurementTypeID, "/",  sep = '') ),
-                               measurementValueID = if_else(str_sub(measurementValueID, -1, -1)=='/',measurementValueID, paste(measurementValueID, "/",  sep = ''))
-      ) 
+      eMoF <- eMoF %>% mutate (measurementTypeID = if_else(str_sub(measurementTypeID, -1, -1)=='/',measurementTypeID, paste(measurementTypeID, "/",  sep = '')),
+                               measurementValueID = if_else(str_sub(measurementValueID, -1, -1)=='/',measurementValueID, paste(measurementValueID, "/",  sep = '')),
+                               measurementUnitID = if_else(str_sub(measurementUnitID, -1, -1)=='/',measurementUnitID, paste(measurementUnitID, "/",  sep = '')),
+                               measurementTypeID = str_replace(measurementTypeID, "https://", "http://"),
+                               measurementValueID = str_replace(measurementValueID, "https://", "http://"),
+                               measurementUnitID = str_replace(measurementUnitID, "https://", "http://")
+                               
+      )
+      
       
       if ( exists("Event") == TRUE){
         if(!is.null(eMoF$eventID) == FALSE){
