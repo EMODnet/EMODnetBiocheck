@@ -42,9 +42,10 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       eMoF <- IPTreport$eMoF
   }}
   
-  
+  # Remove R objects if they are null
   if (is.null(Event)) {rm(Event)}
   if (is.null(eMoF)) {rm(eMoF)}
+  if (is.null(Occurrence)) {rm(Occurrence)}
 
 
   #---------------------------------------------------------------------------#
@@ -57,7 +58,6 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
  
   if (  exists("Occurrence") == TRUE ) {
     
-   if (!is.null(Occurrence)){
     
     if(!"occurrenceID" %in% names(Occurrence) & "id" %in% names(Occurrence)) {
       warning("There is no occurrenceID field in the Occurrence table; occurrenceID created from id field")
@@ -65,8 +65,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     }
     
   Occurrence <- Occurrence %>% cleandataframe()
-  
-  }}
+
+    }
   
   # Occurrence <- Occurrence %>% mutate_all(na_if, 'NA') %>%
   #                              mutate_all(na_if, '') %>%
@@ -148,7 +148,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   ###### Creating the datasummary table: Overview of event and occurrence records
   ######-------------------------------------------------------------------------
   
-  
+  if (  exists("Occurrence") == TRUE ) {
+      
+      
   occurrencetemp <- suppressWarnings(if(("occurrenceStatus" %in% names(Occurrence)) == FALSE) {
                                         mutate  (Occurrence, occurrenceStatus = "present")
                                     } else {Occurrence} %>% fncols ("basisOfRecord") %>%
@@ -190,8 +192,21 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   } else {
     IPTreport$datasummary <- occurrencetemp %>% group_by(basisOfRecord, occurrenceStatus) %>% 
                                                 summarize(countOccurrence = n())        
-  }
+  }}
   
+  
+  # Datasummary for datasets without an occurrence table
+  if (exists("Occurrence") == FALSE ) {
+    if (exists("Event")) {
+      if (!is.null(Event)){
+        IPTreport$datasummary <- Event %>% fncols("type") %>% 
+                                           select (eventID, type) %>%
+                                           group_by(type) %>%
+                                           summarise(n_events = sum(!is.na(eventID)))
+        
+      }
+    }
+  }
   
   
   ###### Creating the mofsummary table: Overview of the measurement or fact records
@@ -280,11 +295,15 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   if ( exists("Event")){
     ev_check_id <- check_eventids(Event)  # Checks that all parenteventIDs linked to an eventID in the dataset
-    oc.ev_check_id <- check_extension_eventids(Event,Occurrence) # Checks if all eventIDs in your occurrence extentsion link to the event Core
+    
+    if (exists("Occurrence")) {
+      oc.ev_check_id <- check_extension_eventids(Event,Occurrence) # Checks if all eventIDs in your occurrence extentsion link to the event Core
+    }                              
     
     if (  exists("eMoF")){
       mof.ev_check_id <- check_extension_eventids(Event,eMoF)  # Checks that all the eventIDs in your eMoF extentsion link to the event Core
       
+      if (exists("Occurrence")) {
       
       if ( sum(is.na(eMoF$occurrenceID)) != nrow(eMoF)  ){
         mof.oc_check_id <- eMoF %>% mutate (level = 'error', 
@@ -306,8 +325,12 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                  by = c(  "eventID.y"=  "eventID", "occurrenceID" = "occurrenceID")) %>%
                                        select (level, field, row, message) # Checks that all eMoF eventIDs are linked to the same eventID as the related occurrenceID
       }
+      
+    }
       }
   }
+  
+  if (exists("Occurrence")) {
   
   if ( exists("Event") == FALSE & exists("eMoF") == TRUE  ){
     mof.oc_check_id <- eMoF %>% mutate (level = 'error', 
@@ -330,6 +353,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                             row = dup_rows,
                             message = paste0("occurrenceID ", Occurrence$occurrenceID[dup_rows], " is duplicated in the Occurrence table")
                             ) # Checks that occurrenceID is unique in the occurrence table
+  }
   }
   
   
@@ -356,7 +380,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   ####                    Tree structure                               ####
   #-----------------------------------------------------------------------#
   
-  if ( exists("Event") &  exists("eMoF")  & tree == "yes" ) { 
+  if ( exists("Event") &  exists("eMoF") & exists("Occurrence") & tree == "yes" ) { 
    if ( if(exists("ev_check_id") ){nrow(ev_check_id) == 0} & 
         if(exists("mof.oc_check_id") ){nrow(mof.oc_check_id) ==0} & 
         if(exists("mof.oc.ev_check_id") ){nrow(mof.oc.ev_check_id) ==0} &
@@ -686,20 +710,28 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     if ( nrow(ev_check_id) == 0) {
     
-    ev_flat0 <- flatten_event(Event) 
-    ev_flat <- ev_flat0 %>% filter (!eventID %in% Event$parentEventID)
+      ev_flat0 <- flatten_event(Event) 
+      ev_flat <- ev_flat0 %>% filter (!eventID %in% Event$parentEventID)
+      
+      ev_CheckFields <- check_fields(ev_flat, level = "warning") %>% filter (field %in% event_fields())
+      
+      if (  exists("Occurrence") ){
+        oc_CheckFields <- check_fields(Occurrence, level = "warning") %>% filter (!field %in% event_fields())
+        }
+      
+      } else {
     
-    ev_CheckFields <- check_fields(ev_flat, level = "warning") %>% filter (field %in% event_fields())
-    oc_CheckFields <- check_fields(Occurrence, level = "warning") %>% filter (!field %in% event_fields())
-    } else {
+            ev_flat <- Event %>% filter (!eventID %in% Event$parentEventID)
+            
+            ev_CheckFields <- check_fields(ev_flat, level = "warning") %>% filter (field %in% event_fields())
+            
+            if (  exists("Occurrence") ){
+                oc_CheckFields <- check_fields(Occurrence, level = "warning") %>% filter (!field %in% event_fields())
+              }
+            ev_flat0 <- ev_flat
     
-    ev_flat <- Event %>% filter (!eventID %in% Event$parentEventID)
+      } 
     
-    ev_CheckFields <- check_fields(ev_flat, level = "warning") %>% filter (field %in% event_fields())
-    oc_CheckFields <- check_fields(Occurrence, level = "warning") %>% filter (!field %in% event_fields())
-    ev_flat0 <- ev_flat
-    
-  } 
     if ( nrow(ev_CheckFields) > 0) {
       ev_CheckFields <- Event  %>% select(eventID) %>% 
                                    mutate (rownew = row_number()) %>% 
@@ -715,6 +747,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       # Checks run only when the Event table does not exists
       #----------------------------------------------------- 
       
+      if (  exists("Occurrence") ) {
+      
         for (i in other_fields){
           if (i %in% names(Occurrence) == FALSE){
             
@@ -724,7 +758,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
           }}
       
       oc_CheckFields <- check_fields(Occurrence, level = "warning")
-    }
+    }}
   
   
   # Preparing general_issues table: Overview of all issues
@@ -897,6 +931,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       
       # Checks run only when the Event table does not exists
       #------------------------------------------------------ 
+      
+      if (exists("Occurrence")) {
     
     if (sum(coords %in% names(Occurrence)) == 2) {
       
@@ -996,7 +1032,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                  if(exists("no_numeric_long")) no_numeric_long,
                                  if(exists("no_numeric_coord_uncer")) no_numeric_coord_uncer)
     
-    }}
+    }}}
   
   if (exists("plot_coordinates")){
     
@@ -1008,7 +1044,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   #### QC checks - Check if the content of the fields is correct
   ####-----------------------------------------------------------
   
-  
+if(exists("Occurrence")){  
   # occurrenceStatus is standardized 
   #-----------------------------------
   
@@ -1057,10 +1093,11 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   # Preparing general_issues table: Overview of all issues
   
-  occurrenceerror <- bind_rows(occurrenceerror, badbasORec)
+  occurrenceerror <- bind_rows(if(exists("occurrenceerror")){occurrenceerror}, 
+                               if(exists("badbasORec")){badbasORec})
   }
   
-  
+}
   # datasetName is standardized 
   #------------------------------
   
@@ -1088,6 +1125,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                 if(exists("datnameNotTitle")) datnameNotTitle) 
         
     } else {
+      if(exists("Occurrence")){
         if(nrow(Occurrence %>% select (datasetName) %>% filter (!is.na(datasetName)) %>% distinct()) != 1) {
           manyDatname <- data.frame(level = 'warning',
                                     field = 'datasetName',
@@ -1108,7 +1146,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                    if(exists("manyDatname")) manyDatname,
                                    if(exists("datnameNotTitle")) datnameNotTitle)
       
-    }
+    }}
   }
 
    
@@ -1134,6 +1172,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     
   } else {
+    if(exists("Occurrence")){
     
         date_rep <- check_eventdate(Occurrence %>% fncols(c("eventDate")))
         if(nrow(date_rep)> 0) {
@@ -1149,9 +1188,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
         # Preparing general_issues table: Overview of all issues
         
         occurrenceerror <- bind_rows(occurrenceerror, date_rep)  
-  } 
+  } }
   
-  IPTreport$dates_plot <- dates_plot  
+  IPTreport$dates_plot <- if(exists("dates_plot")){dates_plot}  
   
   
   
@@ -1162,7 +1201,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   # Including BODCbiometrics into duplicates check when the eMoF table exists
   #---------------------------------------------------------------------------
-  
+if(exists("Occurrence")){  
   if (exists("eMoF")  ){
     
         mof_biometric <- eMoF %>% filter (!is.na(occurrenceID), 
@@ -1407,7 +1446,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     occurrenceerror <- rbind(occurrenceerror, occ_notmatched)          
   }
-  
+}
   #-------------------------------------------------------------------------------#
   ####                    Generate report table                                ####
   #-------------------------------------------------------------------------------#
@@ -1435,6 +1474,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
         } } } }
   
   
+  if(exists("Occurrence")){
      if(is.null(occurrenceerror) == FALSE & nrow(occurrenceerror) > 0) {
        if(is.null(occurrenceerror$row) == FALSE) {
         if(nrow (occurrenceerror %>% filter (!is.na(row))) >0 ) {
@@ -1449,7 +1489,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                                             by = "row", 
                                                                             suffix = c("_error", "")) %>% 
                                                                 arrange(occurrenceID, scientificName) 
-  }}}
+  }}}}
   
   if (exists("eMoF")) {
     
@@ -1491,6 +1531,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                          mutate (table = "event")
   }} 
   
+  
+  if(exists("Occurrence")){
   if(is.null(occurrenceerror) == FALSE & nrow (occurrenceerror) >0) {
 
     occurrenceerror_report <- occurrenceerror  %>% distinct() %>%
@@ -1503,7 +1545,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                    group_by (level, field, message) %>% 
                                                    summarize(count = n()) %>%
                                                    mutate (table = "occurrence")
-  }
+  }}
   
   if (exists("eMoF")) {
       if(is.null(emoferror) == FALSE & nrow(emoferror) > 0) {

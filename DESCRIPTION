@@ -35,6 +35,8 @@ Imports:
 	obistools,
 	tidyr,
 	stringdist
+Suggests:
+  sf
 Remotes:
   github::EMODnet/skosxml,
   github::iobis/obistools
