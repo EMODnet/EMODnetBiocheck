@@ -1201,7 +1201,7 @@ if(exists("Occurrence")){
   
   # Including BODCbiometrics into duplicates check when the eMoF table exists
   #---------------------------------------------------------------------------
-if(exists("Occurrence")){  
+if(exists("Occurrence")){ 
   if (exists("eMoF")  ){
     
         mof_biometric <- eMoF %>% filter (!is.na(occurrenceID), 
@@ -1489,7 +1489,8 @@ if(exists("Occurrence")){
                                                                             by = "row", 
                                                                             suffix = c("_error", "")) %>% 
                                                                 arrange(occurrenceID, scientificName) 
-  }}}}
+     
+        }}}} 
   
   if (exists("eMoF")) {
     
@@ -1545,7 +1546,15 @@ if(exists("Occurrence")){
                                                    group_by (level, field, message) %>% 
                                                    summarize(count = n()) %>%
                                                    mutate (table = "occurrence")
-  }}
+    
+  }} else { # Warning for cases where occurrence table doesn't exist
+    
+    occurrenceerror_report <- bind_rows(if(exists("occurrenceerror")){occurrenceerror},
+                                        data.frame(level = "warning",
+                                                   message = "The dataset does not seem to have an occurrence table",
+                                                   count = 1,
+                                                   table = "occurrence"))
+  }
   
   if (exists("eMoF")) {
       if(is.null(emoferror) == FALSE & nrow(emoferror) > 0) {

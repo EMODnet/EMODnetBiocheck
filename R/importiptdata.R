@@ -86,7 +86,7 @@ if (exists("out") == FALSE) {
     }
   
     if (  exists("Occurrence") == FALSE  ) {   
-    output$error <- ("The dataset does not have an occurrence file")
+    output$warning <- ("The dataset does not have an occurrence file")
     }
   
   if (is.null(out$data[["extendedmeasurementorfact.txt"]]) == FALSE){
