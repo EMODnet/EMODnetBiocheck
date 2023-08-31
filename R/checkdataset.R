@@ -53,20 +53,22 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   #---------------------------------------------------------------------------#      
   
   
-  #### Occurrence fix
-  ####---------------
+  #### Occurrence fix for Occurrence Core
+  ####-----------------------------------
  
   if (  exists("Occurrence") == TRUE ) {
     
+    if (  !exists("Event") ) {
+    
     
     if(!"occurrenceID" %in% names(Occurrence) & "id" %in% names(Occurrence)) {
-      warning("There is no occurrenceID field in the Occurrence table; occurrenceID created from id field")
+      warning("There is no occurrenceID field in the Occurrence core; occurrenceID created from id field")
       Occurrence <- Occurrence %>% mutate(occurrenceID = id)
     }
     
   Occurrence <- Occurrence %>% cleandataframe()
 
-    }
+    }}
   
   # Occurrence <- Occurrence %>% mutate_all(na_if, 'NA') %>%
   #                              mutate_all(na_if, '') %>%
@@ -101,6 +103,20 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
         
         #       Event <- fncols(Event, c("eventDate"))
       }
+    
+    #### Occurrence fix for Event core
+    ####-------------------------------
+    if (  exists("Occurrence") == TRUE ) {
+      
+      if(!"eventID" %in% names(Occurrence) & "id" %in% names(Occurrence)) {
+        warning("There is no eventID field in the Occurrence extension; eventID created from id field")
+        Occurrence <- Occurrence %>% mutate(eventID = id)
+      }
+      
+      Occurrence <- Occurrence %>% cleandataframe()
+      
+    }
+    
     }
   
   
@@ -759,6 +775,30 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       
       oc_CheckFields <- check_fields(Occurrence, level = "warning")
     }}
+  
+  
+      # Checks one to one relationship issues
+      #---------------------------------------
+  
+  
+  if(exists("Occurrence")){
+    
+    many_names <- one_to_one_check(Occurrence, "scientificName", "scientificNameID")
+    
+  }
+  
+  
+ 
+  if(exists("eMoF")){
+    
+    many_types <- one_to_one_check(eMoF, "measurementType", "measurementTypeID")
+    many_values <- one_to_one_check(eMoF, "measurementValue", "measurementValueID")
+    many_units <- one_to_one_check(eMoF, "measurementUnit", "measurementUnitID")
+    
+    
+  }
+  
+  
   
   
   # Preparing general_issues table: Overview of all issues
