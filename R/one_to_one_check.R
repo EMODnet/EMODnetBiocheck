@@ -57,7 +57,7 @@ one_to_one_check <- function(df, field_x, field_y) {
       } else {
         
         warning("--------> Either the field_x and field_y arguments are not character strings, OR they are not fields in df OR df is not a data frame <--------")
-      
+        result <- NULL
         }
   
       return(result) 
