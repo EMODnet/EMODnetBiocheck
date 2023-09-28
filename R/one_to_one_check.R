@@ -21,35 +21,39 @@
 one_to_one_check <- function(df, field_x, field_y) {
 
   
-      if("data.frame" %in% class(df) &       # Checks that df is a dataframe
-         "character" %in% class(field_x) &   # Checks that field_x is a character string         
-         "character" %in% class(field_y) &   # Checks that field_y is a character string
-         field_x %in% names(df) &            # Checks that field_x is one of the df fields
-         field_y %in% names(df) ) {          # Checks that field_y is one of the df fields
-
+      if(
+          is.data.frame(df) &&      # Checks that df is a dataframe
+          is.character(field_x) &&  # Checks that field_x is a character string
+          is.character(field_y) &&  # Checks that field_y is one of the df fields
+          field_x %in% names(df) &&
+          field_y %in% names(df)
+        ) {          
         
         
                 # Isolates the wanted names and ids from the data frame
-                unique_names <- df %>% select (all_of(c(field_x, field_y))) %>% 
-                                               distinct() 
+                unique_combinations <- df %>% select (all_of(c(field_x, field_y))) %>% 
+                                              distinct() %>%
+                                              filter(!is.na(!!sym(field_x)), 
+                                                     !is.na(!!sym(field_y)))
+                
                 
                 # Creates data frame with records where a name is linked to several different ids
-                multiple_x_per_y <- unique_names %>% group_by(across(all_of(field_y)))  %>%
-                                                   summarise(n = n()) %>%
-                                                   filter (n > 1) %>%
-                                                   left_join (unique_names,
-                                                              by = field_y) %>%
-                                                   distinct() %>%
-                                                   mutate (issue = paste0("multiple ", field_x, " per ", field_y))
+                multiple_x_per_y <- unique_combinations %>% group_by(across(all_of(field_y)))  %>%
+                                                            summarise(n = n()) %>%
+                                                            filter (n > 1) %>%
+                                                            left_join (unique_combinations,
+                                                                       by = field_y) %>%
+                                                            distinct() %>%
+                                                            mutate (issue = paste0("multiple ", field_x, " per ", field_y))
                   
                 # Creates data frame with records where an id is linked to several different names
-                multiple_y_per_x <- unique_names %>% group_by(across(all_of(field_x))) %>%
-                                                   summarise(n = n()) %>%
-                                                   filter (n > 1) %>%
-                                                   left_join (unique_names,
-                                                              by = field_x) %>%
-                                                   distinct() %>%
-                                                   mutate (issue = paste0("multiple ", field_y, " per ", field_x))
+                multiple_y_per_x <- unique_combinations %>% group_by(across(all_of(field_x))) %>%
+                                                            summarise(n = n()) %>%
+                                                            filter (n > 1) %>%
+                                                            left_join (unique_combinations,
+                                                                       by = field_x) %>%
+                                                            distinct() %>%
+                                                            mutate (issue = paste0("multiple ", field_y, " per ", field_x))
               
                 # Unites previously created data frames
                 result <- bind_rows(multiple_x_per_y, multiple_y_per_x) 
@@ -57,7 +61,7 @@ one_to_one_check <- function(df, field_x, field_y) {
       } else {
         
         warning("--------> Either the field_x and field_y arguments are not character strings, OR they are not fields in df OR df is not a data frame <--------")
-      
+        result <- NULL
         }
   
       return(result) 

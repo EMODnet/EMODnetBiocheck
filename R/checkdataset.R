@@ -785,15 +785,49 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     many_names <- one_to_one_check(Occurrence, "scientificName", "scientificNameID")
     
+    if(!is.null(many_names) &
+       nrow(many_names) > 0){
+      
+      IPTreport$exclusivity_fails$taxa_ids_not_exclusive <-  many_names
+    }
+    
   }
   
   
  
   if(exists("eMoF")){
     
+    
+    
     many_types <- one_to_one_check(eMoF, "measurementType", "measurementTypeID")
+    
+    if(!is.null(many_types) &
+       nrow(many_types) > 0){
+      
+      IPTreport$exclusivity_fails$type_ids_not_exclusive <-  many_types
+    }
+    
+    
+    
+    
     many_values <- one_to_one_check(eMoF, "measurementValue", "measurementValueID")
+    
+    if(!is.null(many_values) &
+       nrow(many_values) > 0){
+      
+      IPTreport$exclusivity_fails$value_ids_not_exclusive <-  many_values
+    }
+    
+    
+    
+    
     many_units <- one_to_one_check(eMoF, "measurementUnit", "measurementUnitID")
+    
+    if(!is.null(many_units) &
+       nrow(many_units) > 0){
+      
+      IPTreport$exclusivity_fails$unit_ids_not_exclusive <-  many_units
+    }
     
     
   }
