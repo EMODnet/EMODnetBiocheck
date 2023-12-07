@@ -940,12 +940,17 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     
     
-        depth_rep <- check_depth(GoodCords, report=T, depthmargin = 150) # fails when obis api is down
+        depth_rep <- tryCatch({suppressWarnings(check_depth(GoodCords, report=T, depthmargin = 150))}, 
+                                    error=function(x) { occurrenceID <- c(NA)       
+                                    data.frame(occurrenceID) }) # fails when obis api is down. Trycatch solves it
     
     
     
-        OnLand_rep <- check_onland(GoodCords,report=T, buffer = 3000) %>% mutate (field = 'coordinates_error') # fails when obis api is down
+        OnLand_rep <-  tryCatch({suppressWarnings(check_onland(GoodCords,report=T, buffer = 3000) %>% mutate (field = 'coordinates_error'))}, 
+                                  error=function(x) { occurrenceID <- c(NA)       
+                                  data.frame(occurrenceID) }) # fails when obis api is down. Trycatch solves it
     
+      if (ncol(depth_rep) > 1 & ncol(OnLand_rep) > 1){
         goodcord_rep <- GoodCords %>% select(eventID) %>% 
                                       mutate (row = row_number()) %>% 
                                       inner_join(rbind(depth_rep, OnLand_rep), 
@@ -956,7 +961,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                mutate (row = row_number()) %>% 
                                inner_join(goodcord_rep, 
                                           by=c("eventID")) %>% 
-                               select (-eventID)
+                               select (-eventID)}
     
     
         parentdepts <- ev_flat0 %>% fncols (c("decimalLatitude", "decimalLongitude", "minimumDepthInMeters", "maximumDepthInMeters")) %>%
