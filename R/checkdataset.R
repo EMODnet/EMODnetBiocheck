@@ -53,6 +53,13 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   #---------------------------------------------------------------------------#      
   
   
+  # event_required_fields <- c("eventID", "eventDate", "decimalLatitude", "decimalLongitude", "coordinateUncertaintyInMeters", 
+  #                            "datasetName", "institutionCode", "maximumDepthInMeters", "minimumDepthInMeters")
+  # 
+  # occurrence_required_fields <- c("eventID", "occurrenceID", "scientificNameID", "scientificName", "basisOfRecord", "occurrenceStatus")
+  # 
+  # emof_required_fields <- c("occurrenceID", "measurementType", "measurementTypeID","measurementValueID", "measurementValue", "measurementUnitID", "eventID", "measurementUnit")
+  
   #### Occurrence fix for Occurrence Core
   ####-----------------------------------
  
@@ -67,6 +74,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     }
     
   Occurrence <- Occurrence %>% cleandataframe()
+  
+  #Occurrence <- fncols(Occurrence, occurrence_required_fields)
 
     }}
   
@@ -783,7 +792,10 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   if(exists("Occurrence")){
     
-    many_names <- one_to_one_check(Occurrence, "scientificName", "scientificNameID")
+    
+    many_names <- one_to_one_check(fncols(Occurrence, c("scientificName", "scientificNameID")), 
+                                   "scientificName", 
+                                   "scientificNameID")
     
     if(!is.null(many_names) &
        nrow(many_names) > 0){
@@ -799,7 +811,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     
     
-    many_types <- one_to_one_check(eMoF, "measurementType", "measurementTypeID")
+    many_types <- one_to_one_check(fncols(eMoF, c("measurementType", "measurementTypeID")), 
+                                   "measurementType", 
+                                   "measurementTypeID")
     
     if(!is.null(many_types) &
        nrow(many_types) > 0){
@@ -810,7 +824,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     
     
-    many_values <- one_to_one_check(eMoF, "measurementValue", "measurementValueID")
+    many_values <- one_to_one_check(fncols(eMoF, c("measurementValue", "measurementValueID")), 
+                                    "measurementValue", 
+                                    "measurementValueID")
     
     if(!is.null(many_values) &
        nrow(many_values) > 0){
@@ -821,7 +837,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     
     
-    many_units <- one_to_one_check(eMoF, "measurementUnit", "measurementUnitID")
+    many_units <- one_to_one_check(fncols(eMoF, c("measurementUnit", "measurementUnitID")), 
+                                   "measurementUnit", 
+                                   "measurementUnitID")
     
     if(!is.null(many_units) &
        nrow(many_units) > 0){
