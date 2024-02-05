@@ -5,7 +5,7 @@
 \alias{BODCbiometrics}
 \title{BODC vocabulary terms related to Biometric or other Biotic data.}
 \format{
-An object of class \code{character} of length 9.
+An object of class \code{character} of length 12.
 }
 \usage{
 BODCbiometrics
