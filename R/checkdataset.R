@@ -576,9 +576,24 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                               select (level,field, row ,message)
     
       
-      
+    
     if ( sum(is.na(eMoF$occurrenceID)) != nrow(eMoF)  ){
-      mof_oc_Value0 <- suppressWarnings(eMoF %>% mutate (level = 'error', 
+        mof_oc_Value_err <- suppressWarnings(eMoF %>% mutate (level = 'error', 
+                                                               field = 'measurementValue', 
+                                                               row = row_number(),
+                                                               message = 'Biological quantitification of 0 while occurrenceStatus is present') %>%
+                                                inner_join (fncols(Occurrence, c("occurrenceStatus")) %>% filter (is.na(occurrenceStatus) | occurrenceStatus == 'present' ) %>% 
+                                                              select (occurrenceID), 
+                                                            by = 'occurrenceID') %>%
+                                                mutate(measurementValue = as.numeric(measurementValue)) %>% 
+                                                filter (measurementValue == 0 &
+                                                        measurementTypeID %in% BODCquantity) %>%  
+                                                select (level,field, row ,message))
+      } else {mof_oc_Value_err <-NULL }  
+      
+        
+    if ( sum(is.na(eMoF$occurrenceID)) != nrow(eMoF)  ){
+      mof_oc_Value_war <- suppressWarnings(eMoF %>% mutate (level = 'warning', 
                                                          field = 'measurementValue', 
                                                          row = row_number(),
                                                          message = 'Biological value of 0 while occurrenceStatus is present') %>%
@@ -586,9 +601,10 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                                                                            select (occurrenceID), 
                                                              by = 'occurrenceID') %>%
                                                  mutate(measurementValue = as.numeric(measurementValue)) %>% 
-                                                 filter ( measurementValue == 0 ) %>%  
+                                                 filter (measurementValue == 0 &
+                                                         !measurementTypeID %in% BODCquantity ) %>%  
                                                  select (level,field, row ,message))
-      } else {mof_oc_Value0 <-NULL }
+      } else {mof_oc_Value_war <-NULL }
     
     mof_oc_dubs <- eMoF %>% filter (!is.na(occurrenceID), !is.na(measurementTypeID)) %>%
                             select (occurrenceID, measurementTypeID) %>% 
@@ -685,7 +701,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     # Preparing general_issues table: Overview of all issues
     
-    emoferror <- rbind(emoferror, mof_ValueNull, mof_oc_Value0, mof_oc_dubs,  
+    emoferror <- rbind(emoferror, mof_ValueNull, mof_oc_Value_war, mof_oc_Value_err, mof_oc_dubs,  
                        if(exists("mof_ev_dubs")) mof_ev_dubs,
                        if(exists("mof_noInstrument")) mof_noInstrument,  
                        if(exists("mof_noSamplingdescriptor")) mof_noSamplingdescriptor
