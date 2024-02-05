@@ -141,9 +141,18 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       eMoF <- fncols(eMoF, c("occurrenceID", "measurementType", "measurementTypeID","measurementValueID", "measurementValue", "measurementUnitID", "eventID", "measurementUnit"))
 
       
-      eMoF <- eMoF %>% mutate (measurementTypeID = if_else(str_sub(measurementTypeID, -1, -1)=='/',measurementTypeID, paste(measurementTypeID, "/",  sep = '')),
-                               measurementValueID = if_else(str_sub(measurementValueID, -1, -1)=='/',measurementValueID, paste(measurementValueID, "/",  sep = '')),
-                               measurementUnitID = if_else(str_sub(measurementUnitID, -1, -1)=='/',measurementUnitID, paste(measurementUnitID, "/",  sep = '')),
+      eMoF <- eMoF %>% mutate (measurementTypeID = if_else(str_sub(measurementTypeID, -1, -1)!='/' & "vocab.nerc.ac.uk" %in% measurementTypeID,
+                                                           paste0(measurementTypeID, 
+                                                                  "/"),
+                                                           measurementTypeID),
+                               measurementValueID = if_else(str_sub(measurementValueID, -1, -1)!='/' & "vocab.nerc.ac.uk" %in% measurementValueID,
+                                                            paste0(measurementValueID, 
+                                                                   "/"),
+                                                            measurementValueID),
+                               measurementUnitID = if_else(str_sub(measurementUnitID, -1, -1)!='/' & "vocab.nerc.ac.uk" %in% measurementUnitID,
+                                                           paste0(measurementUnitID, 
+                                                                  "/"),
+                                                           measurementUnitID),
                                measurementTypeID = str_replace(measurementTypeID, "https://", "http://"),
                                measurementValueID = str_replace(measurementValueID, "https://", "http://"),
                                measurementUnitID = str_replace(measurementUnitID, "https://", "http://")
