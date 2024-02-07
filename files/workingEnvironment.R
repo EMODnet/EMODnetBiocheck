@@ -49,7 +49,8 @@ BODCquantity <- c('http://vocab.nerc.ac.uk/collection/P01/current/SDBIOL07/',
                   'http://vocab.nerc.ac.uk/collection/P01/current/ODRYBM01/',
                   'http://vocab.nerc.ac.uk/collection/P01/current/OWETBM01/',
                   'http://vocab.nerc.ac.uk/collection/P01/current/OCOUNT01/',
-                  'http://vocab.nerc.ac.uk/collection/P01/current/USPBIOSV/')
+                  'http://vocab.nerc.ac.uk/collection/P01/current/USPBIOSV/',
+                  'http://vocab.nerc.ac.uk/collection/P01/current/WWBMM00Z/')
 
 
 
