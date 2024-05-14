@@ -51,11 +51,6 @@
     },
     "2": {
       "@type": "SoftwareApplication",
-      "identifier": "rgdal",
-      "name": "rgdal"
-    },
-    "3": {
-      "@type": "SoftwareApplication",
       "identifier": "RCurl",
       "name": "RCurl",
       "provider": {
@@ -66,7 +61,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=RCurl"
     },
-    "4": {
+    "3": {
       "@type": "SoftwareApplication",
       "identifier": "httr",
       "name": "httr",
@@ -78,7 +73,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=httr"
     },
-    "5": {
+    "4": {
       "@type": "SoftwareApplication",
       "identifier": "dplyr",
       "name": "dplyr",
@@ -90,7 +85,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=dplyr"
     },
-    "6": {
+    "5": {
       "@type": "SoftwareApplication",
       "identifier": "finch",
       "name": "finch",
@@ -102,7 +97,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=finch"
     },
-    "7": {
+    "6": {
       "@type": "SoftwareApplication",
       "identifier": "ggplot2",
       "name": "ggplot2",
@@ -114,7 +109,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=ggplot2"
     },
-    "8": {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "knitr",
       "name": "knitr",
@@ -126,7 +121,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=knitr"
     },
-    "9": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "leaflet",
       "name": "leaflet",
@@ -138,7 +133,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=leaflet"
     },
-    "10": {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "xml2",
       "name": "xml2",
@@ -150,7 +145,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=xml2"
     },
-    "11": {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "rmarkdown",
       "name": "rmarkdown",
@@ -162,7 +157,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=rmarkdown"
     },
-    "12": {
+    "11": {
       "@type": "SoftwareApplication",
       "identifier": "stringr",
       "name": "stringr",
@@ -174,13 +169,13 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=stringr"
     },
-    "13": {
+    "12": {
       "@type": "SoftwareApplication",
       "identifier": "skosxml",
       "name": "skosxml",
       "sameAs": "https://github.com/EMODnet/skosxml"
     },
-    "14": {
+    "13": {
       "@type": "SoftwareApplication",
       "identifier": "rjson",
       "name": "rjson",
@@ -192,7 +187,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=rjson"
     },
-    "15": {
+    "14": {
       "@type": "SoftwareApplication",
       "identifier": "parsedate",
       "name": "parsedate",
@@ -204,7 +199,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=parsedate"
     },
-    "16": {
+    "15": {
       "@type": "SoftwareApplication",
       "identifier": "plyr",
       "name": "plyr",
@@ -216,13 +211,13 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=plyr"
     },
-    "17": {
+    "16": {
       "@type": "SoftwareApplication",
       "identifier": "obistools",
       "name": "obistools",
       "sameAs": "https://github.com/iobis/obistools"
     },
-    "18": {
+    "17": {
       "@type": "SoftwareApplication",
       "identifier": "tidyr",
       "name": "tidyr",
@@ -234,7 +229,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tidyr"
     },
-    "19": {
+    "18": {
       "@type": "SoftwareApplication",
       "identifier": "stringdist",
       "name": "stringdist",
