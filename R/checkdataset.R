@@ -542,7 +542,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       mof_noSamplingdescriptor <- data.frame(level = "warning",
                                              field = "measurementType", 
                                              row = NA, 
-                                             message = "No sampling descriptors present: see http://vocab.nerc.ac.uk/collection/Q01/current/")
+                                             message = "No sampling descriptors/effort present: see https://github.com/EMODnet/EMODnetBiocheck/blob/master/files/workingEnvironment.R#L26")
     }
     
     
