@@ -5,7 +5,7 @@
 \alias{BODCeffort}
 \title{BODC vocabulary terms related to sampling descriptors.}
 \format{
-An object of class \code{character} of length 6.
+An object of class \code{character} of length 30.
 }
 \usage{
 BODCeffort

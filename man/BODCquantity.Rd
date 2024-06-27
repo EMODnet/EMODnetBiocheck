@@ -5,7 +5,7 @@
 \alias{BODCquantity}
 \title{BODC vocabulary term related to measurements of quantities where no valueID apply.}
 \format{
-An object of class \code{character} of length 20.
+An object of class \code{character} of length 21.
 }
 \usage{
 BODCquantity
