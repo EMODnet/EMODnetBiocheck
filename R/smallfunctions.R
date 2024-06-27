@@ -76,17 +76,26 @@ cleandataframe <- function (x, vector = TRUE) {
     }
   }
   
-  # turn character NAs and spaces into an actual empty cell
-  x <- x %>% mutate(across(where(is.character), ~na_if(., "NA"))) %>%
-             mutate(across(where(is.character), ~na_if(., ""))) %>%
-             mutate(across(where(is.character), ~na_if(., " ")))
-  
   # remove empty columns
   x <- x[,colSums(is.na(x))<nrow(x)]
   
+  # Transform to character
   if (vector == TRUE ){
     x <- data.frame(lapply(x, as.character), stringsAsFactors=FALSE)
   }
+  
+  # Function to replace non-ASCII characters
+  replace_non_ascii <- function(x) {
+    iconv(x, from = "UTF-8", to = "ASCII//TRANSLIT")
+  }
+  
+  
+  # turn character NAs and spaces into an actual empty cell
+  x <- x %>% mutate(across(where(is.character), ~na_if(., "NA"))) %>%
+    mutate(across(where(is.character), ~na_if(., "NULL"))) %>%
+    mutate(across(where(is.character), ~na_if(., ""))) %>%
+    mutate(across(where(is.character), ~na_if(., " "))) %>%
+    mutate(across(where(is.character), replace_non_ascii))
 
   return (x)
 }
