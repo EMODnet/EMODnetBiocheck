@@ -1714,7 +1714,7 @@ if(exists("Occurrence")){
     if(nrow(IPTreport$dtb$general_issues) > 0){
       
       IPTreport$dtb$general_issues  <- IPTreport$dtb$general_issues %>% mutate (count = as.integer(count)) %>% 
-                                                                        arrange(table, field, desc(count))
+                                                                        arrange(table, level, field, desc(count))
     } else {
       IPTreport$dtb$general_issues <- c ("There don't seem to be any issues")
     }} else {
