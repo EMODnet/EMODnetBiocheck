@@ -199,8 +199,8 @@ SDN:P06::UCNT,Counts,counts,false,http://vocab.nerc.ac.uk/collection/P06/current
 SDN:P06::PPTR,Parts per trillion,pptr,false,http://vocab.nerc.ac.uk/collection/P06/current/PPTR/
 SDN:P06::UPPE,Parts per ten thousand,pptt,false,http://vocab.nerc.ac.uk/collection/P06/current/UPPE/
 SDN:P06::UUPH,pH units,pH units,false,http://vocab.nerc.ac.uk/collection/P06/current/UUPH/
-SDN:P06::BYTE,Bytes,Bytes,false,http://vocab.nerc.ac.uk/collection/P06/current/BYTE/
 SDN:P06::UFFU,Fluorescein Fluorescence Units,FFU,false,http://vocab.nerc.ac.uk/collection/P06/current/UFFU/
+SDN:P06::BYTE,Bytes,Bytes,false,http://vocab.nerc.ac.uk/collection/P06/current/BYTE/
 SDN:P06::NTML,Nautical miles,Nm,false,http://vocab.nerc.ac.uk/collection/P06/current/NTML/
 SDN:P06::UXNM,Nanometres,nm,false,http://vocab.nerc.ac.uk/collection/P06/current/UXNM/
 SDN:P06::UXMM,Millimetres,mm,false,http://vocab.nerc.ac.uk/collection/P06/current/UXMM/
@@ -281,6 +281,7 @@ SDN:P06::UYBC,Gregorian calendar years before Christ,BC,false,http://vocab.nerc.
 SDN:P06::UMNX,per metre per nanometre,/m/nm,false,http://vocab.nerc.ac.uk/collection/P06/current/UMNX/
 SDN:P06::UECH,MicroEinsteins per square centimetre per hour,uE/cm^2/h,false,http://vocab.nerc.ac.uk/collection/P06/current/UECH/
 SDN:P06::UNBQ,Nanobecquerels per litre,nBq/l,false,http://vocab.nerc.ac.uk/collection/P06/current/UNBQ/
+SDN:P06::UWCN,Microwatts per square centimetre per nanometre,uW/cm^2/nm,false,http://vocab.nerc.ac.uk/collection/P06/current/UWCN/
 SDN:P06::PIXY,Pixels,px,false,http://vocab.nerc.ac.uk/collection/P06/current/PIXY/
 SDN:P06::USUM,Square microns per millilitre,um^2/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/USUM/
 SDN:P06::NMPM,Nanomoles per mole,nmol/mol,false,http://vocab.nerc.ac.uk/collection/P06/current/NMPM/
