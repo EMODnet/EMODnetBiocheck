@@ -12,7 +12,7 @@ import ast
 NSV_ENDPOINT: str = "https://vocab.nerc.ac.uk/sparql/sparql"
 NSV:kg.KGSource = kg.KGSource.build(NSV_ENDPOINT)
 
-TEMPLATES_FOLDER = str(pathlib.Path("C:/Users/cyril.radermecker/Documents/Coding_stuff/Python_scripts/nvsSPARQL-main/templated-queries/").absolute())
+TEMPLATES_FOLDER = str(pathlib.Path("files/nvsSPARQL-main/templated-queries/").absolute())
 GENERATOR = kg.DefaultSparqlBuilder(templates_folder=TEMPLATES_FOLDER)
 
 def generate_sparql(name: str, **vars) -> str: 
@@ -31,7 +31,7 @@ valuesCollectionList=['L22','L05','F02','C17','S11','S10','S09','M20','M21','M24
 parametersCollectionList=['Q01','P01','P02','P35']
 
 # File paths
-checkpoint_path = 'C:/Users/cyril.radermecker/Documents/Coding_stuff/Files_used_in_scripts/BODC_tables/'
+checkpoint_path = 'files/'
 
 if os.path.exists(checkpoint_path+'BODCunits.csv'):
 				print('BODCunits table already found, delete this version if you want to download a new one')
@@ -39,7 +39,7 @@ else:
 				BODCunits=execute_to_df("nsv-listing.sparql", cc="P06")
 				BODCunits=BODCunits[['id','pref_lang','alt','depr','member']]
 				BODCunits.columns=['identifier','preflabel','altLabel','deprecated','uri']
-				BODCunits.to_csv('C:/Users/cyril.radermecker/Documents/Coding_stuff/Files_used_in_scripts/BODC_tables/BODCunits.csv',index=False)
+				BODCunits.to_csv(checkpoint_path+'BODCunits.csv',index=False)
 
 if os.path.exists(checkpoint_path+'BODCvalues.csv'):
 				print('BODCvalues table already found, delete this version if you want to download a new one')
@@ -82,7 +82,7 @@ else:
 						BODCvalues=pd.concat([BODCvalues,pd.DataFrame.from_dict([newRow])])
 				BODCvalues=BODCvalues.reset_index()      
 				BODCvalues=BODCvalues.drop(columns='index')  
-				BODCvalues.to_csv('C:/Users/cyril.radermecker/Documents/Coding_stuff/Files_used_in_scripts/BODC_tables/BODCvalues.csv',index=False)
+				BODCvalues.to_csv(checkpoint_path+'BODCvalues.csv',index=False)
 
 if os.path.exists(checkpoint_path+'BODCparameters.csv'):
 				BODCparameters = pd.read_csv(checkpoint_path+'BODCparameters.csv')
@@ -102,12 +102,9 @@ else:
 				BODCparameters.insert(len(BODCparameters.columns),"standardunit",np.nan)
 				BODCparameters=BODCparameters.astype('object',copy=False,errors='ignore')
 
-print(BODCparameters.shape[0])
 for rowNumber in range(BODCparameters.shape[0]):
 				if type(BODCparameters['standardUnitID'][rowNumber]) != float :
-								# print(type(BODCparameters['standardunit'][rowNumber]))
 								if type(BODCparameters['standardunit'][rowNumber]) == float :
-												print(rowNumber)
 												query_with_pref_lang = """
 												PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
