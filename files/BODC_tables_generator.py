@@ -1,6 +1,6 @@
 import os
 import json
-import pykg2tbl as kg
+import sema.query as kg
 import pathlib
 import pandas as pd
 import requests
@@ -10,7 +10,7 @@ import ast
 # SPARQL EndPoint to use - wrapped as Knowledge-Graph 'source'
 # SPARQL setup to use the NVS API
 NSV_ENDPOINT: str = "https://vocab.nerc.ac.uk/sparql/sparql"
-NSV:kg.KGSource = kg.KGSource.build(NSV_ENDPOINT)
+NSV:kg.GraphSource = kg.GraphSource.build(NSV_ENDPOINT)
 
 TEMPLATES_FOLDER = str(pathlib.Path("files/nvsSPARQL-main/templated-queries/").absolute())
 GENERATOR = kg.DefaultSparqlBuilder(templates_folder=TEMPLATES_FOLDER)
