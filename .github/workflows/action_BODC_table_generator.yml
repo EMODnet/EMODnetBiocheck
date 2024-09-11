@@ -7,7 +7,7 @@ on:
   # For testing purposes, also trigger on push to main branch
   push:
     branches:
-      - main
+      - develop
 
 jobs:
   generate-table:
@@ -27,7 +27,7 @@ jobs:
       # Step 3: Install required dependencies
       - name: Install dependencies
         run: |
-          pip install pandas pykg2tbl requests numpy
+          pip install pandas pysema requests numpy
 
       # Step 4: Run the Python script that generates the table
       - name: Run table generator script
