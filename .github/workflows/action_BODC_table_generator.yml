@@ -54,11 +54,6 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v2
 
-      # Step 6: Install R dependencies (usethis package)
-      - name: Install R packages
-        run: |
-          install.packages("usethis")
-          install.packages("devtools")
 
       # Step 7: Read the CSV files in R and run the usethis::use_data() commands
       - name: Process CSV files with R
