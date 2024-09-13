@@ -19,8 +19,6 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: windows-latest, r: 'release'}
-          - {os: macOS-latest, r: 'release'}
           - {os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -59,20 +57,20 @@ jobs:
       # Step 6: Install R dependencies (usethis package)
       - name: Install R packages
         run: |
-          install.packages('usethis')
-          install.packages('devtools')
+          Rscript -e 'install.packages('usethis')'
+          Rscript -e 'install.packages('devtools')'
 
       # Step 7: Read the CSV files in R and run the usethis::use_data() commands
       - name: Process CSV files with R
         run: |
-          BODCunits <- read.csv("files/BODCunits.csv")
-          BODCvalues <- read.csv("files/BODCvalues.csv")
-          BODCparameters <- read.csv("files/BODCparameters.csv")
-          usethis::use_data(BODCunits, overwrite = TRUE)
-          usethis::use_data(BODCvalues, overwrite = TRUE)
-          usethis::use_data(BODCparameters, overwrite = TRUE)
+          Rscript -e 'BODCunits <- read.csv("files/BODCunits.csv")'
+          Rscript -e 'BODCvalues <- read.csv("files/BODCvalues.csv")'
+          Rscript -e 'BODCparameters <- read.csv("files/BODCparameters.csv")'
+          Rscript -e 'usethis::use_data(BODCunits, overwrite = TRUE)'
+          Rscript -e 'usethis::use_data(BODCvalues, overwrite = TRUE)'
+          Rscript -e 'usethis::use_data(BODCparameters, overwrite = TRUE)'
 
       # Step 8: Run devtools::document() to update R package documentation
       - name: Update R documentation
         run: |
-          devtools::document()
+          Rscript -e 'devtools::document()'
