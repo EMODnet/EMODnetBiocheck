@@ -57,20 +57,20 @@ jobs:
       # Step 6: Install R dependencies (usethis package)
       - name: Install R packages
         run: |
-          Rscript -e 'install.packages('usethis')'
-          Rscript -e 'install.packages('devtools')'
+          install.packages("usethis")
+          install.packages("devtools")
 
       # Step 7: Read the CSV files in R and run the usethis::use_data() commands
       - name: Process CSV files with R
         run: |
-          Rscript -e 'BODCunits <- read.csv("files/BODCunits.csv")'
-          Rscript -e 'BODCvalues <- read.csv("files/BODCvalues.csv")'
-          Rscript -e 'BODCparameters <- read.csv("files/BODCparameters.csv")'
-          Rscript -e 'usethis::use_data(BODCunits, overwrite = TRUE)'
-          Rscript -e 'usethis::use_data(BODCvalues, overwrite = TRUE)'
-          Rscript -e 'usethis::use_data(BODCparameters, overwrite = TRUE)'
+          BODCunits <- read.csv("files/BODCunits.csv")
+          BODCvalues <- read.csv("files/BODCvalues.csv")
+          BODCparameters <- read.csv("files/BODCparameters.csv")
+          usethis::use_data(BODCunits, overwrite = TRUE)
+          usethis::use_data(BODCvalues, overwrite = TRUE)
+          usethis::use_data(BODCparameters, overwrite = TRUE)
 
       # Step 8: Run devtools::document() to update R package documentation
       - name: Update R documentation
         run: |
-          Rscript -e 'devtools::document()'
+          devtools::document()
