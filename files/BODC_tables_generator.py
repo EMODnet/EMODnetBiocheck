@@ -96,8 +96,8 @@ else:
 	BODCvalues=BODCvalues.drop(columns='index')  
 	BODCvalues.to_csv(bodc_values_file,index=False)
      	# Clean up old files, keep latest 3
-    	filesList = sorted([f for f in checkpoint_path.iterdir() if 'BODCvalues' in f.name], reverse=True)
-    	if len(filesList) > 3:
+	filesList = sorted([f for f in checkpoint_path.iterdir() if 'BODCvalues' in f.name], reverse=True)
+	if len(filesList) > 3:
 		for file in filesList[3:]:
 			file.unlink()
             
