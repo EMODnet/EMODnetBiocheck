@@ -15,7 +15,7 @@ NSV_ENDPOINT: str = "https://vocab.nerc.ac.uk/sparql/sparql"
 NSV: kg.GraphSource = kg.GraphSource.build(NSV_ENDPOINT)
 
 # Templates folder relative to the current script's parent directory
-TEMPLATES_FOLDER = str(current_dir / "files/nvsSPARQL-main/templated-queries/")
+TEMPLATES_FOLDER = str(current_dir / "nvsSPARQL-main/templated-queries/")
 GENERATOR = kg.DefaultSparqlBuilder(templates_folder=TEMPLATES_FOLDER)
 
 def generate_sparql(name: str, **vars) -> str: 
@@ -32,7 +32,7 @@ valuesCollectionList = ['L22', 'L05', 'F02', 'C17', 'S11', 'S10', 'S09', 'M20', 
 parametersCollectionList = ['Q01', 'P01', 'P02', 'P35']
 
 # File paths
-checkpoint_path = current_dir / "files"
+checkpoint_path = current_dir /
 date = datetime.datetime.now().strftime("%Y%m%d")
 
 # BODCunits handling
@@ -40,7 +40,7 @@ bodc_units_file = checkpoint_path / f'BODCunits_{date}.csv'
 if bodc_units_file.exists():
     print('BODCunits table already found, delete this version if you want to download a new one')
 else:
-    BODCunits = execute_to_df(str(current_dir / "files/nvsSPARQL-main/templated-queries/nsv-listing.sparql"), cc="P06")
+    BODCunits = execute_to_df("nsv-listing.sparql", cc="P06")
     BODCunits = BODCunits[['id', 'pref_lang', 'alt', 'depr', 'member']]
     BODCunits.columns = ['identifier', 'preflabel', 'altLabel', 'deprecated', 'uri']
     BODCunits.to_csv(bodc_units_file, index=False)
