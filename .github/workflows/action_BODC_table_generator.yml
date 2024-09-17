@@ -44,6 +44,24 @@ jobs:
       # Step 4: Run the Python script that generates the table
       - name: Run table generator script
         run: python files/BODC_tables_generator.py
+        
+      # Configure git
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      # Commit the changes
+      - name: Commit changes
+        run: |
+          git add .
+          git commit -m "Automated commit by GitHub Action"
+
+      # Push changes back to the branch
+      - name: Push changes
+        run: git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Step 5: Set up R environment
       #- name: Set up R
