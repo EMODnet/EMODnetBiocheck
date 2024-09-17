@@ -32,7 +32,7 @@ valuesCollectionList = ['L22', 'L05', 'F02', 'C17', 'S11', 'S10', 'S09', 'M20', 
 parametersCollectionList = ['Q01', 'P01', 'P02', 'P35']
 
 # File paths
-checkpoint_path = current_dir /
+checkpoint_path = current_dir
 date = datetime.datetime.now().strftime("%Y%m%d")
 
 # BODCunits handling
