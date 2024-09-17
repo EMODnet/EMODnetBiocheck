@@ -38,36 +38,36 @@ date = datetime.datetime.now().strftime("%Y%m%d")
 # BODCunits handling
 bodc_units_file = checkpoint_path / f'BODCunits_{date}.csv'
 if bodc_units_file.exists():
-    print('BODCunits table already found, delete this version if you want to download a new one')
+	print('BODCunits table already found, delete this version if you want to download a new one')
 else:
-    BODCunits = execute_to_df("nsv-listing.sparql", cc="P06")
-    BODCunits = BODCunits[['id', 'pref_lang', 'alt', 'depr', 'member']]
-    BODCunits.columns = ['identifier', 'preflabel', 'altLabel', 'deprecated', 'uri']
-    BODCunits.to_csv(bodc_units_file, index=False)
-
-    # Clean up old files, keep latest 3
-    filesList = sorted([f for f in checkpoint_path.iterdir() if 'BODCunits' in f.name], reverse=True)
-    if len(filesList) > 3:
-        for file in filesList[3:]:
-            file.unlink()
+	BODCunits = execute_to_df("nsv-listing.sparql", cc="P06")
+	BODCunits = BODCunits[['id', 'pref_lang', 'alt', 'depr', 'member']]
+	BODCunits.columns = ['identifier', 'preflabel', 'altLabel', 'deprecated', 'uri']
+	BODCunits.to_csv(bodc_units_file, index=False)
+	
+	# Clean up old files, keep latest 3
+	filesList = sorted([f for f in checkpoint_path.iterdir() if 'BODCunits' in f.name], reverse=True)
+	if len(filesList) > 3:
+		for file in filesList[3:]:
+			file.unlink()
 
 # BODCvalues handling
 bodc_values_file = checkpoint_path / f'BODCvalues_{date}.csv'
 if bodc_values_file.exists():
-    print('BODCvalues table already found, delete this version if you want to download a new one')
+	print('BODCvalues table already found, delete this version if you want to download a new one')
 else:
 	BODCvalues=pd.DataFrame(columns=['pref_lang','depr','member','definition'])
 	for collection in valuesCollectionList :
 		BODCvaluesTmp=execute_to_df("nsv-listing.sparql", cc=collection)
 		for rowNumber in range(BODCvaluesTmp.shape[0]):
-					try :
-						definitionDict=ast.literal_eval(BODCvaluesTmp['definition'][rowNumber])
-						try:
-							BODCvaluesTmp.loc[rowNumber,'definition']=str(definitionDict['node'])
-						except:
-							BODCvaluesTmp.loc[rowNumber,'definition']='Unavailable'
-					except:
-						print('no dictionnary')
+			try :
+				definitionDict=ast.literal_eval(BODCvaluesTmp['definition'][rowNumber])
+				try:
+					BODCvaluesTmp.loc[rowNumber,'definition']=str(definitionDict['node'])
+				except:
+					BODCvaluesTmp.loc[rowNumber,'definition']='Unavailable'
+			except:
+				print('no dictionnary')
 		BODCvalues=pd.concat([BODCvalues,BODCvaluesTmp[['pref_lang','depr','member','definition']]])
 	BODCvalues.columns=['preflabel','deprecated','uri','definition']  
 	url = "https://dd.eionet.europa.eu/vocabulary/biodiversity/eunishabitats/json"
@@ -99,7 +99,7 @@ else:
     	filesList = sorted([f for f in checkpoint_path.iterdir() if 'BODCvalues' in f.name], reverse=True)
     	if len(filesList) > 3:
 		for file in filesList[3:]:
-	    		file.unlink()
+			file.unlink()
             
 #if os.path.exists(checkpoint_path+'BODCparameters_'+date+'.csv'):
 #	BODCparameters = pd.read_csv(checkpoint_path+'BODCparameters_'+date+'.csv')
