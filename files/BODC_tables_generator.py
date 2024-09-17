@@ -1,4 +1,3 @@
-import os
 import json
 import sema.query as kg
 import pathlib
@@ -8,46 +7,49 @@ import numpy as np
 import ast
 import datetime
 
-# SPARQL EndPoint to use - wrapped as Knowledge-Graph 'source'
-# SPARQL setup to use the NVS API
-NSV_ENDPOINT: str = "https://vocab.nerc.ac.uk/sparql/sparql"
-NSV:kg.GraphSource = kg.GraphSource.build(NSV_ENDPOINT)
+# Get the parent directory of the current script
+current_dir = pathlib.Path(__file__).parent.resolve()
 
-TEMPLATES_FOLDER = str(pathlib.Path("files/nvsSPARQL-main/templated-queries/").absolute())
+# Define the SPARQL EndPoint to use - wrapped as Knowledge-Graph 'source'
+NSV_ENDPOINT: str = "https://vocab.nerc.ac.uk/sparql/sparql"
+NSV: kg.GraphSource = kg.GraphSource.build(NSV_ENDPOINT)
+
+# Templates folder relative to the current script's parent directory
+TEMPLATES_FOLDER = str(current_dir / "files/nvsSPARQL-main/templated-queries/")
 GENERATOR = kg.DefaultSparqlBuilder(templates_folder=TEMPLATES_FOLDER)
 
 def generate_sparql(name: str, **vars) -> str: 
-    """ Simply build the sparql by using the named query and applying the vars
-    """
+    """Simply build the SPARQL by using the named query and applying the vars."""
     return GENERATOR.build_syntax(name, **vars)
 
 def execute_to_df(name: str, **vars) -> pd.DataFrame:
-    """ Builds the sparql and executes, returning the result as a dataframe.
-    """
+    """Builds the SPARQL query and executes it, returning the result as a dataframe."""
     sparql = generate_sparql(name, **vars)
     result: kg.QueryResult = NSV.query(sparql=sparql)
     return result.to_dataframe()
 
-valuesCollectionList=['L22','L05','F02','C17','S11','S10','S09','M20','M21','M24','L06']
-parametersCollectionList=['Q01','P01','P02','P35']
+valuesCollectionList = ['L22', 'L05', 'F02', 'C17', 'S11', 'S10', 'S09', 'M20', 'M21', 'M24', 'L06']
+parametersCollectionList = ['Q01', 'P01', 'P02', 'P35']
 
 # File paths
-checkpoint_path = 'files/'
-date=datetime.datetime.now().strftime("%Y%m%d")
+checkpoint_path = current_dir / "files"
+date = datetime.datetime.now().strftime("%Y%m%d")
 
-if os.path.exists(checkpoint_path+'BODCunits_'+date+'.csv'):
-	print('BODCunits table already found, delete this version if you want to download a new one')
+# BODCunits handling
+bodc_units_file = checkpoint_path / f'BODCunits_{date}.csv'
+if bodc_units_file.exists():
+    print('BODCunits table already found, delete this version if you want to download a new one')
 else:
-	BODCunits=execute_to_df("nsv-listing.sparql", cc="P06")
-	BODCunits=BODCunits[['id','pref_lang','alt','depr','member']]
-	BODCunits.columns=['identifier','preflabel','altLabel','deprecated','uri']
-	BODCunits.to_csv(checkpoint_path+'BODCunits_'+date+'.csv',index=False)
-	filesList=os.listdir(checkpoint_path)
-	filesList=[file for file in filesList if 'BODCunits' in file]
-	filesList.sort(reverse=True)
-	if len(filesList)>3:
-		for file in filesList[3:]:
-			os.remove(checkpoint_path+file)
+    BODCunits = execute_to_df("nsv-listing.sparql", cc="P06")
+    BODCunits = BODCunits[['id', 'pref_lang', 'alt', 'depr', 'member']]
+    BODCunits.columns = ['identifier', 'preflabel', 'altLabel', 'deprecated', 'uri']
+    BODCunits.to_csv(bodc_units_file, index=False)
+
+    # Clean up old files, keep latest 3
+    filesList = sorted([f for f in checkpoint_path.iterdir() if 'BODCunits' in f.name], reverse=True)
+    if len(filesList) > 3:
+        for file in filesList[3:]:
+            file.unlink()
 
 #if os.path.exists(checkpoint_path+'BODCvalues_'+date+'.csv'):	
 #	print('BODCvalues table already found, delete this version if you want to download a new one')
