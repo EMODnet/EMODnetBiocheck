@@ -51,55 +51,56 @@ else:
         for file in filesList[3:]:
             file.unlink()
 
-#if os.path.exists(checkpoint_path+'BODCvalues_'+date+'.csv'):	
-#	print('BODCvalues table already found, delete this version if you want to download a new one')
-#else:
-#	BODCvalues=pd.DataFrame(columns=['pref_lang','depr','member','definition'])
-#	for collection in valuesCollectionList :
-#		BODCvaluesTmp=execute_to_df("nsv-listing.sparql", cc=collection)
-#		for rowNumber in range(BODCvaluesTmp.shape[0]):
-#					try :
-#						definitionDict=ast.literal_eval(BODCvaluesTmp['definition'][rowNumber])
-#						try:
-#							BODCvaluesTmp.loc[rowNumber,'definition']=str(definitionDict['node'])
-#						except:
-#							BODCvaluesTmp.loc[rowNumber,'definition']='Unavailable'
-#					except:
-#						print('no dictionnary')
-#		BODCvalues=pd.concat([BODCvalues,BODCvaluesTmp[['pref_lang','depr','member','definition']]])
-#	BODCvalues.columns=['preflabel','deprecated','uri','definition']  
-#	url = "https://dd.eionet.europa.eu/vocabulary/biodiversity/eunishabitats/json"
-#	filename="eunisValues.json"
-#	response = requests.get(url)
-#	if response.status_code == 200:
-#		with open(checkpoint_path+filename, "wb") as f:
-#			f.write(response.content)
-#	
-#	with open(checkpoint_path+filename, 'r',encoding='utf-8') as file:
-#		eunisValues=json.load(file)
-#	
-#	for concept in eunisValues['concepts']:
-#		if concept['Status'] == 'Valid':
-#			newRow={'preflabel':concept['Label'],
-#				'deprecated':'FALSE',
-#				'uri':concept['skos:exactMatch'][0],
-#				'definition':concept['Definition']}
-#		else :
-#			newRow={'preflabel':concept['Label'],
-#				'deprecated':'TRUE',
-#				'uri':concept['skos:exactMatch'][0],
-#				'definition':concept['Definition']}
-#		BODCvalues=pd.concat([BODCvalues,pd.DataFrame.from_dict([newRow])])
-#	BODCvalues=BODCvalues.reset_index()      
-#	BODCvalues=BODCvalues.drop(columns='index')  
-#	BODCvalues.to_csv(checkpoint_path+'BODCvalues_'+date+'.csv',index=False)
-#	filesList=os.listdir(checkpoint_path)
-#	filesList=[file for file in filesList if 'BODCvalues' in file]
-#	filesList.sort(reverse=True)
-#	if len(filesList)>3:
-#		for file in filesList[3:]:
-#			os.remove(checkpoint_path+file)
-#						
+# BODCvalues handling
+bodc_values_file = checkpoint_path / f'BODCvalues_{date}.csv'
+if bodc_values_file.exists():
+    print('BODCvalues table already found, delete this version if you want to download a new one')
+else:
+	BODCvalues=pd.DataFrame(columns=['pref_lang','depr','member','definition'])
+	for collection in valuesCollectionList :
+		BODCvaluesTmp=execute_to_df("nsv-listing.sparql", cc=collection)
+		for rowNumber in range(BODCvaluesTmp.shape[0]):
+					try :
+						definitionDict=ast.literal_eval(BODCvaluesTmp['definition'][rowNumber])
+						try:
+							BODCvaluesTmp.loc[rowNumber,'definition']=str(definitionDict['node'])
+						except:
+							BODCvaluesTmp.loc[rowNumber,'definition']='Unavailable'
+					except:
+						print('no dictionnary')
+		BODCvalues=pd.concat([BODCvalues,BODCvaluesTmp[['pref_lang','depr','member','definition']]])
+	BODCvalues.columns=['preflabel','deprecated','uri','definition']  
+	url = "https://dd.eionet.europa.eu/vocabulary/biodiversity/eunishabitats/json"
+	filename="eunisValues.json"
+	response = requests.get(url)
+	if response.status_code == 200:
+		with open(checkpoint_path+filename, "wb") as f:
+			f.write(response.content)
+	
+	with open(checkpoint_path+filename, 'r',encoding='utf-8') as file:
+		eunisValues=json.load(file)
+	
+	for concept in eunisValues['concepts']:
+		if concept['Status'] == 'Valid':
+			newRow={'preflabel':concept['Label'],
+				'deprecated':'FALSE',
+				'uri':concept['skos:exactMatch'][0],
+				'definition':concept['Definition']}
+		else :
+			newRow={'preflabel':concept['Label'],
+				'deprecated':'TRUE',
+				'uri':concept['skos:exactMatch'][0],
+				'definition':concept['Definition']}
+		BODCvalues=pd.concat([BODCvalues,pd.DataFrame.from_dict([newRow])])
+	BODCvalues=BODCvalues.reset_index()      
+	BODCvalues=BODCvalues.drop(columns='index')  
+	BODCvalues.to_csv(bodc_values_file,index=False)
+     # Clean up old files, keep latest 3
+    filesList = sorted([f for f in checkpoint_path.iterdir() if 'BODCvalues' in f.name], reverse=True)
+    if len(filesList) > 3:
+        for file in filesList[3:]:
+            file.unlink()
+            
 #if os.path.exists(checkpoint_path+'BODCparameters_'+date+'.csv'):
 #	BODCparameters = pd.read_csv(checkpoint_path+'BODCparameters_'+date+'.csv')
 #else:
