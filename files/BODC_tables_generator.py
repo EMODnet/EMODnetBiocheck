@@ -95,11 +95,11 @@ else:
 	BODCvalues=BODCvalues.reset_index()      
 	BODCvalues=BODCvalues.drop(columns='index')  
 	BODCvalues.to_csv(bodc_values_file,index=False)
-     # Clean up old files, keep latest 3
-    filesList = sorted([f for f in checkpoint_path.iterdir() if 'BODCvalues' in f.name], reverse=True)
-    if len(filesList) > 3:
-        for file in filesList[3:]:
-            file.unlink()
+     	# Clean up old files, keep latest 3
+    	filesList = sorted([f for f in checkpoint_path.iterdir() if 'BODCvalues' in f.name], reverse=True)
+    	if len(filesList) > 3:
+		for file in filesList[3:]:
+	    		file.unlink()
             
 #if os.path.exists(checkpoint_path+'BODCparameters_'+date+'.csv'):
 #	BODCparameters = pd.read_csv(checkpoint_path+'BODCparameters_'+date+'.csv')
