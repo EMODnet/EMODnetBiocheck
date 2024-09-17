@@ -40,7 +40,7 @@ bodc_units_file = checkpoint_path / f'BODCunits_{date}.csv'
 if bodc_units_file.exists():
     print('BODCunits table already found, delete this version if you want to download a new one')
 else:
-    BODCunits = execute_to_df("nsv-listing.sparql", cc="P06")
+    BODCunits = execute_to_df(str(current_dir / "files/nvsSPARQL-main/templated-queries/nsv-listing.sparql"), cc="P06")
     BODCunits = BODCunits[['id', 'pref_lang', 'alt', 'depr', 'member']]
     BODCunits.columns = ['identifier', 'preflabel', 'altLabel', 'deprecated', 'uri']
     BODCunits.to_csv(bodc_units_file, index=False)
