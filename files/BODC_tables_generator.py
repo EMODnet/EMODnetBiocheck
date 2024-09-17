@@ -73,12 +73,7 @@ else:
 	url = "https://dd.eionet.europa.eu/vocabulary/biodiversity/eunishabitats/json"
 	filename="eunisValues.json"
 	response = requests.get(url)
-	if response.status_code == 200:
-		with open(checkpoint_path+filename, "wb") as f:
-			f.write(response.content)
-	
-	with open(checkpoint_path+filename, 'r',encoding='utf-8') as file:
-		eunisValues=json.load(file)
+	eunisValues=response.json()
 	
 	for concept in eunisValues['concepts']:
 		if concept['Status'] == 'Valid':
