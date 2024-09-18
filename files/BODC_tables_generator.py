@@ -141,11 +141,8 @@ BODCparameters.loc[rowNumber,'uri']="http://dd.eionet.europa.eu/vocabulary/biodi
 
 # Final save
 BODCparameters.to_csv(bodc_parameters_file, index=False)
-filesList=os.listdir(checkpoint_path)
-filesList=[file for file in filesList if 'BODCparameters' in file]
-filesList.sort(reverse=True)
 # Clean up old files, keep latest 3
-	filesList = sorted([f for f in checkpoint_path.iterdir() if 'BODCparameters' in f.name], reverse=True)
-	if len(filesList) > 3:
-		for file in filesList[3:]:
-			file.unlink()
+filesList = sorted([f for f in checkpoint_path.iterdir() if 'BODCparameters' in f.name], reverse=True)
+if len(filesList) > 3:
+	for file in filesList[3:]:
+		file.unlink()
