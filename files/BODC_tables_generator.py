@@ -95,53 +95,57 @@ else:
 	if len(filesList) > 3:
 		for file in filesList[3:]:
 			file.unlink()
-            
-#if os.path.exists(checkpoint_path+'BODCparameters_'+date+'.csv'):
-#	BODCparameters = pd.read_csv(checkpoint_path+'BODCparameters_'+date+'.csv')
-#else:
-#	BODCparameters = pd.DataFrame(columns=['id','pref_lang','alt','depr','member','definition','standardUnitID'])
-#	columns_list=['id','pref_lang','alt','depr','member','definition','standardUnitID']
-#	for collection in parametersCollectionList :
-#		columns_list_copy=['id','pref_lang','alt','depr','member','definition','standardUnitID']
-#		BODCparametersTmp=execute_to_df("nsv-listing.sparql", cc=collection)
-#		for col in columns_list :
-#			if col not in BODCparametersTmp.columns :
-#				columns_list_copy.remove(col)
-#		BODCparameters=pd.concat([BODCparameters,BODCparametersTmp[columns_list_copy]])
-#	BODCparameters.columns=['identifier','preflabel','altLabel','deprecated','uri','definition','standardUnitID']   
-#	BODCparameters=BODCparameters.reset_index()
-#	BODCparameters=BODCparameters.drop(columns='index')
-#	BODCparameters.insert(len(BODCparameters.columns),"standardunit",np.nan)
-#	BODCparameters=BODCparameters.astype('object',copy=False,errors='ignore')
-#
-#for rowNumber in range(BODCparameters.shape[0]):
-#	if type(BODCparameters['standardUnitID'][rowNumber]) != float :
-#		if type(BODCparameters['standardunit'][rowNumber]) == float :
-#			query_with_pref_lang = """
-#			PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-#	
-#			SELECT ?pref_lang WHERE {
-#			<%s> skos:prefLabel ?pref_lang .
-#			}
-#			"""%BODCparameters['standardUnitID'][rowNumber]
-#	
-#			result: kg.QueryResult = NSV.query(sparql=query_with_pref_lang)
-#			BODCparameters.loc[rowNumber,'standardunit']=result.to_dict()['pref_lang'][0]
-#	if (rowNumber + 1) % 10000 == 0:
-#		BODCparameters.to_csv(checkpoint_path+'BODCparameters_'+date+'.csv', index=False)
-#
-#rowNumber=BODCparameters.shape[0]
-#BODCparameters.loc[rowNumber,'identifier']="eunishabitats"
-#BODCparameters.loc[rowNumber,'preflabel']="EUNIS habitats"
-#BODCparameters.loc[rowNumber,'definition']="Classification of habitat types according to the EUNIS Biodiversity database"
-#BODCparameters.loc[rowNumber,'deprecated']="false"
-#BODCparameters.loc[rowNumber,'uri']="http://dd.eionet.europa.eu/vocabulary/biodiversity/eunishabitats/"
 
-## Final save
-#BODCparameters.to_csv(checkpoint_path+'BODCparameters_'+date+'.csv', index=False)
-#filesList=os.listdir(checkpoint_path)
-#filesList=[file for file in filesList if 'BODCparameters' in file]
-#filesList.sort(reverse=True)
-#if len(filesList)>3:
-#	for file in filesList[3:]:
-#		os.remove(checkpoint_path+file)
+# BODCparameters handling
+bodc_parameters_file = checkpoint_path / f'BODCparameters_{date}.csv'
+if bodc_values_file.exists():
+	BODCparameters = pd.read_csv(bodc_parameters_file)
+else:
+	BODCparameters = pd.DataFrame(columns=['id','pref_lang','alt','depr','member','definition','standardUnitID'])
+	columns_list=['id','pref_lang','alt','depr','member','definition','standardUnitID']
+	for collection in parametersCollectionList :
+		columns_list_copy=['id','pref_lang','alt','depr','member','definition','standardUnitID']
+		BODCparametersTmp=execute_to_df("nsv-listing.sparql", cc=collection)
+		for col in columns_list :
+			if col not in BODCparametersTmp.columns :
+				columns_list_copy.remove(col)
+		BODCparameters=pd.concat([BODCparameters,BODCparametersTmp[columns_list_copy]])
+	BODCparameters.columns=['identifier','preflabel','altLabel','deprecated','uri','definition','standardUnitID']   
+	BODCparameters=BODCparameters.reset_index()
+	BODCparameters=BODCparameters.drop(columns='index')
+	BODCparameters.insert(len(BODCparameters.columns),"standardunit",np.nan)
+	BODCparameters=BODCparameters.astype('object',copy=False,errors='ignore')
+
+for rowNumber in range(BODCparameters.shape[0]):
+	if type(BODCparameters['standardUnitID'][rowNumber]) != float :
+		if type(BODCparameters['standardunit'][rowNumber]) == float :
+			query_with_pref_lang = """
+			PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+	
+			SELECT ?pref_lang WHERE {
+			<%s> skos:prefLabel ?pref_lang .
+			}
+			"""%BODCparameters['standardUnitID'][rowNumber]
+	
+			result: kg.QueryResult = NSV.query(sparql=query_with_pref_lang)
+			BODCparameters.loc[rowNumber,'standardunit']=result.to_dict()['pref_lang'][0]
+	if (rowNumber + 1) % 10000 == 0:
+		BODCparameters.to_csv(bodc_parameters_file, index=False)
+
+rowNumber=BODCparameters.shape[0]
+BODCparameters.loc[rowNumber,'identifier']="eunishabitats"
+BODCparameters.loc[rowNumber,'preflabel']="EUNIS habitats"
+BODCparameters.loc[rowNumber,'definition']="Classification of habitat types according to the EUNIS Biodiversity database"
+BODCparameters.loc[rowNumber,'deprecated']="false"
+BODCparameters.loc[rowNumber,'uri']="http://dd.eionet.europa.eu/vocabulary/biodiversity/eunishabitats/"
+
+# Final save
+BODCparameters.to_csv(bodc_parameters_file, index=False)
+filesList=os.listdir(checkpoint_path)
+filesList=[file for file in filesList if 'BODCparameters' in file]
+filesList.sort(reverse=True)
+# Clean up old files, keep latest 3
+	filesList = sorted([f for f in checkpoint_path.iterdir() if 'BODCparameters' in f.name], reverse=True)
+	if len(filesList) > 3:
+		for file in filesList[3:]:
+			file.unlink()
