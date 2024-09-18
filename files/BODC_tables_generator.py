@@ -132,6 +132,7 @@ for rowNumber in range(BODCparameters.shape[0]):
 			"""%BODCparameters['standardUnitID'][rowNumber]
 	
 			result: kg.QueryResult = NSV.query(sparql=query_with_pref_lang)
+			print(result.to_dict()['pref_lang'])
 			BODCparameters.loc[rowNumber,'standardunit']=result.to_dict()['pref_lang'][0]
 	if (rowNumber + 1) % 10000 == 0:
 		print('intermediary csv file created')
