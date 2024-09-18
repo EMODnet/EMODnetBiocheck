@@ -101,7 +101,9 @@ bodc_parameters_file = checkpoint_path / f'BODCparameters_{date}.csv'
 if bodc_parameters_file.exists():
 	BODCparameters = pd.read_csv(bodc_parameters_file)
 else:
+	print('Im in the else')
 	BODCparameters = pd.DataFrame(columns=['id','pref_lang','alt','depr','member','definition','standardUnitID'])
+	print('df created')
 	columns_list=['id','pref_lang','alt','depr','member','definition','standardUnitID']
 	for collection in parametersCollectionList :
 		columns_list_copy=['id','pref_lang','alt','depr','member','definition','standardUnitID']
@@ -110,11 +112,13 @@ else:
 			if col not in BODCparametersTmp.columns :
 				columns_list_copy.remove(col)
 		BODCparameters=pd.concat([BODCparameters,BODCparametersTmp[columns_list_copy]])
+	print('loop ended')
 	BODCparameters.columns=['identifier','preflabel','altLabel','deprecated','uri','definition','standardUnitID']   
 	BODCparameters=BODCparameters.reset_index()
 	BODCparameters=BODCparameters.drop(columns='index')
 	BODCparameters.insert(len(BODCparameters.columns),"standardunit",np.nan)
 	BODCparameters=BODCparameters.astype('object',copy=False,errors='ignore')
+	print('first step ended, rest to find the standard unit')
 
 for rowNumber in range(BODCparameters.shape[0]):
 	if type(BODCparameters['standardUnitID'][rowNumber]) != float :
@@ -130,6 +134,7 @@ for rowNumber in range(BODCparameters.shape[0]):
 			result: kg.QueryResult = NSV.query(sparql=query_with_pref_lang)
 			BODCparameters.loc[rowNumber,'standardunit']=result.to_dict()['pref_lang'][0]
 	if (rowNumber + 1) % 10000 == 0:
+		print('intermediary csv file created')
 		BODCparameters.to_csv(bodc_parameters_file, index=False)
 
 rowNumber=BODCparameters.shape[0]
@@ -138,6 +143,7 @@ BODCparameters.loc[rowNumber,'preflabel']="EUNIS habitats"
 BODCparameters.loc[rowNumber,'definition']="Classification of habitat types according to the EUNIS Biodiversity database"
 BODCparameters.loc[rowNumber,'deprecated']="false"
 BODCparameters.loc[rowNumber,'uri']="http://dd.eionet.europa.eu/vocabulary/biodiversity/eunishabitats/"
+print('Second step ended')
 
 # Final save
 BODCparameters.to_csv(bodc_parameters_file, index=False)
