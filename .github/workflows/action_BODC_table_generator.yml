@@ -53,8 +53,11 @@ jobs:
 
       # Step 6: Install R packages
       - name: Install R packages
-        run: Rscript -e 'install.packages(c("devtools","usethis","RCurl", "httr", "dplyr", "finch", "ggplot2", "leaflet", "skosxml", "rjson", "parsedate", "plyr", "obistools", "tidyr", "stringdist"))'
-
+        run: |
+          Rscript -e 'install.packages(c("RCurl", "httr", "dplyr", "finch", "ggplot2", "leaflet", "rjson", "parsedate", "plyr", "tidyr", "stringdist"))'
+          Rscript -e 'remotes::install_github("iobis/obistools")'
+          Rscript -e 'remotes::install_github("iobis/skosxml")'
+          
       # Step 7: Read the CSV files in R and run the usethis::use_data() commands
       - name: Process CSV files with R
         run: |
