@@ -59,7 +59,7 @@ jobs:
       - name: Process CSV files with R
         run: |
           DATE=$(date +%Y%m%d)
-          Rscript -e 'BODCunits <- read.csv("files/BODCunits_$DATE.csv")' -e 'BODCvalues <- read.csv("files/BODCvalues_$DATE.csv")' -e 'BODCparameters <- read.csv("files/BODCparameters_$DATE.csv")' \ 
+          Rscript -e "BODCunits <- read.csv('files/BODCunits_$DATE.csv')" -e "BODCvalues <- read.csv('files/BODCvalues_$DATE.csv')" -e "BODCparameters <- read.csv('files/BODCparameters_$DATE.csv')" \ 
                      -e 'usethis::use_data(BODCunits, overwrite = TRUE)' -e 'usethis::use_data(BODCvalues, overwrite = TRUE)' -e 'usethis::use_data(BODCparameters, overwrite = TRUE)' \
                      -e 'devtools::document()'
 
