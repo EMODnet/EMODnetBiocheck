@@ -115,29 +115,29 @@ else:
 	BODCparameters.insert(len(BODCparameters.columns),"standardunit",np.nan)
 	BODCparameters=BODCparameters.astype('object',copy=False,errors='ignore')
 
-for uri in BODCparameters['standardUnitID'].unique():
-	if uri != None :
-		query_with_pref_lang = """
-		PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-
-		SELECT ?pref_lang WHERE {
-		<%s> skos:prefLabel ?pref_lang .
-		}
-		"""%uri
-		result: kg.QueryResult = NSV.query(sparql=query_with_pref_lang)
-		BODCparameters.loc[BODCparameters['standardUnitID']==uri,'standardunit']=result.to_dict()['pref_lang'][0]
-
-rowNumber=BODCparameters.shape[0]
-BODCparameters.loc[rowNumber,'identifier']="eunishabitats"
-BODCparameters.loc[rowNumber,'preflabel']="EUNIS habitats"
-BODCparameters.loc[rowNumber,'definition']="Classification of habitat types according to the EUNIS Biodiversity database"
-BODCparameters.loc[rowNumber,'deprecated']="false"
-BODCparameters.loc[rowNumber,'uri']="http://dd.eionet.europa.eu/vocabulary/biodiversity/eunishabitats/"
-
-# Final save
-BODCparameters.to_csv(bodc_parameters_file, index=False)
-# Clean up old files, keep latest 3
-filesList = sorted([f for f in checkpoint_path.iterdir() if 'BODCparameters' in f.name], reverse=True)
-if len(filesList) > 3:
-	for file in filesList[3:]:
-		file.unlink()
+	for uri in BODCparameters['standardUnitID'].unique():
+		if uri != None :
+			query_with_pref_lang = """
+			PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+	
+			SELECT ?pref_lang WHERE {
+			<%s> skos:prefLabel ?pref_lang .
+			}
+			"""%uri
+			result: kg.QueryResult = NSV.query(sparql=query_with_pref_lang)
+			BODCparameters.loc[BODCparameters['standardUnitID']==uri,'standardunit']=result.to_dict()['pref_lang'][0]
+	
+	rowNumber=BODCparameters.shape[0]
+	BODCparameters.loc[rowNumber,'identifier']="eunishabitats"
+	BODCparameters.loc[rowNumber,'preflabel']="EUNIS habitats"
+	BODCparameters.loc[rowNumber,'definition']="Classification of habitat types according to the EUNIS Biodiversity database"
+	BODCparameters.loc[rowNumber,'deprecated']="false"
+	BODCparameters.loc[rowNumber,'uri']="http://dd.eionet.europa.eu/vocabulary/biodiversity/eunishabitats/"
+	
+	# Final save
+	BODCparameters.to_csv(bodc_parameters_file, index=False)
+	# Clean up old files, keep latest 3
+	filesList = sorted([f for f in checkpoint_path.iterdir() if 'BODCparameters' in f.name], reverse=True)
+	if len(filesList) > 3:
+		for file in filesList[3:]:
+			file.unlink()
