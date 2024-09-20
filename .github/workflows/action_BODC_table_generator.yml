@@ -57,7 +57,9 @@ jobs:
 
       # Step 7: Read the CSV files in R and run the usethis::use_data() commands
       - name: Process CSV files with R
-        run: Rscript -e 'BODCunits <- read.csv("files/BODCunits.csv")' -e 'BODCvalues <- read.csv("files/BODCvalues.csv")' -e 'BODCparameters <- read.csv("files/BODCparameters.csv")' \ 
+        run: |
+          DATE=$(date +%Y%m%d)
+          Rscript -e 'BODCunits <- read.csv("files/BODCunits_$DATE.csv")' -e 'BODCvalues <- read.csv("files/BODCvalues_$DATE.csv")' -e 'BODCparameters <- read.csv("files/BODCparameters_$DATE.csv")' \ 
                      -e 'usethis::use_data(BODCunits, overwrite = TRUE)' -e 'usethis::use_data(BODCvalues, overwrite = TRUE)' -e 'usethis::use_data(BODCparameters, overwrite = TRUE)' \
                      -e 'devtools::document()'
 
@@ -78,16 +80,3 @@ jobs:
         run: git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-       # run: |
-        #  Rscript -e "BODCunits <- read.csv("files/BODCunits.csv")"
-         # Rscript -e "BODCvalues <- read.csv("files/BODCvalues.csv")"
-          #Rscript -e "BODCparameters <- read.csv("files/BODCparameters.csv")"
-          #Rscript -e "usethis::use_data(BODCunits, overwrite = TRUE)"
-         # Rscript -e "usethis::use_data(BODCvalues, overwrite = TRUE)"
-          #Rscript -e "usethis::use_data(BODCparameters, overwrite = TRUE)"
-
-      # Step 8: Run devtools::document() to update R package documentation
-      #- name: Update R documentation
-       # run: |
-        #  Rscript -e "devtools::document()"
