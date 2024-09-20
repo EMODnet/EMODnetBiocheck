@@ -53,7 +53,7 @@ jobs:
 
       # Step 6: Install R packages
       - name: Install R packages
-        run: Rscript -e 'install.packages(c("devtools","usethis"))'
+        run: Rscript -e 'install.packages(c("devtools","usethis","RCurl", "httr", "dplyr", "finch", "ggplot2", "leaflet", "skosxml", "rjson", "parsedate", "plyr", "obistools", "tidyr", "stringdist"))'
 
       # Step 7: Read the CSV files in R and run the usethis::use_data() commands
       - name: Process CSV files with R
@@ -66,11 +66,7 @@ jobs:
             usethis::use_data(BODCvalues, overwrite = TRUE); \
             usethis::use_data(BODCparameters, overwrite = TRUE); \
             devtools::document()"
-          
-          #Rscript -e "BODCunits <- read.csv('files/BODCunits_$DATE.csv')" -e "BODCvalues <- read.csv('files/BODCvalues_$DATE.csv')" -e "BODCparameters <- read.csv('files/BODCparameters_$DATE.csv')" \ 
-          #        -e 'usethis::use_data(BODCunits, overwrite = TRUE)' -e 'usethis::use_data(BODCvalues, overwrite = TRUE)' -e 'usethis::use_data(BODCparameters, overwrite = TRUE)' \
-          #        -e 'devtools::document()'
-
+            
       # Configure git
       - name: Configure Git
         run: |
