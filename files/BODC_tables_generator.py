@@ -98,7 +98,7 @@ else:
 # BODCparameters handling
 bodc_parameters_file = checkpoint_path / f'BODCparameters_{date}.csv'
 if bodc_parameters_file.exists():
-	BODCparameters = pd.read_csv(bodc_parameters_file)
+	print('BODCparameters table already found, delete this version if you want to download a new one')
 else:
 	BODCparameters = pd.DataFrame(columns=['id','pref_lang','alt','depr','member','definition','standardUnitID'])
 	columns_list=['id','pref_lang','alt','depr','member','definition','standardUnitID']
