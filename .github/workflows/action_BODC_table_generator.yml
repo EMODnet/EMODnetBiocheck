@@ -54,8 +54,12 @@ jobs:
       # Step 6: Install R packages
       - name: Install R packages
         run: |
-          Rscript -e 'install.packages(c("usethis","devtools","remotes"))'
-          Rscript -e 'remotes::install_github("r-spatial/sf")'
+          Rscript -e 'install.packages(c("usethis","devtools"))'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libudunits2-dev libgdal-dev libgeos-dev libproj-dev gdal-bin
           
       # Step 7: Install package dependencies
       - name: Install package dependencies
