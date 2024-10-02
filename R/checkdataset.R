@@ -192,11 +192,14 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   
   if (exists("Event")) {
+
+    
     if("absent" %in% occurrencetemp$occurrenceStatus | NA %in% occurrencetemp$occurrenceStatus  )   {     
-      IPTreport$datasummary <- Event %>% fncols("type") %>% 
-                                         select (eventID, type) %>% 
+      IPTreport$datasummary <- Event %>% fncols(c("type", "eventType")) %>% # Check for both "type" and "eventType", and create a common column "event_type"
+                                         mutate(event_type = coalesce(eventType, type)) %>%
+                                         select (eventID, event_type) %>% 
                                          left_join(occurrencetemp, by = "eventID") %>% 
-                                         group_by(eventID, type, occurrenceStatus, basisOfRecord ) %>% 
+                                         group_by(eventID, event_type, occurrenceStatus, basisOfRecord ) %>% 
                                          summarise( occount = sum(!is.na(basisOfRecord))) %>%
                                          pivot_wider(names_from = occurrenceStatus, 
                                                      values_from = occount, 
@@ -204,15 +207,16 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                      values_fill = 0) %>% 
                                          fncols(c("absent", "NA", "present")) %>%
                                          mutate(absent = as.integer(absent), `NA` = as.integer(`NA`) ) %>% 
-                                         group_by(type, basisOfRecord) %>% 
+                                         group_by(event_type, basisOfRecord) %>% 
                                          summarise(n_events = sum(!is.na(unique(eventID))) , n_absent = sum(absent), n_present = sum(as.integer(present)), n_NA = sum(`NA`)) %>%
-                                         select(type,n_events, basisOfRecord, n_present, n_absent, n_NA )
+                                         select(event_type,n_events, basisOfRecord, n_present, n_absent, n_NA )
      } else {
-      IPTreport$datasummary <- Event %>% fncols("type") %>% 
-                                         select (eventID, type) %>% 
+      IPTreport$datasummary <- Event %>% fncols(c("type", "eventType")) %>% # Check for both "type" and "eventType", and create a common column "event_type"
+                                         mutate(event_type = coalesce(eventType, type)) %>%
+                                         select (eventID, event_type) %>% 
                                          left_join(occurrencetemp, by = "eventID") %>% 
                                          mutate (occurrenceStatus = if_else(!is.na(occurrenceStatus), paste("n_", occurrenceStatus, sep ="") , occurrenceStatus )) %>%
-                                         group_by(type, occurrenceStatus, basisOfRecord ) %>% 
+                                         group_by(event_type, occurrenceStatus, basisOfRecord ) %>% 
                                          summarise(occount = sum(!is.na(basisOfRecord)), n_events = sum(!is.na(unique(eventID)))) %>%  
                                          mutate (occount = if_else(occount =="0", as.integer(NA), occount )) %>% 
                                          pivot_wider(names_from = occurrenceStatus, 
@@ -221,7 +225,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     }
     
     IPTreport$datasummary[IPTreport$datasummary =='0' | IPTreport$datasummary  =='NA'] <- NA
-    IPTreport$datasummary <- IPTreport$datasummary[,names(IPTreport$datasummary) == "type" |colSums(is.na(IPTreport$datasummary))<nrow(IPTreport$datasummary)] 
+    IPTreport$datasummary <- IPTreport$datasummary[,names(IPTreport$datasummary) == "event_type" |colSums(is.na(IPTreport$datasummary))<nrow(IPTreport$datasummary)] 
     
   } else {
     IPTreport$datasummary <- occurrencetemp %>% group_by(basisOfRecord, occurrenceStatus) %>% 
@@ -233,9 +237,11 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   if (exists("Occurrence") == FALSE ) {
     if (exists("Event")) {
       if (!is.null(Event)){
-        IPTreport$datasummary <- Event %>% fncols("type") %>% 
-                                           select (eventID, type) %>%
-                                           group_by(type) %>%
+        
+        IPTreport$datasummary <- Event %>% fncols(c("type", "eventType")) %>% # Check for both "type" and "eventType", and create a common column "event_type"
+                                           mutate(event_type = coalesce(eventType, type)) %>%
+                                           select (eventID, event_type) %>%
+                                           group_by(event_type) %>%
                                            summarise(n_events = sum(!is.na(eventID)))
         
       }
