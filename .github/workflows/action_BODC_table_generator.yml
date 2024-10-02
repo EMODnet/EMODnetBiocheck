@@ -56,14 +56,14 @@ jobs:
         run: |
           Rscript -e 'install.packages(c("usethis","devtools"))'
 
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libudunits2-dev libgdal-dev libgeos-dev libproj-dev gdal-bin
+      #- name: Install system dependencies
+       # run: |
+        #  sudo apt-get update
+         # sudo apt-get install -y libudunits2-dev libgdal-dev libgeos-dev libproj-dev gdal-bin
           
       # Step 7: Install package dependencies
-      - name: Install package dependencies
-        uses: r-lib/actions/setup-r-dependencies@v2
+      #- name: Install package dependencies
+       # uses: r-lib/actions/setup-r-dependencies@v2
         
       # Step 8: Read the CSV files in R and run the usethis::use_data() commands
       - name: Process CSV files with R
