@@ -285,7 +285,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                          ungroup() %>%
                                                          left_join(parameters , by = c("measurementTypeID"="uri")) %>%
                                                          transmute (IDlink, measurementType, minValue,  maxValue, measurementUnit,  
-                                                                    count, TypeID_standardUnit = standardunit, TypeID_name = preflabel, 
+                                                                    count, TypeID_standardUnit_test = standardunit, TypeID_name = preflabel, 
                                                                     TypeID_definition = definition))
 
       
