@@ -27,7 +27,7 @@ def execute_to_df(name: str, **vars) -> pd.DataFrame:
     result: kg.QueryResult = NSV.query(sparql=sparql)
     return result.to_dataframe()
 
-valuesCollectionList = ['L22', 'L05', 'F02', 'C17', 'S11', 'S10', 'S09', 'M20', 'M21', 'M24', 'L06']
+valuesCollectionList = ['L22', 'L05', 'F02', 'C17', 'S13', 'S11', 'S10', 'S09', 'M20', 'M21', 'M24', 'L06']
 parametersCollectionList = ['Q01', 'P01', 'P02', 'P35']
 
 # File paths
