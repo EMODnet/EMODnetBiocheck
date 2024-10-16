@@ -285,7 +285,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                          ungroup() %>%
                                                          left_join(parameters , by = c("measurementTypeID"="uri")) %>%
                                                          transmute (IDlink, measurementType, minValue,  maxValue, measurementUnit,  
-                                                                    count, TypeID_standardUnit_test = standardunit, TypeID_name = preflabel, 
+                                                                    count, TypeID_standardUnit = standardunit, TypeID_name = preflabel, 
                                                                     TypeID_definition = definition))
 
       
@@ -1713,8 +1713,8 @@ if(exists("Occurrence")){
   if (is.null(IPTreport$dtb$general_issues) == FALSE){
     if(nrow(IPTreport$dtb$general_issues) > 0){
       
-      IPTreport$dtb$general_issues  <- IPTreport$dtb$general_issues %>% select(-level) %>% mutate (count = as.integer(count)) %>% 
-                                                                        arrange(table, field, desc(count))
+      IPTreport$dtb$general_issues  <- IPTreport$dtb$general_issues %>% mutate (count = as.integer(count)) %>% 
+                                                                        arrange(table, level, field, desc(count))
     } else {
       IPTreport$dtb$general_issues <- c ("There don't seem to be any issues")
     }} else {
