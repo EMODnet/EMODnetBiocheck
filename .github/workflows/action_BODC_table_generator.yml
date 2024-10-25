@@ -68,7 +68,7 @@ jobs:
       # Step 8: Read the CSV files in R and run the usethis::use_data() commands
       - name: Process CSV files with R
         run: |
-          DATE=$(date +%Y%m%d)
+          $DATE = Get-Date -Format "yyyyMMdd"
           Rscript -e "BODCunits <- read.csv('files/BODCunits_$DATE.csv'); \
             BODCvalues <- read.csv('files/BODCvalues_$DATE.csv'); \
             BODCparameters <- read.csv('files/BODCparameters_$DATE.csv'); \
