@@ -1,0 +1,28 @@
+{#- Jinja Template --> Sparql Query
+ | Search for all found triples, optionally limitting to first N, and offsetting O
+ | variables in template:
+ |    - (optional) regex: regex to which the title of the collection should match
+ |    - (optional) N: number of triples to return (no limit applied when no N is given)
+ |    - (optional) O: offset to apply (no offset applied when no O is given)
+-#}
+prefix skos:<http://www.w3.org/2004/02/skos/core#>
+prefix owl:<http://www.w3.org/2002/07/owl#>
+prefix dc:<http://purl.org/dc/terms/>
+
+SELECT distinct 
+    (?ccode as ?Collection) 
+    (?ctitle as ?Title) 
+    (?cdescr as ?Description) 
+WHERE {
+    ?c a skos:Collection ;
+          dc:title ?ctitle;
+          dc:description ?cdescr .
+	{%- if regex %}
+    FILTER(regex(str(?ctitle),'{{regex}}',"i"))
+	{%- endif %}
+    BIND(REPLACE(str(?c), "http://vocab.nerc.ac.uk/collection/", "") AS ?ctrail) 
+    BIND(REPLACE(str(?ctrail), "/current/", "") AS ?ccode) 
+}  
+ORDER BY asc(?ccode) 
+{{ "OFFSET " ~ O  if O else "" }} {#- add offset statement if provided #}
+{{ "LIMIT " ~ N   if N else "" }} {#- add limit  statement if provided #}

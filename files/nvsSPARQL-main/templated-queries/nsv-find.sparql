@@ -1,0 +1,39 @@
+{# Jinja Template --> Sparql Query
+ | Search for the parameters that have descriptions matching the regex in the mentioned collections
+ | variables in template:
+ |    - (optional) regex: regex matching the term description  (anything matches if no regex provided)
+ |    - collections: list of collections to search in ('*' is shorthand for any collection)
+ |    - (optional) language: language of the labels to return (defaults to "en")
+#}
+
+{%-if not language %}{% set language = "en" %}{%endif-%}
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+prefix text: <http://jena.apache.org/text#>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix dc: <http://purl.org/dc/terms/>
+
+SELECT DISTINCT 
+	(?x as ?ConceptIRI)
+	(?dci as ?Identifier)
+	(?pl as ?PreferedLabelTranslated)
+WHERE {
+{%- for c in collections %}
+	{
+	{%- if c == '*' %}
+		[] skos:member ?x.
+	{%- else %}
+		<http://vocab.nerc.ac.uk/collection/{{c}}/current/> skos:member ?x.
+	{%- endif %}
+		?x skos:prefLabel ?pl .
+	{%- if regex %}
+		FILTER(regex(str(?pl),'{{regex}}',"i"))
+	{%- endif %}
+		?x owl:deprecated "false" .
+		FILTER(langMatches(lang(?pl), "{{language}}"))
+		?x dc:identifier ?dci .
+	}
+	{{'UNION' if not loop.last }}
+{%- endfor %}
+}
+ORDER BY (?dci)
