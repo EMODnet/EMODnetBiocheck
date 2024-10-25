@@ -1,0 +1,96 @@
+name: Update BODC tables used in the package
+
+on:
+  # Scheduled to run on the 1st of each month
+   #schedule:
+     #- cron: '0 0 1 * *'  # Runs at midnight UTC on the 1st of each month
+  # For testing purposes, also trigger on push to main branch
+    #push:
+      #branches:
+        #- develop
+
+jobs:
+  generate-table:
+    runs-on: ${{ matrix.config.os }}
+
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: ubuntu-latest, r: 'release'}
+    env:
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      RSPM: ${{ matrix.config.rspm }}
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.2'
+
+      # Step 3: Install required dependencies
+      - name: Install dependencies
+        run: |
+          pip install pandas pysema requests numpy
+
+      # Step 4: Run the Python script that generates the table
+      - name: Run table generator script
+        run: python files/BODC_tables_generator.py
+                     
+      # Step 5: Set up R environment
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+
+      # Step 6: Install R packages
+      - name: Install R packages
+        run: |
+          Rscript -e 'install.packages(c("usethis","devtools"))'
+
+      #- name: Install system dependencies
+       # run: |
+        #  sudo apt-get update
+         # sudo apt-get install -y libudunits2-dev libgdal-dev libgeos-dev libproj-dev gdal-bin
+          
+      # Step 7: Install package dependencies
+      #- name: Install package dependencies
+       # uses: r-lib/actions/setup-r-dependencies@v2
+        
+      # Step 8: Read the CSV files in R and run the usethis::use_data() commands
+      - name: Process CSV files with R
+        run: |
+          DATE=$(date +%Y%m%d)
+          Rscript -e "BODCunits <- read.csv('files/BODCunits_$DATE.csv'); \
+            BODCvalues <- read.csv('files/BODCvalues_$DATE.csv'); \
+            BODCparameters <- read.csv('files/BODCparameters_$DATE.csv'); \
+            usethis::use_data(BODCunits, overwrite = TRUE); \
+            usethis::use_data(BODCvalues, overwrite = TRUE); \
+            usethis::use_data(BODCparameters, overwrite = TRUE); \
+            devtools::document()"
+            
+      # Step 9: Configure git
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      # Step 10: Commit the changes
+      - name: Commit changes
+        run: |
+          git add .
+          git commit -m "Automated commit by GitHub Action"
+
+      # Step 11: Push changes back to the branch
+      - name: Push changes
+        run: git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
