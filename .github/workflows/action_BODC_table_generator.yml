@@ -69,12 +69,12 @@ jobs:
       - name: Process CSV files with R
         run: |
           $DATE = Get-Date -Format "yyyyMMdd"
-          Rscript -e "BODCunits <- read.csv('files/BODCunits_$DATE.csv'); \
-            BODCvalues <- read.csv('files/BODCvalues_$DATE.csv'); \
-            BODCparameters <- read.csv('files/BODCparameters_$DATE.csv'); \
-            usethis::use_data(BODCunits, overwrite = TRUE); \
-            usethis::use_data(BODCvalues, overwrite = TRUE); \
-            usethis::use_data(BODCparameters, overwrite = TRUE); \
+          Rscript -e "BODCunits <- read.csv('files/BODCunits_$DATE.csv'); |
+            BODCvalues <- read.csv('files/BODCvalues_$DATE.csv'); |
+            BODCparameters <- read.csv('files/BODCparameters_$DATE.csv'); |
+            usethis::use_data(BODCunits, overwrite = TRUE); |
+            usethis::use_data(BODCvalues, overwrite = TRUE); |
+            usethis::use_data(BODCparameters, overwrite = TRUE); |
             devtools::document()"
             
       # Step 9: Configure git
