@@ -5,9 +5,9 @@ on:
    #schedule:
      #- cron: '0 0 1 * *'  # Runs at midnight UTC on the 1st of each month
   # For testing purposes, also trigger on push to main branch
-   push:
-     branches:
-       - develop
+  push:
+    branches:
+        - develop
 
 jobs:
   generate-table:
@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: ubuntu-latest, r: 'release'}
+          - {os: windows-latest, r: 'release'}
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       RSPM: ${{ matrix.config.rspm }}
@@ -55,27 +55,16 @@ jobs:
       - name: Install R packages
         run: |
           Rscript -e 'install.packages(c("usethis","devtools"))'
-
-      #- name: Install system dependencies
-       # run: |
-        #  sudo apt-get update
-         # sudo apt-get install -y libudunits2-dev libgdal-dev libgeos-dev libproj-dev gdal-bin
           
       # Step 7: Install package dependencies
-      #- name: Install package dependencies
-       # uses: r-lib/actions/setup-r-dependencies@v2
+      - name: Install package dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
         
       # Step 8: Read the CSV files in R and run the usethis::use_data() commands
       - name: Process CSV files with R
         run: |
-          DATE=$(date +%Y%m%d)
-          Rscript -e "BODCunits <- read.csv('files/BODCunits_$DATE.csv'); \
-            BODCvalues <- read.csv('files/BODCvalues_$DATE.csv'); \
-            BODCparameters <- read.csv('files/BODCparameters_$DATE.csv'); \
-            usethis::use_data(BODCunits, overwrite = TRUE); \
-            usethis::use_data(BODCvalues, overwrite = TRUE); \
-            usethis::use_data(BODCparameters, overwrite = TRUE); \
-            devtools::document()"
+          $DATE = Get-Date -Format "yyyyMMdd"
+          Rscript -e "BODCunits <- read.csv('files/BODCunits_$DATE.csv'); BODCvalues <- read.csv('files/BODCvalues_$DATE.csv'); BODCparameters <- read.csv('files/BODCparameters_$DATE.csv'); usethis::use_data(BODCunits, overwrite = TRUE); usethis::use_data(BODCvalues, overwrite = TRUE); usethis::use_data(BODCparameters, overwrite = TRUE); devtools::document()"
             
       # Step 9: Configure git
       - name: Configure Git
