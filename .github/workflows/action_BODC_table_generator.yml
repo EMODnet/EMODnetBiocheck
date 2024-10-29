@@ -8,6 +8,8 @@ on:
   #push:
     #branches:
         #- master
+        #- develop
+
 
 jobs:
   generate-table:
@@ -60,6 +62,7 @@ jobs:
        # run: |
         #  sudo apt-get update
          # sudo apt-get install -y libudunits2-dev libgdal-dev libgeos-dev libproj-dev gdal-bin
+
           
       # Step 7: Install package dependencies
       - name: Install package dependencies
