@@ -1649,7 +1649,8 @@ if(exists("Occurrence")){
                                                                     "Minimum depth is greater than maximum depth" , as.character(message)))) %>% 
                                          mutate (message = (if_else(grepl("has no corresponding eventID", message, fixed = TRUE),
                                                                     "This parentEventID has no corresponding eventID" , as.character(message)))) %>% 
-                                         group_by (level, field, message) %>% 
+                                         select(-level) %>%
+                                         group_by (field, message) %>% 
                                          summarize(count = n()) %>% 
                                          mutate (table = "event")
   }} 
@@ -1665,15 +1666,15 @@ if(exists("Occurrence")){
                                                                               "eventDate does not seem to be a valid date" , as.character(message)))) %>% 
                                                    mutate (message = (if_else(grepl("is greater than maximum", message, fixed = TRUE),
                                                                               "Minimum depth is greater than maximum depth" , as.character(message)))) %>% 
-                                                   group_by (level, field, message) %>% 
+                                                   select(-level) %>%
+                                                   group_by (field, message) %>% 
                                                    summarize(count = n()) %>%
                                                    mutate (table = "occurrence")
     
   }} else { # Warning for cases where occurrence table doesn't exist
     
     occurrenceerror_report <- bind_rows(if(exists("occurrenceerror")){occurrenceerror},
-                                        data.frame(level = "warning",
-                                                   message = "The dataset does not seem to have an occurrence table",
+                                        data.frame(message = "The dataset does not seem to have an occurrence table",
                                                    count = 1,
                                                    table = "occurrence"))
   }
@@ -1685,8 +1686,9 @@ if(exists("Occurrence")){
                                        mutate(field = as.character(field), 
                                               message = as.character(message)) %>% 
                         mutate (message = (if_else(grepl("has no corresponding eventID in the core", message, fixed = TRUE),
-                                                   "This eventID has no corresponding eventID in the core" , message))) %>%                         
-                        group_by (level, field, message) %>% 
+                                                   "This eventID has no corresponding eventID in the core" , message))) %>%
+                        select(-level) %>%
+                        group_by (field, message) %>% 
                         summarize(count = n()) %>% 
                         mutate (table = "emof") 
   }}     
@@ -1695,7 +1697,7 @@ if(exists("Occurrence")){
   if (is.null(IPTreport$ipt_url) == FALSE) {
     if(exists("metadataerror")){
       if(is.null(metadataerror) == FALSE) {
-        metadataerror_report <- metadataerror
+        metadataerror_report <- metadataerror %>% select(-level)
     }}}
   
   
@@ -1714,7 +1716,7 @@ if(exists("Occurrence")){
     if(nrow(IPTreport$dtb$general_issues) > 0){
       
       IPTreport$dtb$general_issues  <- IPTreport$dtb$general_issues %>% mutate (count = as.integer(count)) %>% 
-                                                                        arrange(table, level, field, desc(count))
+                                                                        arrange(table, field, desc(count))
     } else {
       IPTreport$dtb$general_issues <- c ("There don't seem to be any issues")
     }} else {

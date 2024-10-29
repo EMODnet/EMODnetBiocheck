@@ -7,7 +7,9 @@ on:
   # For testing purposes, also trigger on push to main branch
   #push:
     #branches:
+        #- master
         #- develop
+
 
 jobs:
   generate-table:
@@ -55,6 +57,12 @@ jobs:
       - name: Install R packages
         run: |
           Rscript -e 'install.packages(c("usethis","devtools"))'
+
+      #- name: Install system dependencies
+       # run: |
+        #  sudo apt-get update
+         # sudo apt-get install -y libudunits2-dev libgdal-dev libgeos-dev libproj-dev gdal-bin
+
           
       # Step 7: Install package dependencies
       - name: Install package dependencies
@@ -65,6 +73,13 @@ jobs:
         run: |
           $DATE = Get-Date -Format "yyyyMMdd"
           Rscript -e "BODCunits <- read.csv('files/BODCunits_$DATE.csv'); BODCvalues <- read.csv('files/BODCvalues_$DATE.csv'); BODCparameters <- read.csv('files/BODCparameters_$DATE.csv'); usethis::use_data(BODCunits, overwrite = TRUE); usethis::use_data(BODCvalues, overwrite = TRUE); usethis::use_data(BODCparameters, overwrite = TRUE); devtools::document()"
+           #Rscript -e "BODCunits <- read.csv('files/BODCunits_$DATE.csv'); |
+             #BODCvalues <- read.csv('files/BODCvalues_$DATE.csv'); |
+             #BODCparameters <- read.csv('files/BODCparameters_$DATE.csv'); |
+             #usethis::use_data(BODCunits, overwrite = TRUE); |
+             #usethis::use_data(BODCvalues, overwrite = TRUE); |
+             #usethis::use_data(BODCparameters, overwrite = TRUE); |
+             #devtools::document()"
             
       # Step 9: Configure git
       - name: Configure Git
