@@ -28,7 +28,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   
   
   # if (exists("IPTreport") == FALSE ) {IPTreport <- list()} # To use checkdataset only with tables and no importiptdata()
-  
+  if (!is.null(IPTreport$error)) { 
+    stop(IPTreport$error) 
+  }
   if (!is.null(IPTreport$Event)) { 
     if (is.data.frame(IPTreport$Event)) {
       Event <- IPTreport$Event
