@@ -3,7 +3,7 @@ name: Update BODC tables used in the package
 on:
   # Scheduled to run on the 1st of each month
    schedule:
-     - cron: '0 0 1 * *'  # Runs at midnight UTC on the 1st of each month
+     - cron: '20 * * * *'  # Runs at midnight UTC on the 1st of each month
   # For testing purposes, also trigger on push to main branch
   #push:
     #branches:
