@@ -1,0 +1,35 @@
+{#- Jinja Template --> Sparql Query
+ | Search for the entries (skos:concepts) in a particular bodc collection 
+ | variables in template:
+ |    - cc: the bodc collection code (e.g. P01, P06, S25, C17, ..) to list 
+ |    - (optional) lang: language of the labels to return (defaults to "en")
+ |    - (optional) N: number of hits you want (defaults to no limits --> full listing)
+ |    - (optional) O: offset to apply when paging
+-#}
+{%-if not lang %}{% set lang = "en" %}{%endif-%}  # assume english if nothing explicitely specified
+PREFIX dc:   <http://purl.org/dc/terms/>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+SELECT *
+WHERE {
+    
+  BIND (<http://vocab.nerc.ac.uk/collection/{{ cc }}/current/>  as ?collection)
+  
+  ?collection skos:member ?member .
+  ?member skos:prefLabel ?pref_lang; dc:identifier ?id; skos:altLabel ?alt; owl:deprecated ?depr; skos:definition ?definition.
+  
+  FILTER(langmatches(lang(?pref_lang),'{{ lang }}'))   
+  FILTER(lang(?alt) = '')              # most times the language is not present on the alt-label
+  OPTIONAL {                           # but when it is it might be useful to have that too
+    ?member skos:altLabel ?alt_lang.  
+    FILTER(langmatches(lang(?alt_lang),'{{ lang }}'))  
+  }  
+  OPTIONAL {                           # but when it is it might be useful to have that too
+    ?member skos:related ?standardUnitID.  
+    FILTER(CONTAINS(STR(?standardUnitID), "P06"))
+  }  
+} 
+{{ "OFFSET " ~ O  if O else "" }} {#- add offset statement if provided #}
+{{ "LIMIT " ~ N   if N else "" }} {#- add limit  statement if provided #}
