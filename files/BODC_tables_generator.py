@@ -14,7 +14,7 @@ NSV_ENDPOINT: str = "https://vocab.nerc.ac.uk/sparql/sparql"
 NSV: kg.GraphSource = kg.GraphSource.build(NSV_ENDPOINT)
 
 # Templates folder relative to the current script's parent directory
-TEMPLATES_FOLDER = str(current_dir / "nvsSPARQL-main/templated-queries/")
+TEMPLATES_FOLDER = str(current_dir / "templated-queries/")
 GENERATOR = kg.DefaultSparqlBuilder(templates_folder=TEMPLATES_FOLDER)
 
 def generate_sparql(name: str, **vars) -> str: 
