@@ -5,6 +5,7 @@ import requests
 import numpy as np
 import ast
 import datetime
+from unidecode import unidecode
 
 # Get the parent directory of the current script
 current_dir = pathlib.Path(__file__).parent.resolve()
@@ -27,6 +28,10 @@ def execute_to_df(name: str, **vars) -> pd.DataFrame:
     result: kg.QueryResult = NSV.query(sparql=sparql)
     return result.to_dataframe()
 
+def convert_to_ascii(df):
+    # Apply the function to each element in the DataFrame
+    return df.map(lambda x: unidecode(str(x)))
+	
 valuesCollectionList = ['L22', 'L05', 'F02', 'C17', 'S13', 'S11', 'S10', 'S09', 'M20', 'M21', 'M24', 'L06']
 parametersCollectionList = ['Q01', 'P01', 'P02', 'P35']
 
@@ -42,6 +47,7 @@ else:
 	BODCunits = execute_to_df("nsv-listing.sparql", cc="P06")
 	BODCunits = BODCunits[['id', 'pref_lang', 'alt', 'depr', 'member']]
 	BODCunits.columns = ['identifier', 'preflabel', 'altLabel', 'deprecated', 'uri']
+	BODCunits=convert_to_ascii(BODCunits)
 	BODCunits.to_csv(bodc_units_file, index=False)
 	
 	# Clean up old files, keep latest 3
@@ -88,6 +94,7 @@ else:
 		BODCvalues=pd.concat([BODCvalues,pd.DataFrame.from_dict([newRow])])
 	BODCvalues=BODCvalues.reset_index()      
 	BODCvalues=BODCvalues.drop(columns='index')  
+	BODCvalues=convert_to_ascii(BODCvalues)
 	BODCvalues.to_csv(bodc_values_file,index=False)
      	# Clean up old files, keep latest 3
 	filesList = sorted([f for f in checkpoint_path.iterdir() if 'BODCvalues' in f.name], reverse=True)
@@ -135,6 +142,7 @@ else:
 	BODCparameters.loc[rowNumber,'uri']="http://dd.eionet.europa.eu/vocabulary/biodiversity/eunishabitats/"
 	
 	# Final save
+	BODCparameters=convert_to_ascii(BODCparameters)
 	BODCparameters.to_csv(bodc_parameters_file, index=False)
 	# Clean up old files, keep latest 3
 	filesList = sorted([f for f in checkpoint_path.iterdir() if 'BODCparameters' in f.name], reverse=True)
