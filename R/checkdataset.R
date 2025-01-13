@@ -280,7 +280,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       
       suppressWarnings(
       if(length(valuestolookup[!is.na(valuestolookup)&valuestolookup!=""])>0){
-        valuestolookedup <- suppressWarnings(getskossxmldatainfo(vocid = valuestolookup, vocabs ="S10|S11|L22|L05|M20|M21|M22|M23|C35|C17"))
+        valuestolookedup <- suppressWarnings(getskossxmldatainfo(vocid = valuestolookup, vocabs ="S04|S10|S11|L22|L05|M20|M21|M22|M23|C35|C17"))
         values <- bind_rows(BODCvalues, valuestolookedup)
       } else { values <- BODCvalues}
       )
