@@ -539,7 +539,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     #-----------------------------------------------------------------------    
     
     
-    if (sum(grepl(BODCinstrument, unique(eMoF$measurementTypeID)))== 0){
+    if (sum(grepl(paste0(BODCinstrument, collapse="|"), unique(eMoF$measurementTypeID)))== 0){
       mof_noInstrument <- data_frame(level = "warning",
                                      field = "measurementType", 
                                      row = NA, 
@@ -550,7 +550,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       mof_noSamplingdescriptor <- data.frame(level = "warning",
                                              field = "measurementType", 
                                              row = NA, 
-                                             message = "No sampling descriptors/effort present: see https://github.com/EMODnet/EMODnetBiocheck/blob/master/files/workingEnvironment.R#L26")
+                                             message = "No sampling descriptors/effort present")
     }
     
     

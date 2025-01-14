@@ -29,7 +29,7 @@ BODCeffort <- c('Q01', 'AREABEDS', 'VOLWBSMP', 'LENTRACK', 'AZDRZZ01', 'VOLFFMXX
                 'PRSZSPUP', 'MSHSIZE3', 'WASPXX01', 'COREWDTH', 'VOLXXXXX', 'VOLFFMDT', 'VOLFDGDT', 'VOLFMCXX', 'VOLSEDSM',
                 'VOLSPOPC', 'M91BA36A') # Mostly P01s linked to https://vocab.nerc.ac.uk/collection/P02/current/SAMP/
 
-BODCinstrument <- c('NMSPINST')
+BODCinstrument <- c('NMSPINST', 'Q0100002')
 
 
 
