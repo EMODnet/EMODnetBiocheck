@@ -32,7 +32,7 @@ def convert_to_ascii(df):
     # Apply the function to each element in the DataFrame
     return df.map(lambda x: unidecode(str(x)))
 	
-valuesCollectionList = ['L22', 'L05', 'F02', 'C17', 'S13', 'S11', 'S10', 'S09', 'M20', 'M21', 'M24', 'L06']
+valuesCollectionList = ['L22', 'L05', 'F02', 'C17', 'S13', 'S11', 'S10', 'S09', 'M20', 'M21', 'M24', 'L06', 'S04']
 parametersCollectionList = ['Q01', 'P01', 'P02', 'P35']
 
 # File paths
