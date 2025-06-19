@@ -89,6 +89,11 @@ if (exists("out") == FALSE) {
     output$warning <- ("The dataset does not have an occurrence file")
     }
   
+  if (is.null(out$data[["dnaderiveddata.txt"]]) == FALSE){
+    output$DNA <-out$data[["dnaderiveddata.txt"]]  
+  }
+  
+  
   if (is.null(out$data[["extendedmeasurementorfact.txt"]]) == FALSE){
     eMoF <-out$data[["extendedmeasurementorfact.txt"]]  
       }

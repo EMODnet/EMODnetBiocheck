@@ -20,8 +20,7 @@
 #' }
 
 
-checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport = list(), tree = FALSE){
-
+checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, DNA = NULL, IPTreport = list(), tree = FALSE){
   
   ###### Extracting tables from IPTreport list, which is the output of importiptdata()
   ######-------------------------------------------------------------------------------
@@ -34,20 +33,26 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   if (!is.null(IPTreport$Event)) { 
     if (is.data.frame(IPTreport$Event)) {
       Event <- IPTreport$Event
-  }}
+    }}
   if (!is.null(IPTreport$Occurrence)) { 
     if (is.data.frame(IPTreport$Occurrence)) {
       Occurrence <- IPTreport$Occurrence
-  }}
+    }}
   if (!is.null(IPTreport$eMoF)) { 
     if (is.data.frame(IPTreport$eMoF)) {
       eMoF <- IPTreport$eMoF
-  }}
+    }}
+  if (!is.null(IPTreport$DNA)) { 
+    if (is.data.frame(IPTreport$DNA)) {
+      DNA <- IPTreport$DNA
+    }}
   
   # Remove R objects if they are null
   if (is.null(Event)) {rm(Event)}
   if (is.null(eMoF)) {rm(eMoF)}
   if (is.null(Occurrence)) {rm(Occurrence)}
+  if (is.null(DNA)) {rm(DNA)}
+  
 
 
   #---------------------------------------------------------------------------#
