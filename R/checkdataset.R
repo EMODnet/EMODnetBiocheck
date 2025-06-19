@@ -831,7 +831,15 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, DNA = NULL
       oc_CheckFields <- check_fields(Occurrence, level = "warning")
     }}
   
-  
+ 
+    
+    # Checks run only when the DNA table exists
+    #---------------------------------------------
+    
+  if (  exists("DNA") ){
+    dna_checkFields <- check_required_fields_dna(Occurrence, DNA)
+  }
+    
       # Checks one to one relationship issues
       #---------------------------------------
   
@@ -910,6 +918,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, DNA = NULL
                           if(exists("ev_CheckFields")) ev_CheckFields,
                           if(exists("no_ev_datasetName")) no_ev_datasetName,
                           if(exists("no_ev_institutionCode")) no_ev_institutionCode)
+  
+  dnaerror <- bind_rows(if(exists("dnaerror") & nrow(dnaerror) > 0) dnaerror, 
+                        if(exists("dna_checkFields")) dna_checkFields)
   
   
   

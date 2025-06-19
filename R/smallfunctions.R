@@ -261,3 +261,40 @@ check_extension_occurrenceids <- function(occurrence, extension, field = "occurr
     return(tibble())
   }
 }
+
+#check if required / highly recommended fields are present in the dataset
+check_required_fields_dna <- function(occ, dna) {
+  if(is.null(occ$basisOfRecord)){
+    stop("basisOfRecord is missing")
+  } else {
+    if(length(unique(occ$basisOfRecord == "materialSample"))==1 && unique(occ$basisOfRecord == "materialSample") ==TRUE){
+      #if materialSample, dna derived data is assumed
+      required_fields <- c("associatedSequences", "target_gene")
+      highly_recommended_fields <- c("DNA_sequence", "organismQuantity","organismQuantityType","sampleSizeValue","sampleSizeUnit","identificationRemarks","identificationReferences","taxonConceptID","materialSampleID","pcr_primer_forward","pcr_primer_reverse","pcr_primer_name_forward","pcr_primer_name_reverse","pcr_primer_reference","seq_meth","otu_class_appr")
+    } else {
+      #if not, enriched occurrence is assumed
+      required_fields <- c("Req1", "target_gene")
+      highly_recommended_fields <- c("DNA_sequence", "associatedSequences", "pcr_primer_forward","pcr_primer_reverse","pcr_primer_name_forward","pcr_primer_name_reverse","pcr_primer_reference","seq_meth")
+    }
+  }
+  missing_fields_req <- data.frame(fields = setdiff(required_fields, c(names(occ), names(dna))), status = if(length(setdiff(required_fields, c(names(occ), names(dna)))) > 0) "Required" else character(0))
+  missing_fields_rec <- data.frame(fields = setdiff(highly_recommended_fields, c(names(occ), names(dna))), status = if(length(setdiff(highly_recommended_fields, c(names(occ), names(dna)))) > 0) "Highly recommended" else character(0))
+  missing_fields <- rbind(missing_fields_req, missing_fields_rec)
+  #taxonID is highly recommended if DNA_sequence is not provided
+  if("DNA_sequence" %in% missing_fields$fields) {
+    if(!"taxonID" %in% names(occ)) {
+      missing_fields <- rbind(missing_fields, data.frame(fields= "taxonID", status="Highly recommended"))
+    }
+  }
+  if (nrow(missing_fields) > 0) {
+    return(data.frame(
+      field = missing_fields$fields,
+      level = "error",
+      row = NA,
+      message = paste0(missing_fields$status, " field '", missing_fields$fields, "' is missing"),
+      stringsAsFactors = FALSE
+    ))
+  } else {
+    return(tibble())
+  }
+}
