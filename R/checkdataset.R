@@ -1601,6 +1601,12 @@ if(exists("Occurrence")){
     occurrenceerror <- rbind(occurrenceerror, occ_notmatched)          
   }
 }
+  # Checking content of DNA related fields
+  #-----------------------------------------------
+if(exists("DNA")){
+  dnaerror <- rbind(dnaerror, check_content_dna_fields(Occurrence, DNA))
+}
+  
   #-------------------------------------------------------------------------------#
   ####                    Generate report table                                ####
   #-------------------------------------------------------------------------------#

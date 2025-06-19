@@ -273,7 +273,7 @@ check_required_fields_dna <- function(occ, dna) {
       highly_recommended_fields <- c("DNA_sequence", "organismQuantity","organismQuantityType","sampleSizeValue","sampleSizeUnit","identificationRemarks","identificationReferences","taxonConceptID","materialSampleID","pcr_primer_forward","pcr_primer_reverse","pcr_primer_name_forward","pcr_primer_name_reverse","pcr_primer_reference","seq_meth","otu_class_appr")
     } else {
       #if not, enriched occurrence is assumed
-      required_fields <- c("Req1", "target_gene")
+      required_fields <- c("target_gene")
       highly_recommended_fields <- c("DNA_sequence", "associatedSequences", "pcr_primer_forward","pcr_primer_reverse","pcr_primer_name_forward","pcr_primer_name_reverse","pcr_primer_reference","seq_meth")
     }
   }
@@ -297,4 +297,38 @@ check_required_fields_dna <- function(occ, dna) {
   } else {
     return(tibble())
   }
+}
+
+#check content of DNA related fields
+check_content_dna_fields <- function(occ, dna){
+  error <- tibble()
+  if("organismQuantityType" %in% names(occ) && any(occ$organismQuantityType != "DNA sequence reads")){
+    error <- bind_rows(error, tibble(
+        field = "organismQuantityType",
+        level = "warning",
+        row = which(occ$organismQuantityType != "DNA sequence reads"),
+        message = "organismQuantity must be 'DNA sequence reads'"
+    ))
+  }
+  if("sampleSizeUnit" %in% names(occ) && any(occ$sampleSizeUnit != "DNA sequence reads")){
+    error <- bind_rows(error, tibble(
+      field = "sampleSizeUnit",
+      level = "warning",
+      row = which(occ$sampleSizeUnit != "DNA sequence reads"),
+      message = "sampleSizeUnit must be 'DNA sequence reads'"
+    ))
+  }
+  # DNA_sequence should only contain A,C,G,T,R,Y,K,M,S,W,B,D,H,V,N (nucleotides or ambiguity codes)
+  if("DNA_sequence" %in% names(dna)){
+    invalid_dna_sequences <- which(!grepl("^[ACGTRYKMSWBDHVN]*$", dna$DNA_sequence, ignore.case = TRUE))
+    if(length(invalid_dna_sequences) > 0){
+      error <- bind_rows(error, tibble(
+        field = "DNA_sequence",
+        level = "error",
+        row = invalid_dna_sequences,
+        message = "DNA_sequence contains invalid characters. Only A,C,G,T,R,Y,K,M,S,W,B,D,H,V,N are allowed."
+      ))
+    }
+  }
+  return(error)
 }
