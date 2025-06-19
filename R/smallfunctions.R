@@ -245,3 +245,19 @@ new_data_frame[new_data_frame =='NA' | new_data_frame =='' | new_data_frame ==' 
 return(new_data_frame)
 
 }
+
+#Check if occurrenceID in extension exists in occurrence core (code adapted from obistools::check_extension_eventids())
+check_extension_occurrenceids <- function(occurrence, extension, field = "occurrenceID") {
+  rows <- which(!extension[[field]] %in% occurrence$occurrenceID)
+  if (length(rows) > 0) {
+    return(data.frame(
+      field = field,
+      level = "error",
+      row = rows,
+      message = paste0(field, " ", extension[[field]][rows], " has no corresponding occurrenceID in the occurrence table"),
+      stringsAsFactors = FALSE
+    ))
+  } else {
+    return(tibble())
+  }
+}
