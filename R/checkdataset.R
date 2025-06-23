@@ -623,7 +623,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                  select (level,field, row ,message))
       } else {mof_oc_Value_war <-NULL }
     
-    mof_oc_dubs <- eMoF %>% filter (!is.na(occurrenceID)) %>%
+    mof_oc_dubs_emptyMeasurementTypeID <- eMoF %>% filter (!is.na(occurrenceID)) %>%
                             select (occurrenceID, measurementType, measurementTypeID) %>% 
                             group_by (occurrenceID, measurementType, measurementTypeID) %>% 
                             summarize(count = n())  %>% 
@@ -635,13 +635,28 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                     level = 'error',  
                                     message = 'Duplicate eMoF record linked to occurrence') %>%
                             select (level,field, row ,message)
+
+    mof_oc_dubs_filledMeasurementTypeID <- eMoF %>% filter (!is.na(occurrenceID), !is.na(measurementTypeID)) %>%
+                            select (occurrenceID, measurementTypeID) %>% 
+                            group_by (occurrenceID, measurementTypeID) %>% 
+                            summarize(count = n())  %>% 
+                            filter (count >1 )  %>%
+                            inner_join((eMoF) %>% mutate (row = row_number()), 
+                                       by = c("occurrenceID", "measurementTypeID") ) %>% 
+                            ungroup() %>%
+                            mutate (field = 'measurementType', 
+                                    level = 'error',  
+                                    message = 'Duplicate eMoF record linked to occurrence') %>%
+                            select (level,field, row ,message)
     
-    
+    # combine mof_oc_dubs_filledMeasurementTypeID and mof_oc_dubs_emptyMeasurementTypeID
+    mof_oc_dubs <- bind_rows(mof_oc_dubs_emptyMeasurementTypeID, mof_oc_dubs_filledMeasurementTypeID)
+
     # Missing BODC terms for Event related records
     #----------------------------------------------    
     
     if (  exists("Event") ){
-      mof_ev_dubs <- eMoF %>% filter (is.na(occurrenceID)) %>%
+      mof_ev_dubs_emptyMeasurementTypeID <- eMoF %>% filter (is.na(occurrenceID)) %>%
                               select (eventID, measurementType, measurementTypeID) %>% 
                               group_by (eventID, measurementType, measurementTypeID) %>% 
                               summarize(count = n())  %>% 
@@ -653,8 +668,22 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                       level = 'error',  
                                       message = 'Duplicate eMoF record linked to event') %>%
                               select (level,field, row ,message)
+      mof_ev_dubs_filledMeasurementTypeID <- eMoF %>% filter (is.na(occurrenceID), !is.na(measurementTypeID)) %>%
+                              select (id, measurementTypeID) %>% 
+                              group_by (id, measurementTypeID) %>% 
+                              summarize(count = n())  %>% 
+                              filter (count >1 )  %>%
+                              inner_join((eMoF) %>% mutate (row = row_number()), 
+                                         by = c("id", "measurementTypeID") )  %>% 
+                              ungroup() %>%
+                              mutate (field = 'measurementType', 
+                                      level = 'error',  
+                                      message = 'Duplicate eMoF record linked to event') %>%
+                              select (level,field, row ,message)
       
-      
+      # combine mof_ev_dubs_filledMeasurementTypeID and mof_ev_dubs_emptyMeasurementTypeID
+      mof_ev_dubs <- bind_rows(mof_ev_dubs_emptyMeasurementTypeID, mof_ev_dubs_filledMeasurementTypeID)
+
       mof_ev_noTypeID <- eMoF %>% filter (!is.na(eventID), is.na(occurrenceID), is.na(measurementTypeID) ) %>% 
                                   select (measurementType, measurementUnit) %>% 
                                   mutate(IDlink = 'eventMoF', 
