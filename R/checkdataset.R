@@ -623,13 +623,13 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                  select (level,field, row ,message))
       } else {mof_oc_Value_war <-NULL }
     
-    mof_oc_dubs_emptyMeasurementTypeID <- eMoF %>% filter (!is.na(occurrenceID)) %>%
-                            select (occurrenceID, measurementType, measurementTypeID) %>% 
-                            group_by (occurrenceID, measurementType, measurementTypeID) %>% 
+    mof_oc_dubs_emptyMeasurementTypeID <- eMoF %>% filter (!is.na(occurrenceID),is.na(measurementTypeID)) %>%
+                            select (occurrenceID, measurementType) %>% 
+                            group_by (occurrenceID, measurementType) %>% 
                             summarize(count = n())  %>% 
                             filter (count >1 )  %>%
                             inner_join((eMoF) %>% mutate (row = row_number()), 
-                                       by = c("occurrenceID", "measurementType", "measurementTypeID") ) %>% 
+                                       by = c("occurrenceID", "measurementType") ) %>% 
                             ungroup() %>%
                             mutate (field = 'measurementType', 
                                     level = 'error',  
@@ -656,13 +656,13 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     #----------------------------------------------    
     
     if (  exists("Event") ){
-      mof_ev_dubs_emptyMeasurementTypeID <- eMoF %>% filter (is.na(occurrenceID)) %>%
-                              select (eventID, measurementType, measurementTypeID) %>% 
-                              group_by (eventID, measurementType, measurementTypeID) %>% 
+      mof_ev_dubs_emptyMeasurementTypeID <- eMoF %>% filter (is.na(occurrenceID),is.na(measurementTypeID)) %>%
+                              select (eventID, measurementType) %>% 
+                              group_by (eventID, measurementType) %>% 
                               summarize(count = n())  %>% 
                               filter (count >1 )  %>%
                               inner_join((eMoF) %>% mutate (row = row_number()), 
-                                         by = c("eventID", "measurementType", "measurementTypeID") )  %>% 
+                                         by = c("eventID", "measurementType") )  %>% 
                               ungroup() %>%
                               mutate (field = 'measurementType', 
                                       level = 'error',  
