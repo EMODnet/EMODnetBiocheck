@@ -654,7 +654,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                             mutate(field = 'eMoF',
                                     level = 'error',
                                     message = 'Duplicate eMoF record linked to occurrence',
-                                    row=which(all_duplicates)) %>%
+                                    row=which(exact_duplicate_oc_check)) %>%
                             select(level, field, row, message)
 
     # Missing BODC terms for Event related records
@@ -688,11 +688,11 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                               select (level,field, row ,message)
 
       exact_duplicate_ev_check <- duplicated(eMoF) | duplicated(eMoF, fromLast = TRUE)
-      exact_duplicate_ev_list <- eMoF[exact_duplicate_ev_list, ] %>%
+      exact_duplicate_ev_list <- eMoF[exact_duplicate_ev_check, ] %>%
                               mutate(field = 'eMoF',
                                       level = 'error',
                                       message = 'Duplicate eMoF record linked to occurrence',
-                                      row=which(all_duplicates)) %>%
+                                      row=which(exact_duplicate_ev_check)) %>%
                               select(level, field, row, message)
       
       # combine mof_ev_dubs_filledMeasurementTypeID and mof_ev_dubs_emptyMeasurementTypeID
