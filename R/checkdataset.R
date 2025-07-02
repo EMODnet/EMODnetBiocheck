@@ -648,14 +648,6 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                     level = 'error',  
                                     message = 'Duplicate measurementTypeID linked to the same occurrence') %>%
                             select (level,field, row ,message)
-    
-    exact_duplicate_oc_check <- duplicated(eMoF) | duplicated(eMoF, fromLast = TRUE)
-    exact_duplicate_oc_list <- eMoF[exact_duplicate_oc_check, ] %>%
-                            mutate(field = 'eMoF',
-                                    level = 'error',
-                                    message = 'Duplicate eMoF record linked to occurrence',
-                                    row=which(exact_duplicate_oc_check)) %>%
-                            select(level, field, row, message)
 
     # Missing BODC terms for Event related records
     #----------------------------------------------    
@@ -687,12 +679,12 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                       message = 'Duplicate measurementTypeID linked to the same event') %>%
                               select (level,field, row ,message)
 
-      exact_duplicate_ev_check <- duplicated(eMoF) | duplicated(eMoF, fromLast = TRUE)
-      exact_duplicate_ev_list <- eMoF[exact_duplicate_ev_check, ] %>%
+      exact_duplicate_emof_check <- duplicated(eMoF) | duplicated(eMoF, fromLast = TRUE)
+      exact_duplicate_emof_list <- eMoF[exact_duplicate_emof_check, ] %>%
                               mutate(field = 'eMoF',
                                       level = 'error',
-                                      message = 'Duplicate eMoF record linked to occurrence',
-                                      row=which(exact_duplicate_ev_check)) %>%
+                                      message = 'Duplicate eMoF record',
+                                      row=which(exact_duplicate_emof_check)) %>%
                               select(level, field, row, message)
 
       mof_ev_noTypeID <- eMoF %>% filter (!is.na(eventID), is.na(occurrenceID), is.na(measurementTypeID) ) %>% 
@@ -758,10 +750,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     # Preparing general_issues table: Overview of all issues
     
-    emoferror <- rbind(emoferror, mof_ValueNull, mof_oc_Value_war, mof_oc_Value_err, duplicated_measurementType_oc, duplicated_measurementTypeID_oc, exact_duplicate_oc_list
+    emoferror <- rbind(emoferror, mof_ValueNull, mof_oc_Value_war, mof_oc_Value_err, duplicated_measurementType_oc, duplicated_measurementTypeID_oc, exact_duplicate_emof_list
                        if(exists("duplicated_measurementType_ev")) duplicated_measurementType_ev,
                        if(exists("duplicated_measurementTypeID_ev")) duplicated_measurementTypeID_ev,
-                       if(exists("exact_duplicate_ev_list")) exact_duplicate_ev_list,
                        if(exists("mof_noInstrument")) mof_noInstrument,  
                        if(exists("mof_noSamplingdescriptor")) mof_noSamplingdescriptor
     )
