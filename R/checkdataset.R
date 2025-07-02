@@ -650,7 +650,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                             select (level,field, row ,message)
     
     exact_duplicate_oc_check <- duplicated(eMoF) | duplicated(eMoF, fromLast = TRUE)
-    exact_duplicate_oc_list <- eMoF[exact_duplicate_check, ] %>%
+    exact_duplicate_oc_list <- eMoF[exact_duplicate_oc_check, ] %>%
                             mutate(field = 'eMoF',
                                     level = 'error',
                                     message = 'Duplicate eMoF record linked to occurrence',
@@ -688,7 +688,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                               select (level,field, row ,message)
 
       exact_duplicate_ev_check <- duplicated(eMoF) | duplicated(eMoF, fromLast = TRUE)
-      exact_duplicate_ev_list <- eMoF[exact_duplicate_check, ] %>%
+      exact_duplicate_ev_list <- eMoF[exact_duplicate_ev_list, ] %>%
                               mutate(field = 'eMoF',
                                       level = 'error',
                                       message = 'Duplicate eMoF record linked to occurrence',
