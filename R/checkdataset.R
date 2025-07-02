@@ -623,7 +623,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                  select (level,field, row ,message))
       } else {mof_oc_Value_war <-NULL }
     
-    mof_oc_dubs_emptyMeasurementTypeID <- eMoF %>% filter (!is.na(occurrenceID),is.na(measurementTypeID)) %>%
+    duplicated_measurementType_oc <- eMoF %>% filter (!is.na(occurrenceID),is.na(measurementTypeID)) %>%
                             select (occurrenceID, measurementType) %>% 
                             group_by (occurrenceID, measurementType) %>% 
                             summarize(count = n())  %>% 
@@ -633,10 +633,10 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                             ungroup() %>%
                             mutate (field = 'measurementType', 
                                     level = 'error',  
-                                    message = 'Duplicate eMoF record linked to occurrence') %>%
+                                    message = 'Duplicate measurementType linked to the same occurrence') %>%
                             select (level,field, row ,message)
 
-    mof_oc_dubs_filledMeasurementTypeID <- eMoF %>% filter (!is.na(occurrenceID), !is.na(measurementTypeID)) %>%
+    duplicated_measurementTypeID_oc <- eMoF %>% filter (!is.na(occurrenceID), !is.na(measurementTypeID)) %>%
                             select (occurrenceID, measurementTypeID) %>% 
                             group_by (occurrenceID, measurementTypeID) %>% 
                             summarize(count = n())  %>% 
@@ -646,11 +646,16 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                             ungroup() %>%
                             mutate (field = 'measurementType', 
                                     level = 'error',  
-                                    message = 'Duplicate eMoF record linked to occurrence') %>%
+                                    message = 'Duplicate measurementTypeID linked to the same occurrence') %>%
                             select (level,field, row ,message)
     
-    # combine mof_oc_dubs_filledMeasurementTypeID and mof_oc_dubs_emptyMeasurementTypeID
-    mof_oc_dubs <- bind_rows(mof_oc_dubs_emptyMeasurementTypeID, mof_oc_dubs_filledMeasurementTypeID)
+    exact_duplicate_oc_check <- duplicated(eMoF) | duplicated(eMoF, fromLast = TRUE)
+    exact_duplicate_oc_list <- eMoF[exact_duplicate_check, ] %>%
+                            mutate(field = 'eMoF',
+                                    level = 'error',
+                                    message = 'Duplicate eMoF record linked to occurrence',
+                                    row=which(all_duplicates)) %>%
+                            select(level, field, row, message)
 
     # Missing BODC terms for Event related records
     #----------------------------------------------    
@@ -666,8 +671,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                               ungroup() %>%
                               mutate (field = 'measurementType', 
                                       level = 'error',  
-                                      message = 'Duplicate eMoF record linked to event') %>%
+                                      message = 'Duplicate measurementType linked to the same event') %>%
                               select (level,field, row ,message)
+      
       mof_ev_dubs_filledMeasurementTypeID <- eMoF %>% filter (is.na(occurrenceID), !is.na(measurementTypeID)) %>%
                               select (id, measurementTypeID) %>% 
                               group_by (id, measurementTypeID) %>% 
@@ -678,8 +684,16 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                               ungroup() %>%
                               mutate (field = 'measurementType', 
                                       level = 'error',  
-                                      message = 'Duplicate eMoF record linked to event') %>%
+                                      message = 'Duplicate measurementTypeID linked to the same event') %>%
                               select (level,field, row ,message)
+
+      exact_duplicate_ev_check <- duplicated(eMoF) | duplicated(eMoF, fromLast = TRUE)
+      exact_duplicate_ev_list <- eMoF[exact_duplicate_check, ] %>%
+                              mutate(field = 'eMoF',
+                                      level = 'error',
+                                      message = 'Duplicate eMoF record linked to occurrence',
+                                      row=which(all_duplicates)) %>%
+                              select(level, field, row, message)
       
       # combine mof_ev_dubs_filledMeasurementTypeID and mof_ev_dubs_emptyMeasurementTypeID
       mof_ev_dubs <- bind_rows(mof_ev_dubs_emptyMeasurementTypeID, mof_ev_dubs_filledMeasurementTypeID)
