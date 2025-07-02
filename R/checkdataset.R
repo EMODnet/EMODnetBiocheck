@@ -750,7 +750,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     # Preparing general_issues table: Overview of all issues
     
-    emoferror <- rbind(emoferror, mof_ValueNull, mof_oc_Value_war, mof_oc_Value_err, duplicated_measurementType_oc, duplicated_measurementTypeID_oc, exact_duplicate_emof_list
+    emoferror <- rbind(emoferror, mof_ValueNull, mof_oc_Value_war, mof_oc_Value_err, duplicated_measurementType_oc, duplicated_measurementTypeID_oc, exact_duplicate_emof_list,
                        if(exists("duplicated_measurementType_ev")) duplicated_measurementType_ev,
                        if(exists("duplicated_measurementTypeID_ev")) duplicated_measurementTypeID_ev,
                        if(exists("mof_noInstrument")) mof_noInstrument,  
