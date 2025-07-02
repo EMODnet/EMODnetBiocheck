@@ -661,7 +661,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     #----------------------------------------------    
     
     if (  exists("Event") ){
-      mof_ev_dubs_emptyMeasurementTypeID <- eMoF %>% filter (is.na(occurrenceID),is.na(measurementTypeID)) %>%
+      duplicated_measurementType_ev <- eMoF %>% filter (is.na(occurrenceID),is.na(measurementTypeID)) %>%
                               select (eventID, measurementType) %>% 
                               group_by (eventID, measurementType) %>% 
                               summarize(count = n())  %>% 
@@ -674,7 +674,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                       message = 'Duplicate measurementType linked to the same event') %>%
                               select (level,field, row ,message)
       
-      mof_ev_dubs_filledMeasurementTypeID <- eMoF %>% filter (is.na(occurrenceID), !is.na(measurementTypeID)) %>%
+      duplicated_measurementTypeID_ev <- eMoF %>% filter (is.na(occurrenceID), !is.na(measurementTypeID)) %>%
                               select (id, measurementTypeID) %>% 
                               group_by (id, measurementTypeID) %>% 
                               summarize(count = n())  %>% 
@@ -694,9 +694,6 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                       message = 'Duplicate eMoF record linked to occurrence',
                                       row=which(exact_duplicate_ev_check)) %>%
                               select(level, field, row, message)
-      
-      # combine mof_ev_dubs_filledMeasurementTypeID and mof_ev_dubs_emptyMeasurementTypeID
-      mof_ev_dubs <- bind_rows(mof_ev_dubs_emptyMeasurementTypeID, mof_ev_dubs_filledMeasurementTypeID)
 
       mof_ev_noTypeID <- eMoF %>% filter (!is.na(eventID), is.na(occurrenceID), is.na(measurementTypeID) ) %>% 
                                   select (measurementType, measurementUnit) %>% 
@@ -761,8 +758,10 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     # Preparing general_issues table: Overview of all issues
     
-    emoferror <- rbind(emoferror, mof_ValueNull, mof_oc_Value_war, mof_oc_Value_err, mof_oc_dubs,  
-                       if(exists("mof_ev_dubs")) mof_ev_dubs,
+    emoferror <- rbind(emoferror, mof_ValueNull, mof_oc_Value_war, mof_oc_Value_err, duplicated_measurementType_oc, duplicated_measurementTypeID_oc, exact_duplicate_oc_list
+                       if(exists("duplicated_measurementType_ev")) duplicated_measurementType_ev,
+                       if(exists("duplicated_measurementTypeID_ev")) duplicated_measurementTypeID_ev,
+                       if(exists("exact_duplicate_ev_list")) exact_duplicate_ev_list,
                        if(exists("mof_noInstrument")) mof_noInstrument,  
                        if(exists("mof_noSamplingdescriptor")) mof_noSamplingdescriptor
     )
