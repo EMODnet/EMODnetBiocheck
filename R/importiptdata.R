@@ -42,7 +42,11 @@ if (exists("out") == FALSE) {
   } else  { 
   
   output$name <- names(NamesToVector(file))
-  output$title <- out$emlmeta$dataset$title$title[[1]]@.Data
+  output$title <- tryCatch(out$emlmeta$dataset$title$title[[1]]@.Data, 
+                           error = function(e) {
+                             out$emlmeta$dataset$title
+                           }
+  )
   output$ipt_url <- file
   
   if (length(out$emlmeta$dataset$coverage$temporalCoverage)>0) {
