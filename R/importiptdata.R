@@ -96,6 +96,9 @@ if (exists("out") == FALSE) {
   if (is.null(out$data[["dnaderiveddata.txt"]]) == FALSE){
     output$DNA <-out$data[["dnaderiveddata.txt"]]  
   }
+  else if (is.null(out$data[["dna.txt"]]) == FALSE){
+    output$DNA <-out$data[["dna.txt"]]  
+  }
   
   
   if (is.null(out$data[["extendedmeasurementorfact.txt"]]) == FALSE){
