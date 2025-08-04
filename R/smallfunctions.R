@@ -267,7 +267,7 @@ check_required_fields_dna <- function(occ, dna) {
   if(is.null(occ$basisOfRecord)){
     stop("basisOfRecord is missing")
   } else {
-    if(length(unique(occ$basisOfRecord == "materialSample"))==1 && unique(occ$basisOfRecord == "materialSample") ==TRUE){
+    if(all(occ$basisOfRecord == "materialSample")){
       #if materialSample, dna derived data is assumed
       required_fields <- c("associatedSequences", "target_gene")
       highly_recommended_fields <- c("DNA_sequence", "organismQuantity","organismQuantityType","sampleSizeValue","sampleSizeUnit","identificationRemarks","identificationReferences","taxonConceptID","materialSampleID","pcr_primer_forward","pcr_primer_reverse","pcr_primer_name_forward","pcr_primer_name_reverse","pcr_primer_reference","seq_meth","otu_class_appr")
@@ -307,7 +307,7 @@ check_content_dna_fields <- function(occ, dna){
         field = "organismQuantityType",
         level = "warning",
         row = which(occ$organismQuantityType != "DNA sequence reads"),
-        message = "organismQuantity must be 'DNA sequence reads'"
+        message = "organismQuantityType must be 'DNA sequence reads'"
     ))
   }
   if("sampleSizeUnit" %in% names(occ) && any(occ$sampleSizeUnit != "DNA sequence reads")){
