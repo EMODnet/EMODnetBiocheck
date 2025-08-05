@@ -42,7 +42,11 @@ if (exists("out") == FALSE) {
   } else  { 
   
   output$name <- names(NamesToVector(file))
-  output$title <- out$emlmeta$dataset$title$title[[1]]@.Data
+  output$title <- tryCatch(out$emlmeta$dataset$title$title[[1]]@.Data, 
+                           error = function(e) {
+                             out$emlmeta$dataset$title
+                           }
+  )
   output$ipt_url <- file
   
   if (length(out$emlmeta$dataset$coverage$temporalCoverage)>0) {
@@ -88,6 +92,14 @@ if (exists("out") == FALSE) {
     if (  exists("Occurrence") == FALSE  ) {   
     output$warning <- ("The dataset does not have an occurrence file")
     }
+  
+  if (is.null(out$data[["dnaderiveddata.txt"]]) == FALSE){
+    output$DNA <-out$data[["dnaderiveddata.txt"]]  
+  }
+  else if (is.null(out$data[["dna.txt"]]) == FALSE){
+    output$DNA <-out$data[["dna.txt"]]  
+  }
+  
   
   if (is.null(out$data[["extendedmeasurementorfact.txt"]]) == FALSE){
     eMoF <-out$data[["extendedmeasurementorfact.txt"]]  

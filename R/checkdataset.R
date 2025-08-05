@@ -20,9 +20,8 @@
 #' }
 
 
-checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport = list(), tree = FALSE){
+checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, DNA = NULL, IPTreport = list(), tree = FALSE){
 
-  
   ###### Extracting tables from IPTreport list, which is the output of importiptdata()
   ######-------------------------------------------------------------------------------
   
@@ -34,20 +33,25 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   if (!is.null(IPTreport$Event)) { 
     if (is.data.frame(IPTreport$Event)) {
       Event <- IPTreport$Event
-  }}
+    }}
   if (!is.null(IPTreport$Occurrence)) { 
     if (is.data.frame(IPTreport$Occurrence)) {
       Occurrence <- IPTreport$Occurrence
-  }}
+    }}
   if (!is.null(IPTreport$eMoF)) { 
     if (is.data.frame(IPTreport$eMoF)) {
       eMoF <- IPTreport$eMoF
-  }}
+    }}
+  if (!is.null(IPTreport$DNA)) { 
+    if (is.data.frame(IPTreport$DNA)) {
+      DNA <- IPTreport$DNA
+    }}
   
   # Remove R objects if they are null
   if (is.null(Event)) {rm(Event)}
   if (is.null(eMoF)) {rm(eMoF)}
   if (is.null(Occurrence)) {rm(Occurrence)}
+  if (is.null(DNA)) {rm(DNA)}
 
 
   #---------------------------------------------------------------------------#
@@ -346,56 +350,57 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       mof.ev_check_id <- check_extension_eventids(Event,eMoF)  # Checks that all the eventIDs in your eMoF extentsion link to the event Core
       
       if (exists("Occurrence")) {
-      
-      if ( sum(is.na(eMoF$occurrenceID)) != nrow(eMoF)  ){
-        mof.oc_check_id <- eMoF %>% mutate (level = 'error', 
-                                            field = 'occurrenceID', 
-                                            row = row_number(),
-                                            message = 'This occurrenceID has no corresponding occurrenceID in the occurrence Extension') %>%
-                                    filter (!is.na(occurrenceID)) %>%  
-                                    anti_join(Occurrence, by = "occurrenceID")  %>%
-                                    select (level, field, row, message) # Checks that all eMoF occurrenceIDs exist in the Occurrence table
         
+        if ( sum(is.na(eMoF$occurrenceID)) != nrow(eMoF)  ){
+          mof.oc_check_id <- eMoF %>% mutate (level = 'error', 
+                                              field = 'occurrenceID', 
+                                              row = row_number(),
+                                              message = 'This occurrenceID has no corresponding occurrenceID in the occurrence Extension') %>%
+            filter (!is.na(occurrenceID)) %>%  
+            anti_join(Occurrence, by = "occurrenceID")  %>%
+            select (level, field, row, message) # Checks that all eMoF occurrenceIDs exist in the Occurrence table
+          
+          
+          mof.oc.ev_check_id <- eMoF %>% mutate (level = 'error', 
+                                                 field = 'eventID', 
+                                                 row = row_number(),
+                                                 message = 'This eventID differs from the eventID provided in the related Occurrence') %>%
+            inner_join(Occurrence, by = "occurrenceID") %>% 
+            mutate(eventID.y = as.character(eventID.y)) %>%
+            anti_join(eMoF %>% mutate(eventID = as.character(eventID)), 
+                      by = c(  "eventID.y"=  "eventID", "occurrenceID" = "occurrenceID")) %>%
+            select (level, field, row, message) # Checks that all eMoF eventIDs are linked to the same eventID as the related occurrenceID
+        }
         
-        mof.oc.ev_check_id <- eMoF %>% mutate (level = 'error', 
-                                               field = 'eventID', 
-                                               row = row_number(),
-                                               message = 'This eventID differs from the eventID provided in the related Occurrence') %>%
-                                       inner_join(Occurrence, by = "occurrenceID") %>% 
-                                       mutate(eventID.y = as.character(eventID.y)) %>%
-                                       anti_join(eMoF %>% mutate(eventID = as.character(eventID)), 
-                                                 by = c(  "eventID.y"=  "eventID", "occurrenceID" = "occurrenceID")) %>%
-                                       select (level, field, row, message) # Checks that all eMoF eventIDs are linked to the same eventID as the related occurrenceID
       }
-      
     }
-      }
+    if (exists("DNA")) {
+      dna.ev_check_id <- check_extension_eventids(Event,DNA) # Checks that all eventIDs in your DNA extension link to the event Core
+    }
   }
   
   if (exists("Occurrence")) {
-  
-  if ( exists("Event") == FALSE & exists("eMoF") == TRUE  ){
-    mof.oc_check_id <- eMoF %>% mutate (level = 'error', 
-                                        field = 'occurrenceID', 
-                                        row = row_number(),
-                                        message = 'This occurrenceID has no corresponding occurrenceID in the occurrence Extension') %>%
-                                filter (!is.na(occurrenceID)) %>%  
-                                anti_join(Occurrence, by = "occurrenceID")  %>%
-                                select (level, field, row, message) # Checks that all eMoF occurrenceIDs exist in the Occurrence table
     
-  }
-  
-
-  occurrenceIDs <- Occurrence$occurrenceID[!is.na(Occurrence$occurrenceID) & !Occurrence$occurrenceID == ""]
-  dup_rows <- which(duplicated(occurrenceIDs))
-  
-  if (length(dup_rows) > 0) {
-    dup_occID <- data_frame(level = "error",
-                            field = "occurrenceID",
-                            row = dup_rows,
-                            message = paste0("occurrenceID ", Occurrence$occurrenceID[dup_rows], " is duplicated in the Occurrence table")
-                            ) # Checks that occurrenceID is unique in the occurrence table
-  }
+    if ( exists("Event") == FALSE & exists("eMoF") == TRUE  ){
+      mof.oc_check_id <- check_extension_occurrenceids(Occurrence, eMoF)
+      
+    }
+    
+    if ( exists("Event") == FALSE & exists("DNA") == TRUE  ){
+      dna.oc_check_id <- check_extension_occurrenceids(Occurrence, DNA)
+    }
+    
+    
+    occurrenceIDs <- Occurrence$occurrenceID[!is.na(Occurrence$occurrenceID) & !Occurrence$occurrenceID == ""]
+    dup_rows <- which(duplicated(occurrenceIDs))
+    
+    if (length(dup_rows) > 0) {
+      dup_occID <- data_frame(level = "error",
+                              field = "occurrenceID",
+                              row = dup_rows,
+                              message = paste0("occurrenceID ", Occurrence$occurrenceID[dup_rows], " is duplicated in the Occurrence table")
+      ) # Checks that occurrenceID is unique in the occurrence table
+    }
   }
   
   
@@ -417,20 +422,28 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
   eventerror <- bind_rows(eventerror, 
                           if(exists("ev_check_id")) ev_check_id)
   
+  dnaerror <- data.frame()
+  dnaerror <- bind_rows(dnaerror, 
+                        if(exists("dna.ev_check_id")) dna.ev_check_id,
+                        if(exists("dna.oc_check_id")) dna.oc_check_id)
+
+  
   
   #-----------------------------------------------------------------------#
   ####                    Tree structure                               ####
   #-----------------------------------------------------------------------#
   
   if ( exists("Event") &  exists("eMoF") & exists("Occurrence") & tree == "yes" ) { 
-   if ( if(exists("ev_check_id") ){nrow(ev_check_id) == 0} & 
-        if(exists("mof.oc_check_id") ){nrow(mof.oc_check_id) ==0} & 
-        if(exists("mof.oc.ev_check_id") ){nrow(mof.oc.ev_check_id) ==0} &
-        if(exists("mof.ev_check_id") ){nrow(mof.ev_check_id) ==0} ) {
-   tryCatch({IPTreport$tree <- treeStructure(Event, Occurrence, eMoF)}, error = function(x){print("tree gives error")})
-  
-    
-  }}
+    if ( if(exists("ev_check_id") ){nrow(ev_check_id) == 0} & 
+         if(exists("mof.oc_check_id") ){nrow(mof.oc_check_id) ==0} & 
+         if(exists("mof.oc.ev_check_id") ){nrow(mof.oc.ev_check_id) ==0} &
+         if(exists("mof.ev_check_id") ){nrow(mof.ev_check_id) ==0} &
+         if(exists("dna.ev_check_id") ){nrow(dna.ev_check_id) == 0} &
+         if(exists("dna.oc_check_id") ){nrow(dna.oc_check_id) == 0} ) {
+      tryCatch({IPTreport$tree <- treeStructure(Event, Occurrence, eMoF)}, error = function(x){print("tree gives error")})
+      
+      
+    }}
   
   
   
@@ -623,7 +636,20 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                                                  select (level,field, row ,message))
       } else {mof_oc_Value_war <-NULL }
     
-    mof_oc_dubs <- eMoF %>% filter (!is.na(occurrenceID), !is.na(measurementTypeID)) %>%
+    duplicated_measurementType_oc <- eMoF %>% filter (!is.na(occurrenceID),is.na(measurementTypeID)) %>%
+                            select (occurrenceID, measurementType) %>% 
+                            group_by (occurrenceID, measurementType) %>% 
+                            summarize(count = n())  %>% 
+                            filter (count >1 )  %>%
+                            inner_join((eMoF) %>% mutate (row = row_number()), 
+                                       by = c("occurrenceID", "measurementType") ) %>% 
+                            ungroup() %>%
+                            mutate (field = 'measurementType', 
+                                    level = 'error',  
+                                    message = 'Duplicate measurementType linked to the same occurrence') %>%
+                            select (level,field, row ,message)
+
+    duplicated_measurementTypeID_oc <- eMoF %>% filter (!is.na(occurrenceID), !is.na(measurementTypeID)) %>%
                             select (occurrenceID, measurementTypeID) %>% 
                             group_by (occurrenceID, measurementTypeID) %>% 
                             summarize(count = n())  %>% 
@@ -633,15 +659,27 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                             ungroup() %>%
                             mutate (field = 'measurementType', 
                                     level = 'error',  
-                                    message = 'Duplicate eMoF record linked to occurrence') %>%
+                                    message = 'Duplicate measurementTypeID linked to the same occurrence') %>%
                             select (level,field, row ,message)
-    
-    
+
     # Missing BODC terms for Event related records
     #----------------------------------------------    
     
     if (  exists("Event") ){
-      mof_ev_dubs <- eMoF %>% filter (is.na(occurrenceID), !is.na(measurementTypeID)) %>%
+      duplicated_measurementType_ev <- eMoF %>% filter (is.na(occurrenceID),is.na(measurementTypeID)) %>%
+                              select (eventID, measurementType) %>% 
+                              group_by (eventID, measurementType) %>% 
+                              summarize(count = n())  %>% 
+                              filter (count >1 )  %>%
+                              inner_join((eMoF) %>% mutate (row = row_number()), 
+                                         by = c("eventID", "measurementType") )  %>% 
+                              ungroup() %>%
+                              mutate (field = 'measurementType', 
+                                      level = 'error',  
+                                      message = 'Duplicate measurementType linked to the same event') %>%
+                              select (level,field, row ,message)
+      
+      duplicated_measurementTypeID_ev <- eMoF %>% filter (is.na(occurrenceID), !is.na(measurementTypeID)) %>%
                               select (eventID, measurementTypeID) %>% 
                               group_by (eventID, measurementTypeID) %>% 
                               summarize(count = n())  %>% 
@@ -651,10 +689,17 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                               ungroup() %>%
                               mutate (field = 'measurementType', 
                                       level = 'error',  
-                                      message = 'Duplicate eMoF record linked to event') %>%
+                                      message = 'Duplicate measurementTypeID linked to the same event') %>%
                               select (level,field, row ,message)
-      
-      
+
+      exact_duplicate_emof_check <- duplicated(eMoF) | duplicated(eMoF, fromLast = TRUE)
+      exact_duplicate_emof_list <- eMoF[exact_duplicate_emof_check, ] %>%
+                              mutate(field = 'eMoF',
+                                      level = 'error',
+                                      message = 'Duplicate eMoF record',
+                                      row=which(exact_duplicate_emof_check)) %>%
+                              select(level, field, row, message)
+
       mof_ev_noTypeID <- eMoF %>% filter (!is.na(eventID), is.na(occurrenceID), is.na(measurementTypeID) ) %>% 
                                   select (measurementType, measurementUnit) %>% 
                                   mutate(IDlink = 'eventMoF', 
@@ -718,8 +763,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
     
     # Preparing general_issues table: Overview of all issues
     
-    emoferror <- rbind(emoferror, mof_ValueNull, mof_oc_Value_war, mof_oc_Value_err, mof_oc_dubs,  
-                       if(exists("mof_ev_dubs")) mof_ev_dubs,
+    emoferror <- rbind(emoferror, mof_ValueNull, mof_oc_Value_war, mof_oc_Value_err, duplicated_measurementType_oc, duplicated_measurementTypeID_oc, exact_duplicate_emof_list,
+                       if(exists("duplicated_measurementType_ev")) duplicated_measurementType_ev,
+                       if(exists("duplicated_measurementTypeID_ev")) duplicated_measurementTypeID_ev,
                        if(exists("mof_noInstrument")) mof_noInstrument,  
                        if(exists("mof_noSamplingdescriptor")) mof_noSamplingdescriptor
     )
@@ -818,7 +864,15 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
       oc_CheckFields <- check_fields(Occurrence, level = "warning")
     }}
   
-  
+ 
+    
+    # Checks run only when the DNA table exists
+    #---------------------------------------------
+    
+  if (  exists("DNA") ){
+    dna_checkFields <- check_required_fields_dna(Occurrence, DNA)
+  }
+    
       # Checks one to one relationship issues
       #---------------------------------------
   
@@ -897,6 +951,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, IPTreport 
                           if(exists("ev_CheckFields")) ev_CheckFields,
                           if(exists("no_ev_datasetName")) no_ev_datasetName,
                           if(exists("no_ev_institutionCode")) no_ev_institutionCode)
+  
+  dnaerror <- bind_rows(if(exists("dnaerror") & nrow(dnaerror) > 0) dnaerror, 
+                        if(exists("dna_checkFields")) dna_checkFields)
   
   
   
@@ -1577,6 +1634,12 @@ if(exists("Occurrence")){
     occurrenceerror <- rbind(occurrenceerror, occ_notmatched)          
   }
 }
+  # Checking content of DNA related fields
+  #-----------------------------------------------
+if(exists("DNA")){
+  dnaerror <- rbind(dnaerror, check_content_dna_fields(Occurrence, DNA))
+}
+  
   #-------------------------------------------------------------------------------#
   ####                    Generate report table                                ####
   #-------------------------------------------------------------------------------#
@@ -1708,7 +1771,15 @@ if(exists("Occurrence")){
         metadataerror_report <- metadataerror %>% select(-level)
     }}}
   
-  
+  if (exists("dnaerror")) {
+    if(is.null(dnaerror) == FALSE & nrow(dnaerror) > 0) {
+      dnaerror_report <- dnaerror  %>% distinct() %>% 
+        select(-level) %>%
+        group_by (field, message) %>% 
+        summarize(count = n()) %>% 
+        mutate (table = "dna")
+    }
+  } 
   
   ###### Creating the general_issues table: Overview of all issues
   ######----------------------------------------------------------- 
@@ -1716,7 +1787,8 @@ if(exists("Occurrence")){
   IPTreport$dtb$general_issues <- bind_rows(if(exists("eventerror_report")) eventerror_report, 
                                             if(exists("occurrenceerror_report")) occurrenceerror_report, 
                                             if(exists("emoferror_report")) emoferror_report,
-                                            if(exists("metadataerror_report")) metadataerror_report)
+                                            if(exists("metadataerror_report")) metadataerror_report,
+                                            if(exists("dnaerror_report")) dnaerror_report)
   
   
   
