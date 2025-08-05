@@ -680,12 +680,12 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, DNA = NULL
                               select (level,field, row ,message)
       
       duplicated_measurementTypeID_ev <- eMoF %>% filter (is.na(occurrenceID), !is.na(measurementTypeID)) %>%
-                              select (id, measurementTypeID) %>% 
-                              group_by (id, measurementTypeID) %>% 
+                              select (eventID, measurementTypeID) %>% 
+                              group_by (eventID, measurementTypeID) %>% 
                               summarize(count = n())  %>% 
                               filter (count >1 )  %>%
                               inner_join((eMoF) %>% mutate (row = row_number()), 
-                                         by = c("id", "measurementTypeID") )  %>% 
+                                         by = c("eventID", "measurementTypeID") )  %>% 
                               ungroup() %>%
                               mutate (field = 'measurementType', 
                                       level = 'error',  
