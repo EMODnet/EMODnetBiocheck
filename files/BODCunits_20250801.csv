@@ -1,0 +1,426 @@
+identifier,preflabel,altLabel,deprecated,uri
+SDN:P06::BQSM,Becquerels per square metre,Bq/m^2,false,http://vocab.nerc.ac.uk/collection/P06/current/BQSM/
+SDN:P06::BSM3,Becquerels second per cubic metre,Bq.s/m^3,false,http://vocab.nerc.ac.uk/collection/P06/current/BSM3/
+SDN:P06::KMP2,Kilograms per square metre,kg/m^2,false,http://vocab.nerc.ac.uk/collection/P06/current/KMP2/
+SDN:P06::UKMC,Kilograms per cubic metre,kg/m^3,false,http://vocab.nerc.ac.uk/collection/P06/current/UKMC/
+SDN:P06::UUUU,Dimensionless,Dmnless,false,http://vocab.nerc.ac.uk/collection/P06/current/UUUU/
+SDN:P06::KMPS,Kilograms per metre per second,kg/m/s,false,http://vocab.nerc.ac.uk/collection/P06/current/KMPS/
+SDN:P06::BQM3,Becquerels per cubic metre,Bq/m^3,false,http://vocab.nerc.ac.uk/collection/P06/current/BQM3/
+SDN:P06::MOLE,Moles,mol,false,http://vocab.nerc.ac.uk/collection/P06/current/MOLE/
+SDN:P06::DEGE,Degrees east,degree_east,false,http://vocab.nerc.ac.uk/collection/P06/current/DEGE/
+SDN:P06::ULAA,Metres,m,false,http://vocab.nerc.ac.uk/collection/P06/current/ULAA/
+SDN:P06::CMPS,Cubic metres per second,m^3/s,false,http://vocab.nerc.ac.uk/collection/P06/current/CMPS/
+SDN:P06::KSP2,Kilograms per square metre per second,kg/m^2/s,false,http://vocab.nerc.ac.uk/collection/P06/current/KSP2/
+SDN:P06::PRSC,per second,/s,false,http://vocab.nerc.ac.uk/collection/P06/current/PRSC/
+SDN:P06::MPS2,Metres per second squared,m/s^2,false,http://vocab.nerc.ac.uk/collection/P06/current/MPS2/
+SDN:P06::UFAA,Watts per square metre,W/m^2,false,http://vocab.nerc.ac.uk/collection/P06/current/UFAA/
+SDN:P06::PASX,Pascals,Pa,false,http://vocab.nerc.ac.uk/collection/P06/current/PASX/
+SDN:P06::UTAA,Days,d,false,http://vocab.nerc.ac.uk/collection/P06/current/UTAA/
+SDN:P06::PCUM,per cubic metre,/m^3,false,http://vocab.nerc.ac.uk/collection/P06/current/PCUM/
+SDN:P06::UPKA,Kelvins,K,false,http://vocab.nerc.ac.uk/collection/P06/current/UPKA/
+SDN:P06::KGPS,Kilogram per second,kg/s,false,http://vocab.nerc.ac.uk/collection/P06/current/KGPS/
+SDN:P06::KSP3,Kilograms per cubic metre per second,kg/m^3/s,false,http://vocab.nerc.ac.uk/collection/P06/current/KSP3/
+SDN:P06::M2S2,per square metre per second,/m^2/s,false,http://vocab.nerc.ac.uk/collection/P06/current/M2S2/
+SDN:P06::M2MS,Moles per square metre per second,mol/m^2/s,false,http://vocab.nerc.ac.uk/collection/P06/current/M2MS/
+SDN:P06::MLPS,Moles per second,mol/s,false,http://vocab.nerc.ac.uk/collection/P06/current/MLPS/
+SDN:P06::SQM2,Square metres per second squared,m^2/s^2,false,http://vocab.nerc.ac.uk/collection/P06/current/SQM2/
+SDN:P06::XXXX,Not applicable,NA,false,http://vocab.nerc.ac.uk/collection/P06/current/XXXX/
+SDN:P06::UPRM,per metre,/m,false,http://vocab.nerc.ac.uk/collection/P06/current/UPRM/
+SDN:P06::MLM3,Moles per cubic metre,mol/m^3,false,http://vocab.nerc.ac.uk/collection/P06/current/MLM3/
+SDN:P06::PAPS,Pascals per second,Pa/s,false,http://vocab.nerc.ac.uk/collection/P06/current/PAPS/
+SDN:P06::KMTS,Kelvin metres per second,K.m/s,false,http://vocab.nerc.ac.uk/collection/P06/current/KMTS/
+SDN:P06::MPYR,Metres per year,m/yr,false,http://vocab.nerc.ac.uk/collection/P06/current/MPYR/
+SDN:P06::WMSS,Watts per square metre per steradian,W/m^2/sr,false,http://vocab.nerc.ac.uk/collection/P06/current/WMSS/
+SDN:P06::UVAA,Metres per second,m/s,false,http://vocab.nerc.ac.uk/collection/P06/current/UVAA/
+SDN:P06::SQMS,Square metres per second,m^2/s,false,http://vocab.nerc.ac.uk/collection/P06/current/SQMS/
+SDN:P06::UPDB,Decibars,dbar,false,http://vocab.nerc.ac.uk/collection/P06/current/UPDB/
+SDN:P06::UNSM,Newtons per square metre,N/m^2,false,http://vocab.nerc.ac.uk/collection/P06/current/UNSM/
+SDN:P06::PSTR,per steradian,/sr,false,http://vocab.nerc.ac.uk/collection/P06/current/PSTR/
+SDN:P06::KPRS,Kelvin per second,K/s,false,http://vocab.nerc.ac.uk/collection/P06/current/KPRS/
+SDN:P06::UAAA,Degrees,deg,false,http://vocab.nerc.ac.uk/collection/P06/current/UAAA/
+SDN:P06::UTHZ,Hertz,Hz,false,http://vocab.nerc.ac.uk/collection/P06/current/UTHZ/
+SDN:P06::UMSQ,Square metres,m^2,false,http://vocab.nerc.ac.uk/collection/P06/current/UMSQ/
+SDN:P06::UTBB,Seconds,s,false,http://vocab.nerc.ac.uk/collection/P06/current/UTBB/
+SDN:P06::KGVM,Kilograms per cubic metre per metre,kg/m^3/m,false,http://vocab.nerc.ac.uk/collection/P06/current/KGVM/
+SDN:P06::MM3S,Moles per cubic metre per second,mol/m^3/s,false,http://vocab.nerc.ac.uk/collection/P06/current/MM3S/
+SDN:P06::M3SR,Moles per square metre per second per steradian,mol/m^2/s/sr,false,http://vocab.nerc.ac.uk/collection/P06/current/M3SR/
+SDN:P06::PMSR,per metre per steradian,/m/sr,false,http://vocab.nerc.ac.uk/collection/P06/current/PMSR/
+SDN:P06::WATT,Watts,W,false,http://vocab.nerc.ac.uk/collection/P06/current/WATT/
+SDN:P06::WM2S,Watts per square metre per metre per steradian,W/m^2/m/sr,false,http://vocab.nerc.ac.uk/collection/P06/current/WM2S/
+SDN:P06::UGKG,Grams per kilogram,g/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/UGKG/
+SDN:P06::UGMS,Grams per square metre,g/m^2,false,http://vocab.nerc.ac.uk/collection/P06/current/UGMS/
+SDN:P06::MLKG,Moles per kilogram,mol/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/MLKG/
+SDN:P06::KGS2,Kilograms squared per second squared,kg^2/s^2,false,http://vocab.nerc.ac.uk/collection/P06/current/KGS2/
+SDN:P06::KGXX,Kilograms,kg,false,http://vocab.nerc.ac.uk/collection/P06/current/KGXX/
+SDN:P06::UPSS,per second squared,/s^2,false,http://vocab.nerc.ac.uk/collection/P06/current/UPSS/
+SDN:P06::PASS,Pascal seconds,Pa.s,false,http://vocab.nerc.ac.uk/collection/P06/current/PASS/
+SDN:P06::WM2M,Watts per square metre per metre,W/m^2/m,false,http://vocab.nerc.ac.uk/collection/P06/current/WM2M/
+SDN:P06::JMSQ,Joules per square metre,J/m^2,false,http://vocab.nerc.ac.uk/collection/P06/current/JMSQ/
+SDN:P06::MCUB,Cubic metres,m^3,false,http://vocab.nerc.ac.uk/collection/P06/current/MCUB/
+SDN:P06::MLM2,Moles per square metre,mol/m^2,false,http://vocab.nerc.ac.uk/collection/P06/current/MLM2/
+SDN:P06::UPAA,Degrees Celsius,degC,false,http://vocab.nerc.ac.uk/collection/P06/current/UPAA/
+SDN:P06::PAMS,Pascal metres per second,Pa.m/s,false,http://vocab.nerc.ac.uk/collection/P06/current/PAMS/
+SDN:P06::M2MM,Moles per square metre per second per metre,mol/m^2/s/m,false,http://vocab.nerc.ac.uk/collection/P06/current/M2MM/
+SDN:P06::PMSQ,per square metre,/m^2,false,http://vocab.nerc.ac.uk/collection/P06/current/PMSQ/
+SDN:P06::UGMC,Grams per cubic metre,g/m^3,false,http://vocab.nerc.ac.uk/collection/P06/current/UGMC/
+SDN:P06::UPCT,Percent,%,false,http://vocab.nerc.ac.uk/collection/P06/current/UPCT/
+SDN:P06::UPCT,Percent,%,false,http://vocab.nerc.ac.uk/collection/P06/current/UPCT/
+SDN:P06::UPCT,Percent,%,false,http://vocab.nerc.ac.uk/collection/P06/current/UPCT/
+SDN:P06::UPCT,Percent,%,false,http://vocab.nerc.ac.uk/collection/P06/current/UPCT/
+SDN:P06::UPCT,Percent,%,false,http://vocab.nerc.ac.uk/collection/P06/current/UPCT/
+SDN:P06::PAPM,Pascals per metre,Pa/m,false,http://vocab.nerc.ac.uk/collection/P06/current/PAPM/
+SDN:P06::WAPK,Watts per metre per Kelvin,W/m/K,false,http://vocab.nerc.ac.uk/collection/P06/current/WAPK/
+SDN:P06::M4S1,Metres to the power four per second,m^4/s,false,http://vocab.nerc.ac.uk/collection/P06/current/M4S1/
+SDN:P06::M2SX,Square metre seconds,m^2.s,false,http://vocab.nerc.ac.uk/collection/P06/current/M2SX/
+SDN:P06::DGPM,Degrees per metre,deg/m,false,http://vocab.nerc.ac.uk/collection/P06/current/DGPM/
+SDN:P06::PAM2,Pascal metres per second squared,Pa.m/s^2,false,http://vocab.nerc.ac.uk/collection/P06/current/PAM2/
+SDN:P06::JKGK,Joules per kilogram per Kelvin,J/kg/K,false,http://vocab.nerc.ac.uk/collection/P06/current/JKGK/
+SDN:P06::URAD,Radians,rad,false,http://vocab.nerc.ac.uk/collection/P06/current/URAD/
+SDN:P06::M3PS,per cubic metre per second,/m^3/s,false,http://vocab.nerc.ac.uk/collection/P06/current/M3PS/
+SDN:P06::UMBQ,Millibecquerels per litre,mBq/l,false,http://vocab.nerc.ac.uk/collection/P06/current/UMBQ/
+SDN:P06::WSMM,Watt seconds per square metre,W.s/m^2,false,http://vocab.nerc.ac.uk/collection/P06/current/WSMM/
+SDN:P06::JPKG,Joules per kilogram,J/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/JPKG/
+SDN:P06::UDBL,Decibels,dB,false,http://vocab.nerc.ac.uk/collection/P06/current/UDBL/
+SDN:P06::M2SR,Moles per square metre per second per metre per steradian,mol/m^2/s/m/sr,false,http://vocab.nerc.ac.uk/collection/P06/current/M2SR/
+SDN:P06::SCPM,Seconds per metre,s/m,false,http://vocab.nerc.ac.uk/collection/P06/current/SCPM/
+SDN:P06::DGPS,Degrees per second,deg/s,false,http://vocab.nerc.ac.uk/collection/P06/current/DGPS/
+SDN:P06::KSXX,Kelvin second,K.s,false,http://vocab.nerc.ac.uk/collection/P06/current/KSXX/
+SDN:P06::KMTX,Kelvin metres,K.m,false,http://vocab.nerc.ac.uk/collection/P06/current/KMTX/
+SDN:P06::UPMS,Number per square metre,#/m^2,false,http://vocab.nerc.ac.uk/collection/P06/current/UPMS/
+SDN:P06::MPMX,Moles per mole,mol/mol,false,http://vocab.nerc.ac.uk/collection/P06/current/MPMX/
+SDN:P06::M2RD,Square metre seconds per radian,m2.s/rad,false,http://vocab.nerc.ac.uk/collection/P06/current/M2RD/
+SDN:P06::PAMT,Pascal metres,Pa.m,false,http://vocab.nerc.ac.uk/collection/P06/current/PAMT/
+SDN:P06::WMSW,Watts per square metre per inverse metre per steradian,W/m^2/m^-1/sr,false,http://vocab.nerc.ac.uk/collection/P06/current/WMSW/
+SDN:P06::KPAS,Kelvin Pascals per second,K.Pa/s,false,http://vocab.nerc.ac.uk/collection/P06/current/KPAS/
+SDN:P06::DKM2,Degrees Celsius kilogram per square metre,degC.kg/m^2,false,http://vocab.nerc.ac.uk/collection/P06/current/DKM2/
+SDN:P06::UPMM,Number per cubic metre,#/m^3,false,http://vocab.nerc.ac.uk/collection/P06/current/UPMM/
+SDN:P06::KPMT,Kelvins per metre,K/m,false,http://vocab.nerc.ac.uk/collection/P06/current/KPMT/
+SDN:P06::KMSS,Kelvin square metres per kilogram per second,K.m^2/kg/s,false,http://vocab.nerc.ac.uk/collection/P06/current/KMSS/
+SDN:P06::DEGN,Degrees north,degree_north,false,http://vocab.nerc.ac.uk/collection/P06/current/DEGN/
+SDN:P06::MCS2,Cubic metres per second squared,m^3/s^2,false,http://vocab.nerc.ac.uk/collection/P06/current/MCS2/
+SDN:P06::JOUL,Joule,J,false,http://vocab.nerc.ac.uk/collection/P06/current/JOUL/
+SDN:P06::SQM3,Square metres per second cubed,m^2/s^3,false,http://vocab.nerc.ac.uk/collection/P06/current/SQM3/
+SDN:P06::UPPT,Parts per thousand,ppt,false,http://vocab.nerc.ac.uk/collection/P06/current/UPPT/
+SDN:P06::NTPM,Newtons per metre,N/m,false,http://vocab.nerc.ac.uk/collection/P06/current/NTPM/
+SDN:P06::PMPS,per metre per second,/m/s,false,http://vocab.nerc.ac.uk/collection/P06/current/PMPS/
+SDN:P06::UWCM,Watts per cubic metre,W/m^3,false,http://vocab.nerc.ac.uk/collection/P06/current/UWCM/
+SDN:P06::UECA,Siemens per metre,S/m,false,http://vocab.nerc.ac.uk/collection/P06/current/UECA/
+SDN:P06::PPS2,Pascal squared per second squared,Pa^2/s^2,false,http://vocab.nerc.ac.uk/collection/P06/current/PPS2/
+SDN:P06::UYRS,Years,yr,false,http://vocab.nerc.ac.uk/collection/P06/current/UYRS/
+SDN:P06::PPPS,per Pascal per second,/Pa/s,false,http://vocab.nerc.ac.uk/collection/P06/current/PPPS/
+SDN:P06::UDBZ,Decibels of Z,dBZ,false,http://vocab.nerc.ac.uk/collection/P06/current/UDBZ/
+SDN:P06::KLSQ,Kelvin squared,K^2,false,http://vocab.nerc.ac.uk/collection/P06/current/KLSQ/
+SDN:P06::WAPM,Watts per metre,W/m,false,http://vocab.nerc.ac.uk/collection/P06/current/WAPM/
+SDN:P06::WPKG,Watts per kilogram,W/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/WPKG/
+SDN:P06::UUKG,Micrograms per kilogram,ug/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/UUKG/
+SDN:P06::UPOX,Micromoles per litre,umol/l,false,http://vocab.nerc.ac.uk/collection/P06/current/UPOX/
+SDN:P06::KGUM,Micromoles per kilogram,umol/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/KGUM/
+SDN:P06::UMMC,Milligrams per cubic metre,mg/m^3,false,http://vocab.nerc.ac.uk/collection/P06/current/UMMC/
+SDN:P06::USTU,Nephelometric Turbidity Units,NTU,false,http://vocab.nerc.ac.uk/collection/P06/current/USTU/
+SDN:P06::UNGL,Nanograms per litre,ng/l,false,http://vocab.nerc.ac.uk/collection/P06/current/UNGL/
+SDN:P06::UWNS,Watts per square metre per nanometre per steradian,W/m^2/nm/sr,false,http://vocab.nerc.ac.uk/collection/P06/current/UWNS/
+SDN:P06::UCML,Number per millilitre,#/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/UCML/
+SDN:P06::UCML,Number per millilitre,#/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/UCML/
+SDN:P06::UCML,Number per millilitre,#/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/UCML/
+SDN:P06::UCML,Number per millilitre,#/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/UCML/
+SDN:P06::UCML,Number per millilitre,#/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/UCML/
+SDN:P06::UCML,Number per millilitre,#/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/UCML/
+SDN:P06::UCML,Number per millilitre,#/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/UCML/
+SDN:P06::UCML,Number per millilitre,#/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/UCML/
+SDN:P06::UCML,Number per millilitre,#/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/UCML/
+SDN:P06::UCML,Number per millilitre,#/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/UCML/
+SDN:P06::UCML,Number per millilitre,#/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/UCML/
+SDN:P06::UCML,Number per millilitre,#/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/UCML/
+SDN:P06::UCML,Number per millilitre,#/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/UCML/
+SDN:P06::UCML,Number per millilitre,#/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/UCML/
+SDN:P06::UCML,Number per millilitre,#/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/UCML/
+SDN:P06::UCML,Number per millilitre,#/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/UCML/
+SDN:P06::UCML,Number per millilitre,#/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/UCML/
+SDN:P06::UCML,Number per millilitre,#/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/UCML/
+SDN:P06::ULKM,Kilometres,km,false,http://vocab.nerc.ac.uk/collection/P06/current/ULKM/
+SDN:P06::GPHT,Grams per hectare,g/ha,false,http://vocab.nerc.ac.uk/collection/P06/current/GPHT/
+SDN:P06::UMMS,Milligrams per square metre,mg/m^2,false,http://vocab.nerc.ac.uk/collection/P06/current/UMMS/
+SDN:P06::KGAK,Kilograms per square kilometre,kg/km^2,false,http://vocab.nerc.ac.uk/collection/P06/current/KGAK/
+SDN:P06::GPKM,Grams per square kilometre,g/km^2,false,http://vocab.nerc.ac.uk/collection/P06/current/GPKM/
+SDN:P06::DEGF,Degrees Fahrenheit,degF,false,http://vocab.nerc.ac.uk/collection/P06/current/DEGF/
+SDN:P06::UABB,Degrees True,deg T,false,http://vocab.nerc.ac.uk/collection/P06/current/UABB/
+SDN:P06::KGNM,Nanomoles per kilogram,nmol/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/KGNM/
+SDN:P06::ATKG,Atoms per kilogram,at/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/ATKG/
+SDN:P06::KGPM,Picomoles per kilogram,pmol/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/KGPM/
+SDN:P06::FMKG,Femtomoles per kilogram,fmol/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/FMKG/
+SDN:P06::MMKG,Millimoles per kilogram,mmol/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/MMKG/
+SDN:P06::UEQL,MicroEquivalents per litre,uEquiv/l,false,http://vocab.nerc.ac.uk/collection/P06/current/UEQL/
+SDN:P06::UPNM,Nanomoles per litre,nmol/l,false,http://vocab.nerc.ac.uk/collection/P06/current/UPNM/
+SDN:P06::CMUM,Micromoles per cubic metre,umol/m^3,false,http://vocab.nerc.ac.uk/collection/P06/current/CMUM/
+SDN:P06::MMPL,Millimoles per litre,mmol/l,false,http://vocab.nerc.ac.uk/collection/P06/current/MMPL/
+SDN:P06::MPLT,Moles per litre,mol/l,false,http://vocab.nerc.ac.uk/collection/P06/current/MPLT/
+SDN:P06::UPML,Picomoles per litre,pmol/l,false,http://vocab.nerc.ac.uk/collection/P06/current/UPML/
+SDN:P06::UPMA,Picomoles per cubic metre,pmol/m^3,false,http://vocab.nerc.ac.uk/collection/P06/current/UPMA/
+SDN:P06::UPFM,Femtomoles per litre,fmol/l,false,http://vocab.nerc.ac.uk/collection/P06/current/UPFM/
+SDN:P06::MMCM,Millimoles per cubic metre,mmol/m^3,false,http://vocab.nerc.ac.uk/collection/P06/current/MMCM/
+SDN:P06::UMGL,Milligrams per litre,mg/l,false,http://vocab.nerc.ac.uk/collection/P06/current/UMGL/
+SDN:P06::UPTH,Parts per thousand per hour,ppt/h,false,http://vocab.nerc.ac.uk/collection/P06/current/UPTH/
+SDN:P06::UPDY,per day,/d,false,http://vocab.nerc.ac.uk/collection/P06/current/UPDY/
+SDN:P06::PMSC,per millisecond,/ms,false,http://vocab.nerc.ac.uk/collection/P06/current/PMSC/
+SDN:P06::UCPS,Counts per second,counts/s,false,http://vocab.nerc.ac.uk/collection/P06/current/UCPS/
+SDN:P06::XXPY,per year,/yr,false,http://vocab.nerc.ac.uk/collection/P06/current/XXPY/
+SDN:P06::NOPH,Number per hour,#/h,false,http://vocab.nerc.ac.uk/collection/P06/current/NOPH/
+SDN:P06::BQ11,Becquerels,Bq,false,http://vocab.nerc.ac.uk/collection/P06/current/BQ11/
+SDN:P06::UGCC,Grams per cubic centimetre,g/cm^3,false,http://vocab.nerc.ac.uk/collection/P06/current/UGCC/
+SDN:P06::WXCC,Micrograms per five cubic centimetres,ug/5cm^3,false,http://vocab.nerc.ac.uk/collection/P06/current/WXCC/
+SDN:P06::UGPL,Micrograms per litre,ug/l,false,http://vocab.nerc.ac.uk/collection/P06/current/UGPL/
+SDN:P06::GPRL,Grams per litre,g/l,false,http://vocab.nerc.ac.uk/collection/P06/current/GPRL/
+SDN:P06::NGML,Nanograms per millilitre,ng/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/NGML/
+SDN:P06::MCUG,Micrograms per cubic metre,ug/m^3,false,http://vocab.nerc.ac.uk/collection/P06/current/MCUG/
+SDN:P06::XGCC,Micrograms per cubic centimetre,ug/cm^3,false,http://vocab.nerc.ac.uk/collection/P06/current/XGCC/
+SDN:P06::UUGS,Micrograms per millilitre,ug/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/UUGS/
+SDN:P06::UNUL,Nanograms per microlitre,ng/ul,false,http://vocab.nerc.ac.uk/collection/P06/current/UNUL/
+SDN:P06::PGPL,Picograms per litre,pg/l,false,http://vocab.nerc.ac.uk/collection/P06/current/PGPL/
+SDN:P06::FGPL,Femtograms per litre,fg/l,false,http://vocab.nerc.ac.uk/collection/P06/current/FGPL/
+SDN:P06::MPM3,Millilitres per cubic metre,ml/m^3,false,http://vocab.nerc.ac.uk/collection/P06/current/MPM3/
+SDN:P06::NCM3,Number per cubic centimetre,#/cm^3,false,http://vocab.nerc.ac.uk/collection/P06/current/NCM3/
+SDN:P06::UGPG,Picograms,pg,false,http://vocab.nerc.ac.uk/collection/P06/current/UGPG/
+SDN:P06::FMTG,Femtograms,fg,false,http://vocab.nerc.ac.uk/collection/P06/current/FMTG/
+SDN:P06::MTON,Tonnes,t,false,http://vocab.nerc.ac.uk/collection/P06/current/MTON/
+SDN:P06::UNPI,Nanograms,ng,false,http://vocab.nerc.ac.uk/collection/P06/current/UNPI/
+SDN:P06::UGUG,Micrograms,ug,false,http://vocab.nerc.ac.uk/collection/P06/current/UGUG/
+SDN:P06::MGRM,Milligrams,mg,false,http://vocab.nerc.ac.uk/collection/P06/current/MGRM/
+SDN:P06::UGRM,Grams,g,false,http://vocab.nerc.ac.uk/collection/P06/current/UGRM/
+SDN:P06::CUPL,Cubic micrometres per litre,um^3/l,false,http://vocab.nerc.ac.uk/collection/P06/current/CUPL/
+SDN:P06::UUML,Microlitres per litre,ul/l,false,http://vocab.nerc.ac.uk/collection/P06/current/UUML/
+SDN:P06::CMCM,Cubic millimetres per cubic metre,mm^3/m^3,false,http://vocab.nerc.ac.uk/collection/P06/current/CMCM/
+SDN:P06::UCCM,Cubic microns per cubic metre,um^3/m^3,false,http://vocab.nerc.ac.uk/collection/P06/current/UCCM/
+SDN:P06::UMLL,Millilitres per litre,ml/l,false,http://vocab.nerc.ac.uk/collection/P06/current/UMLL/
+SDN:P06::UCUM,Cubic microns per millilitre,um^3/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/UCUM/
+SDN:P06::UFNU,Formazin Nephelometric Units,FNU,false,http://vocab.nerc.ac.uk/collection/P06/current/UFNU/
+SDN:P06::MBYT,Megabytes,MByte,false,http://vocab.nerc.ac.uk/collection/P06/current/MBYT/
+SDN:P06::UPPB,Parts per billion,ppb,false,http://vocab.nerc.ac.uk/collection/P06/current/UPPB/
+SDN:P06::UPPM,Parts per million,ppm,false,http://vocab.nerc.ac.uk/collection/P06/current/UPPM/
+SDN:P06::UCNT,Counts,counts,false,http://vocab.nerc.ac.uk/collection/P06/current/UCNT/
+SDN:P06::PPTR,Parts per trillion,pptr,false,http://vocab.nerc.ac.uk/collection/P06/current/PPTR/
+SDN:P06::UPPE,Parts per ten thousand,pptt,false,http://vocab.nerc.ac.uk/collection/P06/current/UPPE/
+SDN:P06::UFFU,Fluorescein Fluorescence Units,FFU,false,http://vocab.nerc.ac.uk/collection/P06/current/UFFU/
+SDN:P06::UUPH,pH units,pH units,false,http://vocab.nerc.ac.uk/collection/P06/current/UUPH/
+SDN:P06::BYTE,Bytes,Bytes,false,http://vocab.nerc.ac.uk/collection/P06/current/BYTE/
+SDN:P06::PSUX,Practical salinity units,PSU,false,http://vocab.nerc.ac.uk/collection/P06/current/PSUX/
+SDN:P06::NTML,Nautical miles,Nm,false,http://vocab.nerc.ac.uk/collection/P06/current/NTML/
+SDN:P06::UXNM,Nanometres,nm,false,http://vocab.nerc.ac.uk/collection/P06/current/UXNM/
+SDN:P06::UXMM,Millimetres,mm,false,http://vocab.nerc.ac.uk/collection/P06/current/UXMM/
+SDN:P06::ULCM,Centimetres,cm,false,http://vocab.nerc.ac.uk/collection/P06/current/ULCM/
+SDN:P06::UMIC,Micrometres (microns),um,false,http://vocab.nerc.ac.uk/collection/P06/current/UMIC/
+SDN:P06::ULDM,Decimetres,dm,false,http://vocab.nerc.ac.uk/collection/P06/current/ULDM/
+SDN:P06::PGKG,Picograms per kilogram,pg/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/PGKG/
+SDN:P06::GPRG,Grams per gram,g/g,false,http://vocab.nerc.ac.uk/collection/P06/current/GPRG/
+SDN:P06::FGKG,Femtograms per kilogram,fg/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/FGKG/
+SDN:P06::MGPG,Milligrams per gram,mg/g,false,http://vocab.nerc.ac.uk/collection/P06/current/MGPG/
+SDN:P06::NGPG,Nanograms per gram,ng/g,false,http://vocab.nerc.ac.uk/collection/P06/current/NGPG/
+SDN:P06::NGKG,Nanograms per kilogram,ng/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/NGKG/
+SDN:P06::UMKG,Milligrams per kilogram,mg/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/UMKG/
+SDN:P06::UGGR,Micrograms per gram,ug/g,false,http://vocab.nerc.ac.uk/collection/P06/current/UGGR/
+SDN:P06::PGPG,Picograms per gram,pg/g,false,http://vocab.nerc.ac.uk/collection/P06/current/PGPG/
+SDN:P06::MILM,Square millimetres,mm^2,false,http://vocab.nerc.ac.uk/collection/P06/current/MILM/
+SDN:P06::SQKM,Square kilometres,km^2,false,http://vocab.nerc.ac.uk/collection/P06/current/SQKM/
+SDN:P06::SQCM,Square centimetres,cm^2,false,http://vocab.nerc.ac.uk/collection/P06/current/SQCM/
+SDN:P06::HCTR,Hectares,ha,false,http://vocab.nerc.ac.uk/collection/P06/current/HCTR/
+SDN:P06::UCMS,Square centimetres per second,cm^2/s,false,http://vocab.nerc.ac.uk/collection/P06/current/UCMS/
+SDN:P06::UCST,Centistokes,cSt,false,http://vocab.nerc.ac.uk/collection/P06/current/UCST/
+SDN:P06::VVML,Millilitres,ml,false,http://vocab.nerc.ac.uk/collection/P06/current/VVML/
+SDN:P06::VVCC,Cubic centimetres,cm^3,false,http://vocab.nerc.ac.uk/collection/P06/current/VVCC/
+SDN:P06::ULIT,Litres,l,false,http://vocab.nerc.ac.uk/collection/P06/current/ULIT/
+SDN:P06::UMCU,Cubic micrometres (microns),um^3,false,http://vocab.nerc.ac.uk/collection/P06/current/UMCU/
+SDN:P06::NHTR,Number per hectare,#/ha,false,http://vocab.nerc.ac.uk/collection/P06/current/NHTR/
+SDN:P06::NPKM,Number per square kilometre,#/km^2,false,http://vocab.nerc.ac.uk/collection/P06/current/NPKM/
+SDN:P06::UVCC,Millimetres per second,mm/s,false,http://vocab.nerc.ac.uk/collection/P06/current/UVCC/
+SDN:P06::UMMM,Millimetres per minute,mm/min,false,http://vocab.nerc.ac.uk/collection/P06/current/UMMM/
+SDN:P06::MMPH,Millimetres per hour,mm/h,false,http://vocab.nerc.ac.uk/collection/P06/current/MMPH/
+SDN:P06::UVBB,Centimetres per second,cm/s,false,http://vocab.nerc.ac.uk/collection/P06/current/UVBB/
+SDN:P06::MMPD,Millimetres per day,mm/d,false,http://vocab.nerc.ac.uk/collection/P06/current/MMPD/
+SDN:P06::KMDY,Kilometres per day,km/d,false,http://vocab.nerc.ac.uk/collection/P06/current/KMDY/
+SDN:P06::KMHR,Kilometres per hour,km/hr,false,http://vocab.nerc.ac.uk/collection/P06/current/KMHR/
+SDN:P06::MMPY,Millimetres per year,mm/y,false,http://vocab.nerc.ac.uk/collection/P06/current/MMPY/
+SDN:P06::UKNT,Knots (nautical miles per hour),Knots,false,http://vocab.nerc.ac.uk/collection/P06/current/UKNT/
+SDN:P06::UCKA,Centimetres per thousand years,cm/kyr,false,http://vocab.nerc.ac.uk/collection/P06/current/UCKA/
+SDN:P06::UPDS,Percentage of dry sediment,% dry sed,true,http://vocab.nerc.ac.uk/collection/P06/current/UPDS/
+SDN:P06::UCUL,Number per microlitre,#/ul,false,http://vocab.nerc.ac.uk/collection/P06/current/UCUL/
+SDN:P06::UCNL,Number per nanolitre,#/nl,false,http://vocab.nerc.ac.uk/collection/P06/current/UCNL/
+SDN:P06::UCPL,Number per litre,#/l,false,http://vocab.nerc.ac.uk/collection/P06/current/UCPL/
+SDN:P06::NBTM,Number per 100 millilitres,#/100ml,false,http://vocab.nerc.ac.uk/collection/P06/current/NBTM/
+SDN:P06::UATM,Microatmospheres,uatm,false,http://vocab.nerc.ac.uk/collection/P06/current/UATM/
+SDN:P06::UBQL,Becquerels per litre,Bq/l,false,http://vocab.nerc.ac.uk/collection/P06/current/UBQL/
+SDN:P06::MEQL,MilliEquivalents per litre,mEquiv/l,false,http://vocab.nerc.ac.uk/collection/P06/current/MEQL/
+SDN:P06::UBQK,Becquerels per kilogram,Bq/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/UBQK/
+SDN:P06::UWNM,Watts per square metre per nanometre,W/m^2/nm,false,http://vocab.nerc.ac.uk/collection/P06/current/UWNM/
+SDN:P06::UVLT,Volts,V,false,http://vocab.nerc.ac.uk/collection/P06/current/UVLT/
+SDN:P06::USEC,Microseconds,us,false,http://vocab.nerc.ac.uk/collection/P06/current/USEC/
+SDN:P06::UPBB,Millibars,mBar,false,http://vocab.nerc.ac.uk/collection/P06/current/UPBB/
+SDN:P06::UMES,MicroEinsteins per square metre per second,uE/m^2/s,false,http://vocab.nerc.ac.uk/collection/P06/current/UMES/
+SDN:P06::HPAX,Hectopascals,hPa,false,http://vocab.nerc.ac.uk/collection/P06/current/HPAX/
+SDN:P06::UVP5,Volts multiplied by 100000,V*10^5,false,http://vocab.nerc.ac.uk/collection/P06/current/UVP5/
+SDN:P06::PWAV,Picowatts per square centimetre per litre,pW/cm^2/l,false,http://vocab.nerc.ac.uk/collection/P06/current/PWAV/
+SDN:P06::NMCH,Nanomoles per cubic centimetre per hour,nmol/cm^3/h,false,http://vocab.nerc.ac.uk/collection/P06/current/NMCH/
+SDN:P06::USCM,MicroSiemens per centimetre,uS/cm,false,http://vocab.nerc.ac.uk/collection/P06/current/USCM/
+SDN:P06::UDTM,yyyymmddhh24miss.dd,Date+Time,false,http://vocab.nerc.ac.uk/collection/P06/current/UDTM/
+SDN:P06::EQPL,Equivalents per litre,Equiv/l,false,http://vocab.nerc.ac.uk/collection/P06/current/EQPL/
+SDN:P06::UPHI,phi units,phi units,false,http://vocab.nerc.ac.uk/collection/P06/current/UPHI/
+SDN:P06::USVD,Sverdrup,Sv,false,http://vocab.nerc.ac.uk/collection/P06/current/USVD/
+SDN:P06::UWBQ,Microbecquerels per kilogram,uBq/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/UWBQ/
+SDN:P06::MGSS,Milligrams per square metre per second,mg/m^2/s,false,http://vocab.nerc.ac.uk/collection/P06/current/MGSS/
+SDN:P06::UMMH,Micromoles per litre per hour,umol/l/h,false,http://vocab.nerc.ac.uk/collection/P06/current/UMMH/
+SDN:P06::UKWN,Not known,Unknown,false,http://vocab.nerc.ac.uk/collection/P06/current/UKWN/
+SDN:P06::PUML,per micromole per litre,/umol/l,false,http://vocab.nerc.ac.uk/collection/P06/current/PUML/
+SDN:P06::UYAD,Gregorian calendar years anno Domini,AD,false,http://vocab.nerc.ac.uk/collection/P06/current/UYAD/
+SDN:P06::MWNM,Milliwatts per square metre per nanometre,mW/m^2/nm,false,http://vocab.nerc.ac.uk/collection/P06/current/MWNM/
+SDN:P06::UUBQ,Microbecquerels per litre,uBq/l,false,http://vocab.nerc.ac.uk/collection/P06/current/UUBQ/
+SDN:P06::MBQM,Millibecquerels per cubic metre,mBq/m^3,false,http://vocab.nerc.ac.uk/collection/P06/current/MBQM/
+SDN:P06::MGSQ,Milligrams per square metre per hour,mg/m^2/h,false,http://vocab.nerc.ac.uk/collection/P06/current/MGSQ/
+SDN:P06::UESC,MicroEinsteins per square centimetre per second,uE/cm^2/s,false,http://vocab.nerc.ac.uk/collection/P06/current/UESC/
+SDN:P06::UMTE,Square metres.Hertz^4,m^2*Hz^4,false,http://vocab.nerc.ac.uk/collection/P06/current/UMTE/
+SDN:P06::MWNS,Milliwatts per square metre per nanometre per steradian,mW/m^2/nm/sr,false,http://vocab.nerc.ac.uk/collection/P06/current/MWNS/
+SDN:P06::UPAM,Picoamps per micromole per litre,pA/umol/l,false,http://vocab.nerc.ac.uk/collection/P06/current/UPAM/
+SDN:P06::MBQK,Millibecquerels per kilogram,mBq/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/MBQK/
+SDN:P06::UMTC,Square Metres.Hertz squared,m^2.Hz^2,false,http://vocab.nerc.ac.uk/collection/P06/current/UMTC/
+SDN:P06::UYBC,Gregorian calendar years before Christ,BC,false,http://vocab.nerc.ac.uk/collection/P06/current/UYBC/
+SDN:P06::MGMH,Milligrams per milligram per hour,mg/mg/h,false,http://vocab.nerc.ac.uk/collection/P06/current/MGMH/
+SDN:P06::MGPF,Milligrams per milligram per hour per (micromole per square metre per second),mg/mg/h/(umol/m^2/s),false,http://vocab.nerc.ac.uk/collection/P06/current/MGPF/
+SDN:P06::UMNX,per metre per nanometre,/m/nm,false,http://vocab.nerc.ac.uk/collection/P06/current/UMNX/
+SDN:P06::UECH,MicroEinsteins per square centimetre per hour,uE/cm^2/h,false,http://vocab.nerc.ac.uk/collection/P06/current/UECH/
+SDN:P06::UNBQ,Nanobecquerels per litre,nBq/l,false,http://vocab.nerc.ac.uk/collection/P06/current/UNBQ/
+SDN:P06::UWCN,Microwatts per square centimetre per nanometre,uW/cm^2/nm,false,http://vocab.nerc.ac.uk/collection/P06/current/UWCN/
+SDN:P06::PIXY,Pixels,px,false,http://vocab.nerc.ac.uk/collection/P06/current/PIXY/
+SDN:P06::USUM,Square microns per millilitre,um^2/ml,false,http://vocab.nerc.ac.uk/collection/P06/current/USUM/
+SDN:P06::NMPM,Nanomoles per mole,nmol/mol,false,http://vocab.nerc.ac.uk/collection/P06/current/NMPM/
+SDN:P06::UYKA,Kiloyears before present,kyr,false,http://vocab.nerc.ac.uk/collection/P06/current/UYKA/
+SDN:P06::USTR,Steradians,sr,false,http://vocab.nerc.ac.uk/collection/P06/current/USTR/
+SDN:P06::UAQU,Angstrom squared per quantum,A^2/Q,false,http://vocab.nerc.ac.uk/collection/P06/current/UAQU/
+SDN:P06::UMTB,Square metres.Hertz,m^2.Hz,false,http://vocab.nerc.ac.uk/collection/P06/current/UMTB/
+SDN:P06::UCLC,Milligrams of carbon per (microEinstein per square metre per second) per milligram of chlorophyll per hour,mgC/(uE/m^2/s)/mgChl/h,false,http://vocab.nerc.ac.uk/collection/P06/current/UCLC/
+SDN:P06::KGPH,Kilograms per hour,kg/h,false,http://vocab.nerc.ac.uk/collection/P06/current/KGPH/
+SDN:P06::MEKG,MilliEquivalents per kilogram,mEquiv/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/MEKG/
+SDN:P06::NSQD,Nanomoles per square metre per day,nmol/m^2/d,false,http://vocab.nerc.ac.uk/collection/P06/current/NSQD/
+SDN:P06::MGPM,MilliGals per month,mGal/mon,false,http://vocab.nerc.ac.uk/collection/P06/current/MGPM/
+SDN:P06::UMUB,Micromoles per micromole per day,um/um/d,false,http://vocab.nerc.ac.uk/collection/P06/current/UMUB/
+SDN:P06::UM2S,Micromoles per square metre per second,umol/m^2/s,false,http://vocab.nerc.ac.uk/collection/P06/current/UM2S/
+SDN:P06::UMGM,Micromoles per milligram per minute,umol/mg/min,false,http://vocab.nerc.ac.uk/collection/P06/current/UMGM/
+SDN:P06::HPAH,Hectopascals per hour,hPa/h,false,http://vocab.nerc.ac.uk/collection/P06/current/HPAH/
+SDN:P06::KIPA,Kilopascals,kPa,false,http://vocab.nerc.ac.uk/collection/P06/current/KIPA/
+SDN:P06::MMSD,Moles per square metre per day,mol/m^2/d,false,http://vocab.nerc.ac.uk/collection/P06/current/MMSD/
+SDN:P06::UMPE,Moles per Einstein,mol/E,false,http://vocab.nerc.ac.uk/collection/P06/current/UMPE/
+SDN:P06::ULKG,Litres per kilogram,l/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/ULKG/
+SDN:P06::KGMH,Kilograms per metre per hour,kg/m/h,false,http://vocab.nerc.ac.uk/collection/P06/current/KGMH/
+SDN:P06::UHMS,Hours Minutes Seconds,hh24miss,false,http://vocab.nerc.ac.uk/collection/P06/current/UHMS/
+SDN:P06::UNIM,Nanograms per individual per minute,ng/ind/min,false,http://vocab.nerc.ac.uk/collection/P06/current/UNIM/
+SDN:P06::MWSR,Milliwatts per square centimetre per micrometre per steradian,mW/cm^2/um/sr,false,http://vocab.nerc.ac.uk/collection/P06/current/MWSR/
+SDN:P06::UPOP,Percent per metre,%/m,false,http://vocab.nerc.ac.uk/collection/P06/current/UPOP/
+SDN:P06::UFPD,per female per day,#/fem/d,false,http://vocab.nerc.ac.uk/collection/P06/current/UFPD/
+SDN:P06::CMM3,Cubic millimetres,mm^3,false,http://vocab.nerc.ac.uk/collection/P06/current/CMM3/
+SDN:P06::MCMD,Millimoles per cubic metre per day,mmol/m^3/d,false,http://vocab.nerc.ac.uk/collection/P06/current/MCMD/
+SDN:P06::GQCY,Grams per square centimetre per year,g/cm^2/yr,false,http://vocab.nerc.ac.uk/collection/P06/current/GQCY/
+SDN:P06::TISO,ISO8601,ISO8601,false,http://vocab.nerc.ac.uk/collection/P06/current/TISO/
+SDN:P06::UMNS,per metre per nanometre per steradian,/m/nm/sr,false,http://vocab.nerc.ac.uk/collection/P06/current/UMNS/
+SDN:P06::UYMA,Millions of years before present,Myr,false,http://vocab.nerc.ac.uk/collection/P06/current/UYMA/
+SDN:P06::MMSM,Millimoles per square metre,mmol/m^2,false,http://vocab.nerc.ac.uk/collection/P06/current/MMSM/
+SDN:P06::UYBP,Years before present,BP,false,http://vocab.nerc.ac.uk/collection/P06/current/UYBP/
+SDN:P06::UPCD,Percent per day,%/d,false,http://vocab.nerc.ac.uk/collection/P06/current/UPCD/
+SDN:P06::UNVH,Cubic microns per individual per hour,um^3/ind/h,false,http://vocab.nerc.ac.uk/collection/P06/current/UNVH/
+SDN:P06::UMPM,Micromoles per mole,umol/mol,false,http://vocab.nerc.ac.uk/collection/P06/current/UMPM/
+SDN:P06::UM2D,Milligrams per square metre per incubation duration,mg/m^2/inc,false,http://vocab.nerc.ac.uk/collection/P06/current/UM2D/
+SDN:P06::UNAH,Number per individual per hour,#/ind/h,false,http://vocab.nerc.ac.uk/collection/P06/current/UNAH/
+SDN:P06::USIS,Magnetic susceptibility SI units,MSSI,false,http://vocab.nerc.ac.uk/collection/P06/current/USIS/
+SDN:P06::UMKS,10^-8 * Cubic metres per kilogram,10^-8m^3kg^-1,false,http://vocab.nerc.ac.uk/collection/P06/current/UMKS/
+SDN:P06::UAMN,Arc minutes,arc_min,false,http://vocab.nerc.ac.uk/collection/P06/current/UAMN/
+SDN:P06::UNPG,Number per gram,#/g,false,http://vocab.nerc.ac.uk/collection/P06/current/UNPG/
+SDN:P06::UOHM,Ohms,ohm,false,http://vocab.nerc.ac.uk/collection/P06/current/UOHM/
+SDN:P06::UNMH,Nanomoles per litre per hour,nmol/l/h,false,http://vocab.nerc.ac.uk/collection/P06/current/UNMH/
+SDN:P06::MGCS,Milligrams per cubic metre per second,mg/m^3/s,false,http://vocab.nerc.ac.uk/collection/P06/current/MGCS/
+SDN:P06::UTRV,Parts per trillion by volume,pptrv,false,http://vocab.nerc.ac.uk/collection/P06/current/UTRV/
+SDN:P06::UUUD,Micromoles per square metre per day,umol/m^2/d,false,http://vocab.nerc.ac.uk/collection/P06/current/UUUD/
+SDN:P06::MSMD,Millilitres per square metre per day,ml/m^2/d,false,http://vocab.nerc.ac.uk/collection/P06/current/MSMD/
+SDN:P06::UPMH,Picomoles per litre per hour,pmol/l/h,false,http://vocab.nerc.ac.uk/collection/P06/current/UPMH/
+SDN:P06::UMFX,Micromoles per square metre per hour,umol/m^2/h,false,http://vocab.nerc.ac.uk/collection/P06/current/UMFX/
+SDN:P06::UHOR,Hours,h,false,http://vocab.nerc.ac.uk/collection/P06/current/UHOR/
+SDN:P06::UGDX,Milligrams per square metre per day,mg/m^2/d,false,http://vocab.nerc.ac.uk/collection/P06/current/UGDX/
+SDN:P06::UGLH,Milligrams per cubic metre per hour,mg/m^3/h,false,http://vocab.nerc.ac.uk/collection/P06/current/UGLH/
+SDN:P06::MMVY,Millimoles per cubic metre per year,mmol/m^3/y,false,http://vocab.nerc.ac.uk/collection/P06/current/MMVY/
+SDN:P06::PG01,per gram,/g,false,http://vocab.nerc.ac.uk/collection/P06/current/PG01/
+SDN:P06::UPCW,Percent per week,%/wk,false,http://vocab.nerc.ac.uk/collection/P06/current/UPCW/
+SDN:P06::UMTN,Square metres per squared Hertz,m^2/Hz^2,false,http://vocab.nerc.ac.uk/collection/P06/current/UMTN/
+SDN:P06::NBMG,Number per milligram,#/mg,false,http://vocab.nerc.ac.uk/collection/P06/current/NBMG/
+SDN:P06::UUDX,Micrograms per square metre per day,ug/m^2/d,false,http://vocab.nerc.ac.uk/collection/P06/current/UUDX/
+SDN:P06::MBQF,Millibecquerels per square metre per day,mBq/m^2/d,false,http://vocab.nerc.ac.uk/collection/P06/current/MBQF/
+SDN:P06::MSCM,MilliSiemens per centimetre,mS/cm,false,http://vocab.nerc.ac.uk/collection/P06/current/MSCM/
+SDN:P06::UGM3,Micrograms per cubic metre per hour,ug/m^3/h,false,http://vocab.nerc.ac.uk/collection/P06/current/UGM3/
+SDN:P06::NCUM,Newtons per cubic metre,N/m^3,false,http://vocab.nerc.ac.uk/collection/P06/current/NCUM/
+SDN:P06::MIKG,Millilitres per kilogram,ml/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/MIKG/
+SDN:P06::MAKG,Million atoms per kilogram,10^6at/kg,false,http://vocab.nerc.ac.uk/collection/P06/current/MAKG/
+SDN:P06::LPUM,Litres per micromole,l/umol,false,http://vocab.nerc.ac.uk/collection/P06/current/LPUM/
+SDN:P06::UYGA,Billions of years before present,Gyr,false,http://vocab.nerc.ac.uk/collection/P06/current/UYGA/
+SDN:P06::SQUM,Square micrometres,um^2,false,http://vocab.nerc.ac.uk/collection/P06/current/SQUM/
+SDN:P06::UPVT,Picomoles per cubic metre per second,pmol/m^3/s,false,http://vocab.nerc.ac.uk/collection/P06/current/UPVT/
+SDN:P06::NMGH,Nanomoles per microgram per hour,nmol/ug/h,false,http://vocab.nerc.ac.uk/collection/P06/current/NMGH/
+SDN:P06::DCPY,Degrees Celsius per year,degC/yr,false,http://vocab.nerc.ac.uk/collection/P06/current/DCPY/
+SDN:P06::UCGS,Magnetic susceptibility cgs units,MScgs,false,http://vocab.nerc.ac.uk/collection/P06/current/UCGS/
+SDN:P06::NMMD,Nanomoles per micromole per day,nmol/umol/d,false,http://vocab.nerc.ac.uk/collection/P06/current/NMMD/
+SDN:P06::UNMD,Nanomoles per litre per day,nmol/l/d,false,http://vocab.nerc.ac.uk/collection/P06/current/UNMD/
+SDN:P06::UCGG,Magnetic susceptibility cgs units per gram,Mscgs/g,false,http://vocab.nerc.ac.uk/collection/P06/current/UCGG/
+SDN:P06::UPMD,Picomoles per square metre per day,pmol/m^2/d,false,http://vocab.nerc.ac.uk/collection/P06/current/UPMD/
+SDN:P06::GSMD,Grams per square metre per day,g/m^2/d,false,http://vocab.nerc.ac.uk/collection/P06/current/GSMD/
+SDN:P06::NBHG,Number per 100 grams,#/100g,false,http://vocab.nerc.ac.uk/collection/P06/current/NBHG/
+SDN:P06::UMHZ,Square metres per Hertz,m^2/Hz,false,http://vocab.nerc.ac.uk/collection/P06/current/UMHZ/
+SDN:P06::UMNT,Months,mon,false,http://vocab.nerc.ac.uk/collection/P06/current/UMNT/
+SDN:P06::UNID,Nanograms per day,ng/d,false,http://vocab.nerc.ac.uk/collection/P06/current/UNID/
+SDN:P06::UPCH,Percent per hour,%/h,false,http://vocab.nerc.ac.uk/collection/P06/current/UPCH/
+SDN:P06::UYMD,Gregorian date (yyyymmdd),yyyymmdd,false,http://vocab.nerc.ac.uk/collection/P06/current/UYMD/
+SDN:P06::UMSG,Square metres per gram of dry sediment,m^2/g dry,true,http://vocab.nerc.ac.uk/collection/P06/current/UMSG/
+SDN:P06::DCWK,Degrees Celsius weeks,degC.wk,false,http://vocab.nerc.ac.uk/collection/P06/current/DCWK/
+SDN:P06::AMPB,Amperes,A,false,http://vocab.nerc.ac.uk/collection/P06/current/AMPB/
+SDN:P06::ULPM,Litres per minute,l/min,false,http://vocab.nerc.ac.uk/collection/P06/current/ULPM/
+SDN:P06::NMMM,Nanomoles per micromole,nmol/umol,false,http://vocab.nerc.ac.uk/collection/P06/current/NMMM/
+SDN:P06::SMPG,Square metres per gram,m^2/g,false,http://vocab.nerc.ac.uk/collection/P06/current/SMPG/
+SDN:P06::UGPM,MicroGals per metre,uGal/m,false,http://vocab.nerc.ac.uk/collection/P06/current/UGPM/
+SDN:P06::UCCL,Milligrams of carbon per milligram of chlorophyll per hour,mgC/mgChl/hr,false,http://vocab.nerc.ac.uk/collection/P06/current/UCCL/
+SDN:P06::UMEC,MicroEinsteins per cubic metre per second,uE/m^3/s,false,http://vocab.nerc.ac.uk/collection/P06/current/UMEC/
+SDN:P06::UMAM,Milliamps,mA,false,http://vocab.nerc.ac.uk/collection/P06/current/UMAM/
+SDN:P06::CCPM,Millilitres per minute,ml/min,false,http://vocab.nerc.ac.uk/collection/P06/current/CCPM/
+SDN:P06::JCMH,Joules per square centimetre per day,J/cm^2/d,false,http://vocab.nerc.ac.uk/collection/P06/current/JCMH/
+SDN:P06::MMOM,Millimoles per mole,mmol/mol,false,http://vocab.nerc.ac.uk/collection/P06/current/MMOM/
+SDN:P06::UUMV,Millivolts,mV,false,http://vocab.nerc.ac.uk/collection/P06/current/UUMV/
+SDN:P06::UMAA,Nanoteslas,nT,false,http://vocab.nerc.ac.uk/collection/P06/current/UMAA/
+SDN:P06::UMDX,Millimoles per square metre per day,mmol/m^2/d,false,http://vocab.nerc.ac.uk/collection/P06/current/UMDX/
+SDN:P06::UMLV,Parts per million by volume,ppmv,false,http://vocab.nerc.ac.uk/collection/P06/current/UMLV/
+SDN:P06::MPGH,Moles per gram per hour,mol/gram/h,false,http://vocab.nerc.ac.uk/collection/P06/current/MPGH/
+SDN:P06::NPMM,Nanomoles per milligram per minute,nmol/mg/min,false,http://vocab.nerc.ac.uk/collection/P06/current/NPMM/
+SDN:P06::MRAD,Millirads per hour,mRad/hr,false,http://vocab.nerc.ac.uk/collection/P06/current/MRAD/
+SDN:P06::NAMP,Nanoamperes,nA,false,http://vocab.nerc.ac.uk/collection/P06/current/NAMP/
+SDN:P06::UCSS,Degrees Celsius squared per second,degC^2/s,false,http://vocab.nerc.ac.uk/collection/P06/current/UCSS/
+SDN:P06::PMMM,Picomoles per milligram per minute,pmol/mg/min,false,http://vocab.nerc.ac.uk/collection/P06/current/PMMM/
+SDN:P06::UMMD,Micromoles per litre per day,umol/l/d,false,http://vocab.nerc.ac.uk/collection/P06/current/UMMD/
+SDN:P06::MBPG,Millibecquerels per gram,mBq/g,false,http://vocab.nerc.ac.uk/collection/P06/current/MBPG/
+SDN:P06::UPVW,Picomoles per metre per watt per second,pmol/m/W/s,false,http://vocab.nerc.ac.uk/collection/P06/current/UPVW/
+SDN:P06::MGLH,Micrograms per litre per hour,ug/l/h,false,http://vocab.nerc.ac.uk/collection/P06/current/MGLH/
+SDN:P06::UVAY,Number per square centimetre per thousand years,#/cm^2/ka,false,http://vocab.nerc.ac.uk/collection/P06/current/UVAY/
+SDN:P06::UPCM,per centimetre,/cm,false,http://vocab.nerc.ac.uk/collection/P06/current/UPCM/
+SDN:P06::NOPM,Number per metre,#/m,false,http://vocab.nerc.ac.uk/collection/P06/current/NOPM/
+SDN:P06::UDPM,Micromoles per disintegrations per minute,umol/dpm,false,http://vocab.nerc.ac.uk/collection/P06/current/UDPM/
+SDN:P06::USPC,Not specified,Unspec.,false,http://vocab.nerc.ac.uk/collection/P06/current/USPC/
+SDN:P06::UMTD,Square metres.cubic Hertz,m^2.Hz^3,false,http://vocab.nerc.ac.uk/collection/P06/current/UMTD/
+SDN:P06::UMCH,Millilitres cleared per individual per hour,ml/ind/h,false,http://vocab.nerc.ac.uk/collection/P06/current/UMCH/
+SDN:P06::UMSC,Milliseconds,ms,false,http://vocab.nerc.ac.uk/collection/P06/current/UMSC/
+SDN:P06::GCM2,Grams per square centimetre,g/cm^2,false,http://vocab.nerc.ac.uk/collection/P06/current/GCM2/
+SDN:P06::MSPM,MilliSiemens per metre,mS/m,false,http://vocab.nerc.ac.uk/collection/P06/current/MSPM/
+SDN:P06::EVLT,Electronvolts,eV,false,http://vocab.nerc.ac.uk/collection/P06/current/EVLT/
+SDN:P06::RAPS,Radians per second,rad/s,false,http://vocab.nerc.ac.uk/collection/P06/current/RAPS/
+SDN:P06::DKPM,Degrees Kelvin per metre,degK/m,true,http://vocab.nerc.ac.uk/collection/P06/current/DKPM/
+SDN:P06::UPCC,Degrees Celsius per metre,degC/m,false,http://vocab.nerc.ac.uk/collection/P06/current/UPCC/
+SDN:P06::M2HD,Square metres per Hertz per degree,m^2/Hz/deg,false,http://vocab.nerc.ac.uk/collection/P06/current/M2HD/
+SDN:P06::OHMM,Ohm metres,ohm.m,false,http://vocab.nerc.ac.uk/collection/P06/current/OHMM/
+SDN:P06::UGDC,Milligrams per cubic metre per day,mg/m^3/d,false,http://vocab.nerc.ac.uk/collection/P06/current/UGDC/
+SDN:P06::DBPY,Decibars per year,dbar/yr,false,http://vocab.nerc.ac.uk/collection/P06/current/DBPY/
+SDN:P06::THSC,thousandths of a second,10^-3s,false,http://vocab.nerc.ac.uk/collection/P06/current/THSC/
+SDN:P06::UMSM,Micromoles per square metre,umol/m^2,false,http://vocab.nerc.ac.uk/collection/P06/current/UMSM/
+SDN:P06::UBLV,Parts per billion by volume,ppbv,false,http://vocab.nerc.ac.uk/collection/P06/current/UBLV/
+SDN:P06::UUTU,Tritium units (10**18H/Tr),TU,false,http://vocab.nerc.ac.uk/collection/P06/current/UUTU/
+SDN:P06::UMIN,Minutes,min,false,http://vocab.nerc.ac.uk/collection/P06/current/UMIN/
+SDN:P06::SQCC,Square centimetres per cubic centimetre,cm^2/cm^3,false,http://vocab.nerc.ac.uk/collection/P06/current/SQCC/
+SDN:P06::MGAL,MilliGals,mGal,false,http://vocab.nerc.ac.uk/collection/P06/current/MGAL/
+SDN:P06::UNDX,Number per square metre per day,#/m^2/d,false,http://vocab.nerc.ac.uk/collection/P06/current/UNDX/
+SDN:P06::PMLD,Picomoles per litre per day,pmol/l/d,false,http://vocab.nerc.ac.uk/collection/P06/current/PMLD/
