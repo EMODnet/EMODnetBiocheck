@@ -661,9 +661,14 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, DNA = NULL
                                     level = 'error',  
                                     message = 'Duplicate measurementTypeID linked to the same occurrence') %>%
                             select (level,field, row ,message)
-
-    # Missing BODC terms for Event related records
-    #----------------------------------------------    
+ 
+    exact_duplicate_emof_check <- duplicated(eMoF) | duplicated(eMoF, fromLast = TRUE)
+    exact_duplicate_emof_list <- eMoF[exact_duplicate_emof_check, ] %>%
+                            mutate(field = 'eMoF',
+                                    level = 'error',
+                                    message = 'Duplicate eMoF record',
+                                    row=which(exact_duplicate_emof_check)) %>%
+                            select(level, field, row, message)
     
     if (  exists("Event") ){
       duplicated_measurementType_ev <- eMoF %>% filter (is.na(occurrenceID),is.na(measurementTypeID)) %>%
@@ -692,14 +697,8 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, DNA = NULL
                                       message = 'Duplicate measurementTypeID linked to the same event') %>%
                               select (level,field, row ,message)
 
-      exact_duplicate_emof_check <- duplicated(eMoF) | duplicated(eMoF, fromLast = TRUE)
-      exact_duplicate_emof_list <- eMoF[exact_duplicate_emof_check, ] %>%
-                              mutate(field = 'eMoF',
-                                      level = 'error',
-                                      message = 'Duplicate eMoF record',
-                                      row=which(exact_duplicate_emof_check)) %>%
-                              select(level, field, row, message)
-
+      # Missing BODC terms for Event related records
+      #----------------------------------------------   
       mof_ev_noTypeID <- eMoF %>% filter (!is.na(eventID), is.na(occurrenceID), is.na(measurementTypeID) ) %>% 
                                   select (measurementType, measurementUnit) %>% 
                                   mutate(IDlink = 'eventMoF', 
