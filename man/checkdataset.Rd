@@ -8,6 +8,7 @@ checkdataset(
   Event = NULL,
   Occurrence = NULL,
   eMoF = NULL,
+  DNA = NULL,
   IPTreport = list(),
   tree = FALSE
 )
