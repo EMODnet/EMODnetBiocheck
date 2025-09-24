@@ -820,7 +820,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, DNA = NULL
       ev_CheckFields <- check_fields(ev_flat, level = "warning") %>% filter (field %in% event_fields())
       
       if (  exists("Occurrence") ){
-        oc_CheckFields <- check_fields(Occurrence, level = "warning") %>% filter (!field %in% event_fields())
+                oc_CheckFields <- check_fields(Occurrence, level = "warning") %>%
+                                      filter(if_any(any_of("field"),
+                                                    ~ !.x %in% event_fields()))
         }
       
       } else {
