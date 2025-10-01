@@ -40,4 +40,4 @@ Suggests:
 Remotes:
   github::EMODnet/skosxml,
   github::iobis/obistools
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
