@@ -826,10 +826,24 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, DNA = NULL
     
             ev_flat <- Event %>% filter (!eventID %in% Event$parentEventID)
             
-            ev_CheckFields <- check_fields(ev_flat, level = "warning") %>% filter (field %in% event_fields())
+            ev_CheckFields <- check_fields(ev_flat, level = "warning") %>% 
+                { if (nrow(.) == 0) {
+                    message("All recommended fields for event table are present")
+                    .
+                  } else {
+                    filter(., !field %in% event_fields())
+                  }
+                  }
             
             if (  exists("Occurrence") ){
-                oc_CheckFields <- check_fields(Occurrence, level = "warning") %>% filter (!field %in% event_fields())
+                oc_CheckFields <- check_fields(Occurrence, level = "warning") %>% 
+                      { if (nrow(.) == 0) {
+                  message("All recommended fields for occurrence table are present")
+                  .
+                } else {
+                  filter(., !field %in% event_fields())
+                }
+                }
               }
             ev_flat0 <- ev_flat
     
