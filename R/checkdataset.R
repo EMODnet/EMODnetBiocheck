@@ -820,7 +820,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, DNA = NULL
                     message("All recommended fields for event table are present")
                     .
                   } else {
-                    filter(., !field %in% event_fields())
+                    filter(., field %in% event_fields())
                   }
                   }
       
@@ -843,7 +843,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, DNA = NULL
                     message("All recommended fields for event table are present")
                     .
                   } else {
-                    filter(., !field %in% event_fields())
+                    filter(., field %in% event_fields())
                   }
                   }
             
