@@ -40,13 +40,9 @@ tryCatch(
 if (exists("out") == FALSE) {
     output$error <- "Link  does not resolve to a public IPT resource"    
   } else  { 
-  
-  output$name <- names(NamesToVector(file))
-  output$title <- tryCatch(out$emlmeta$dataset$title$title[[1]]@.Data, 
-                           error = function(e) {
-                             out$emlmeta$dataset$title
-                           }
-  )
+    
+  out$data <- lapply(out$data, strip_outer_quotes_if_needed)
+ 
   output$ipt_url <- file
   
   if (length(out$emlmeta$dataset$coverage$temporalCoverage)>0) {
@@ -174,4 +170,24 @@ dwca_rowtype_filenames <- function(dwca, rowtype) {
   files <- unique(files[nzchar(files)])
   
   if (length(files) == 0) NA_character_ else files
+}
+
+#helper function to strip outer quotes if they were present around strings in the original data
+strip_outer_quotes_if_needed <- function(df) {
+  if (is.null(df) || !is.data.frame(df) || ncol(df) == 0) return(df)
+  
+  first_name <- names(df)[1]
+  
+  # Only run cleanup if the *first* column name is wrapped in quotes
+  if (!is.na(first_name) && grepl('^".*"$', first_name)) {
+    
+    # Clean column names
+    names(df) <- gsub('^"|"$', "", names(df))
+    
+    # Clean only character columns (remove a single pair of outer quotes)
+    is_chr <- vapply(df, is.character, logical(1))
+    df[is_chr] <- lapply(df[is_chr], function(x) gsub('^"|"$', "", x))
+  }
+  
+  df
 }
