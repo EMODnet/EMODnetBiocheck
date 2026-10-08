@@ -1,4 +1,5 @@
-import sema.query as kg
+from sema.query import DefaultSparqlBuilder, GraphSource, QueryResult
+import pykg2tbl as kg
 import pathlib
 import pandas as pd
 import requests
@@ -12,7 +13,7 @@ current_dir = pathlib.Path(__file__).parent.resolve()
 
 # Define the SPARQL EndPoint to use - wrapped as Knowledge-Graph 'source'
 NSV_ENDPOINT: str = "https://vocab.nerc.ac.uk/sparql/sparql"
-NSV: kg.GraphSource = kg.GraphSource.build(NSV_ENDPOINT)
+NSV:kg.KGSource = kg.KGSource.build(NSV_ENDPOINT)
 
 # Templates folder relative to the current script's parent directory
 TEMPLATES_FOLDER = str(current_dir / "templated-queries/")
