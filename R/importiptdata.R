@@ -40,7 +40,9 @@ tryCatch(
 if (exists("out") == FALSE) {
     output$error <- "Link  does not resolve to a public IPT resource"    
   } else  { 
-    
+
+  output$title <- tryCatch(out$emlmeta$dataset$title$title[[1]]@.Data, 
+                           error = function(e) {out$emlmeta$dataset$title})
   out$data <- lapply(out$data, strip_outer_quotes_if_needed)
  
   output$ipt_url <- file

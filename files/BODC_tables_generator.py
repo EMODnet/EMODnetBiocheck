@@ -1,4 +1,5 @@
-import sema.query as kg
+from sema.query import DefaultSparqlBuilder, GraphSource, QueryResult
+import pykg2tbl as kg
 import pathlib
 import pandas as pd
 import requests
@@ -12,7 +13,7 @@ current_dir = pathlib.Path(__file__).parent.resolve()
 
 # Define the SPARQL EndPoint to use - wrapped as Knowledge-Graph 'source'
 NSV_ENDPOINT: str = "https://vocab.nerc.ac.uk/sparql/sparql"
-NSV: kg.GraphSource = kg.GraphSource.build(NSV_ENDPOINT)
+NSV:kg.KGSource = kg.KGSource.build(NSV_ENDPOINT)
 
 # Templates folder relative to the current script's parent directory
 TEMPLATES_FOLDER = str(current_dir / "templated-queries/")
@@ -32,8 +33,8 @@ def convert_to_ascii(df):
     # Apply the function to each element in the DataFrame
     return df.map(lambda x: unidecode(str(x)))
 	
-valuesCollectionList = ['L22', 'L05', 'F02', 'C17', 'S13', 'S11', 'S10', 'S09', 'M20', 'M21', 'M24', 'L06', 'S04']
-parametersCollectionList = ['Q01', 'P01', 'P02', 'P35']
+valuesCollectionList = ['L22', 'L05', 'F02', 'C17', 'S13', 'S11', 'S10', 'S09', 'M20', 'M21', 'M24', 'L06','C39']
+parametersCollectionList = ['P01','L20']
 
 # File paths
 checkpoint_path = current_dir
