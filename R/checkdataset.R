@@ -1152,7 +1152,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, DNA = NULL
     eventerror <- bind_rows(if(exists("eventerror")){eventerror},
                             if(exists("no_numeric_lat")) no_numeric_lat,
                             if(exists("no_numeric_long")) no_numeric_long,
-                            if(exists("no_numeric_coord_uncer")) no_numeric_coord_uncer)
+                            if(exists("no_numeric_coord_uncer")) no_numeric_coord_uncer,
+                            if(exists("Out_of_range_latitude")) Out_of_range_latitude,
+                            if(exists("Out_of_range_longitude")) Out_of_range_longitude)
     
     } } else {
       
@@ -1272,7 +1274,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, DNA = NULL
     occurrenceerror <- bind_rows(if(exists("occurrenceerror")){occurrenceerror},
                                  if(exists("no_numeric_lat")) no_numeric_lat,
                                  if(exists("no_numeric_long")) no_numeric_long,
-                                 if(exists("no_numeric_coord_uncer")) no_numeric_coord_uncer)
+                                 if(exists("no_numeric_coord_uncer")) no_numeric_coord_uncer,
+                                 if(exists("Out_of_range_latitude")) Out_of_range_latitude,
+                                 if(exists("Out_of_range_longitude")) Out_of_range_longitude)
     
     }}}
   
