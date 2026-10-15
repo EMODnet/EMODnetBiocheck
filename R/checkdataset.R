@@ -1025,7 +1025,23 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, DNA = NULL
     
     suppressWarnings(ev_flat$decimalLongitude <- as.numeric(ev_flat$decimalLongitude))
     suppressWarnings(ev_flat$decimalLatitude <- as.numeric(ev_flat$decimalLatitude))
-    
+
+    Out_of_range_latitude <- Event %>% mutate (level = 'error', 
+                                 field = 'decimalLatitude', 
+                                 row = row_number(),
+                                 message = 'decimalLatitude is out of the range -90 to 90') %>%
+                             filter_out (decimalLatitude < 90, 
+                                     decimalLatitude > -90) %>% 
+                             select (level, field, row, message)
+
+    Out_of_range_longitude <- Event %>% mutate (level = 'error', 
+                                     field = 'decimalLongitude', 
+                                     row = row_number(),
+                                     message = 'decimalLongitude is out of the range -180 to 180') %>%
+                                 filter_out (decimalLongitude < 180, 
+                                         decimalLongitude > -180) %>% 
+                                 select (level, field, row, message)
+
     
     GoodCords <- suppressWarnings(ev_flat %>% fncols(c("minimumDepthInMeters", "maximumDepthInMeters", "coordinateUncertaintyInMeters")) %>% 
                                               select (-coordinateUncertaintyInMeters) %>%
@@ -1136,7 +1152,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, DNA = NULL
     eventerror <- bind_rows(if(exists("eventerror")){eventerror},
                             if(exists("no_numeric_lat")) no_numeric_lat,
                             if(exists("no_numeric_long")) no_numeric_long,
-                            if(exists("no_numeric_coord_uncer")) no_numeric_coord_uncer)
+                            if(exists("no_numeric_coord_uncer")) no_numeric_coord_uncer,
+                            if(exists("Out_of_range_latitude")) Out_of_range_latitude,
+                            if(exists("Out_of_range_longitude")) Out_of_range_longitude)
     
     } } else {
       
@@ -1175,7 +1193,21 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, DNA = NULL
         }
       }
       
-    
+    Out_of_range_latitude <- Occurrence %>% mutate (level = 'error', 
+                                     field = 'decimalLatitude', 
+                                     row = row_number(),
+                                     message = 'decimalLatitude is out of the range -90 to 90') %>%
+                                 filter_out (decimalLatitude < 90, 
+                                         decimalLatitude > -90) %>% 
+                                 select (level, field, row, message)
+
+    Out_of_range_longitude <- Occurrence %>% mutate (level = 'error', 
+                                     field = 'decimalLongitude', 
+                                     row = row_number(),
+                                     message = 'decimalLongitude is out of the range -180 to 180') %>%
+                                 filter_out (decimalLongitude < 180, 
+                                         decimalLongitude > -180) %>% 
+                                 select (level, field, row, message)
     
     
     GoodCords <- suppressWarnings(Occurrence %>% fncols(c("minimumDepthInMeters", "maximumDepthInMeters"))  %>% 
@@ -1242,7 +1274,9 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, DNA = NULL
     occurrenceerror <- bind_rows(if(exists("occurrenceerror")){occurrenceerror},
                                  if(exists("no_numeric_lat")) no_numeric_lat,
                                  if(exists("no_numeric_long")) no_numeric_long,
-                                 if(exists("no_numeric_coord_uncer")) no_numeric_coord_uncer)
+                                 if(exists("no_numeric_coord_uncer")) no_numeric_coord_uncer,
+                                 if(exists("Out_of_range_latitude")) Out_of_range_latitude,
+                                 if(exists("Out_of_range_longitude")) Out_of_range_longitude)
     
     }}}
   
