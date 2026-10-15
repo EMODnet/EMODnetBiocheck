@@ -1030,7 +1030,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, DNA = NULL
                                  field = 'decimalLatitude', 
                                  row = row_number(),
                                  message = 'decimalLatitude is out of the range -90 to 90') %>%
-                             filter (decimalLatitude < 90, 
+                             filter_out (decimalLatitude < 90, 
                                      decimalLatitude > -90) %>% 
                              select (level, field, row, message)
 
@@ -1038,7 +1038,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, DNA = NULL
                                      field = 'decimalLongitude', 
                                      row = row_number(),
                                      message = 'decimalLongitude is out of the range -180 to 180') %>%
-                                 filter (decimalLongitude < 180, 
+                                 filter_out (decimalLongitude < 180, 
                                          decimalLongitude > -180) %>% 
                                  select (level, field, row, message)
 
@@ -1197,7 +1197,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, DNA = NULL
                                      field = 'decimalLatitude', 
                                      row = row_number(),
                                      message = 'decimalLatitude is out of the range -90 to 90') %>%
-                                 filter (decimalLatitude < 90, 
+                                 filter_out (decimalLatitude < 90, 
                                          decimalLatitude > -90) %>% 
                                  select (level, field, row, message)
 
@@ -1205,7 +1205,7 @@ checkdataset = function(Event = NULL, Occurrence = NULL, eMoF = NULL, DNA = NULL
                                      field = 'decimalLongitude', 
                                      row = row_number(),
                                      message = 'decimalLongitude is out of the range -180 to 180') %>%
-                                 filter (decimalLongitude < 180, 
+                                 filter_out (decimalLongitude < 180, 
                                          decimalLongitude > -180) %>% 
                                  select (level, field, row, message)
     
